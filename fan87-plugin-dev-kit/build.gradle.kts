@@ -1,12 +1,11 @@
 import fr.il_totore.manadrop.MinecraftDependencyHelper
 import fr.il_totore.manadrop.MinecraftRepositoryHelper
-
 plugins {
-    kotlin("jvm") version "1.8.0"
+    id("java")
     id("fr.il_totore.manadrop") version "0.4.3"
 }
 
-group = rootProject.group
+group = "me.fan87"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -16,12 +15,8 @@ repositories {
 }
 
 dependencies {
+    compileOnly("org.projectlombok:lombok:1.18.24")
+    annotationProcessor("org.projectlombok:lombok:1.18.24")
     compileOnly(MinecraftDependencyHelper.spigotApi("1.8.8"))
-}
 
-spigot {
-    desc {
-        named(project.name)
-        version(project.version.toString())
-    }
 }

@@ -1,5 +1,6 @@
 plugins {
-    id("java")
+    kotlin("jvm") version "1.8.0"
+
 }
 
 group = rootProject.group

@@ -1,19 +1,20 @@
+import fr.il_totore.manadrop.MinecraftDependencyHelper
+import fr.il_totore.manadrop.MinecraftRepositoryHelper
+
 plugins {
-    id("java")
+    kotlin("jvm") version "1.8.0"
+    id("fr.il_totore.manadrop") version "0.4.3"
 }
 
-group = "net.tilapia"
+group = rootProject.group
 version = "1.0-SNAPSHOT"
 
 repositories {
+    MinecraftRepositoryHelper.spigotSnapshot()
+    MinecraftRepositoryHelper.sonatype()
     mavenCentral()
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
-}
-
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
+    compileOnly(MinecraftDependencyHelper.spigotApi("1.8.8"))
 }
