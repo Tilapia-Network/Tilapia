@@ -5,7 +5,7 @@ import net.tilapia.api.game.GameType
 
 abstract class ManagedLobby(
     val core: TilapiaCore
-): Lobby(core.provideGameId(GameType.LOBBY)) {
+): Lobby(core.provideGameId(GameType.LOBBY), true) {
 
 
 
