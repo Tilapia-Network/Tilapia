@@ -1,4 +1,4 @@
-package net.tilapia.spigotcommon
+package net.tilapia.spigotcommon.game.lobby
 
 import net.tilapia.api.TilapiaCore
 import net.tilapia.api.game.lobby.ManagedLobby
