@@ -19,3 +19,12 @@ dependencies {
     compileOnly(MinecraftDependencyHelper.spigotApi("1.8.8"))
     implementation(project(":tilapia-api"))
 }
+
+
+spigot {
+    desc {
+        named(project.name)
+        version(project.version.toString())
+        main("net.tilapia.core.main.Main")
+    }
+}
