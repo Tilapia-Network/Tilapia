@@ -8,11 +8,13 @@ import org.bukkit.entity.Player
 
 class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
     override fun sendToGame(player: NetworkPlayer, game: Game) {
-
+        player.currentGameId = game.gameId
+        if (game.managed) {
+        }
     }
 
 
     override fun createLocalPlayer(bukkitPlayer: Player): LocalNetworkPlayer {
-
+        return LocalPlayerImpl(core, bukkitPlayer)
     }
 }
