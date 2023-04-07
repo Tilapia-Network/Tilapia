@@ -18,6 +18,7 @@ interface TilapiaCore {
     fun getLocalServer(): TilapiaServer
 
     fun addGame(game: Game)
+    fun removeGame(game: Game)
 
 
 }

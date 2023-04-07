@@ -11,4 +11,6 @@ abstract class NetworkPlayer {
     abstract val currentServer: TilapiaServer
     abstract val currentGame: Game
 
+    abstract fun sendToGame(game: Game)
+
 }

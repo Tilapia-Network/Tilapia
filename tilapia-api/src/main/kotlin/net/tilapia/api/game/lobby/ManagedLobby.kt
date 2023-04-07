@@ -7,6 +7,8 @@ abstract class ManagedLobby(
     val core: TilapiaCore
 ): Lobby(core.provideGameId(GameType.LOBBY), true) {
 
-
+    fun end() {
+        core.removeGame(this)
+    }
 
 }
