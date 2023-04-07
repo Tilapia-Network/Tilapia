@@ -17,6 +17,9 @@ repositories {
 
 dependencies {
     compileOnly(MinecraftDependencyHelper.spigotApi("1.8.8"))
+    implementation(project(":tilapia-api"))
+    implementation(project(":tilapia-common"))
+    implementation(project(":tilapia-spigot-common"))
 }
 
 spigot {

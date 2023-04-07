@@ -5,7 +5,7 @@ import net.tilapia.api.game.GameType
 
 abstract class ManagedMiniGame(
     val core: TilapiaCore
-): MiniGame(core.provideGameId(GameType.MINIGAME), true) {
+): MiniGame(core.getLocalServer(), core.provideGameId(GameType.MINIGAME), true) {
 
     fun end() {
         core.removeGame(this)
