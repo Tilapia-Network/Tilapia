@@ -20,7 +20,7 @@ class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
         if (player.currentGame != null && player is LocalNetworkPlayer) {
             if (player.currentGame!!.managed) {
                 val managedGame = player.currentGame!! as ManagedGame
-                managedGame.removePlayer(player)
+                managedGame.remove(player)
             }
         }
         if (game != null) {
@@ -29,7 +29,7 @@ class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
                 player.teleport(game.gameWorld.spawnLocation)
                 val result = game.preAddPlayer(player)
                 if (result.type.success) {
-                    game.addPlayer(player)
+                    game.add(player)
                 } else {
                     error("Could not add player: ${result.message}")
                 }

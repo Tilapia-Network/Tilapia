@@ -130,7 +130,7 @@ object EventsManager: Listener {
     }
 
     fun fireEvent(event: AbstractEvent) {
-        for (listener in listeners) {
+        for (listener in ArrayList(listeners)) {
             listener(event)
         }
     }

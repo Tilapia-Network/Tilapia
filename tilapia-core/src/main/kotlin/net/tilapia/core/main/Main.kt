@@ -10,4 +10,9 @@ class Main: JavaPlugin() {
         TilapiaCore.instance = TilapiaCoreImpl()
         logger.info("Tilapia Core has been initialized")
     }
+
+    override fun onDisable() {
+        val instance = TilapiaCore.instance as TilapiaCoreImpl
+        instance.onDisable()
+    }
 }

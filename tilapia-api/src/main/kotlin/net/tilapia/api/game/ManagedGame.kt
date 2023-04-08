@@ -17,6 +17,14 @@ interface ManagedGame {
     fun couldAddPlayer(networkPlayer: NetworkPlayer): Double
 
     fun preAddPlayer(networkPlayer: NetworkPlayer): PlayerJoinResult
+    fun add(networkPlayer: LocalNetworkPlayer) {
+        (this as Game).players.add(networkPlayer)
+        addPlayer(networkPlayer)
+    }
+    fun remove(networkPlayer: LocalNetworkPlayer) {
+        (this as Game).players.remove(networkPlayer)
+        removePlayer(networkPlayer)
+    }
     fun addPlayer(networkPlayer: LocalNetworkPlayer)
     fun removePlayer(networkPlayer: LocalNetworkPlayer)
 

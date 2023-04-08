@@ -3,15 +3,20 @@ package net.tilapia.core
 import net.tilapia.api.TilapiaCore
 import net.tilapia.api.commands.CommandsManager
 import net.tilapia.api.events.EventsManager
+import net.tilapia.api.events.annotation.Subscribe
 import net.tilapia.api.events.annotation.registerAnnotationBasedListener
+import net.tilapia.api.events.annotation.unregisterAnnotationBasedListener
 import net.tilapia.api.game.Game
 import net.tilapia.api.game.GamesManager
 import net.tilapia.api.game.GameType
+import net.tilapia.api.game.ManagedGame
 import net.tilapia.api.internal.TilapiaInternal
 import net.tilapia.api.player.PlayersManager
 import net.tilapia.api.server.TilapiaServer
 import net.tilapia.core.commands.CommandTest
 import net.tilapia.core.server.LocalServerImpl
+import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -22,6 +27,7 @@ class TilapiaCoreImpl: TilapiaCore {
         // Initialize managers
         PlayersManager
         CommandsManager
+        EventsManager.registerAnnotationBasedListener(this)
 
         CommandsManager.registerCommand(CommandTest())
     }
@@ -55,14 +61,29 @@ class TilapiaCoreImpl: TilapiaCore {
         if (game !in games) {
             throw IllegalArgumentException("Game is not registered!")
         }
+        Bukkit.broadcastMessage("Removing game ${game.gameId} / ${game.players.size}")
+        for (player in game.players) {
+            val localPlayer = PlayersManager.localPlayers[player.uuid]
+            localPlayer!!.kickPlayer("${ChatColor.RED}TODO: Game has been stopped, sending to fall back server")
+//            TODO("Add to fall back server logic")
+        }
         games.remove(game)
         GamesManager.unregisterManagedGame(game.gameId)
-        EventsManager.registerAnnotationBasedListener(game)
+        EventsManager.unregisterAnnotationBasedListener(game)
     }
 
     private val internal = TilapiaInternalImpl(this)
     override fun getInternal(): TilapiaInternal {
         return internal
     }
+
+    fun onDisable() {
+        for (allGame in GamesManager.getAllGames()) {
+            if (allGame.managed && allGame is ManagedGame) {
+                allGame.end()
+            }
+        }
+    }
+
 
 }
