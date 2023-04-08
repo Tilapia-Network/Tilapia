@@ -1,6 +1,7 @@
 package net.tilapia.core
 
 import net.tilapia.api.TilapiaCore
+import net.tilapia.api.commands.CommandsManager
 import net.tilapia.api.events.EventsManager
 import net.tilapia.api.events.annotation.registerAnnotationBasedListener
 import net.tilapia.api.game.Game
@@ -9,6 +10,7 @@ import net.tilapia.api.game.GameType
 import net.tilapia.api.internal.TilapiaInternal
 import net.tilapia.api.player.PlayersManager
 import net.tilapia.api.server.TilapiaServer
+import net.tilapia.core.commands.CommandTest
 import net.tilapia.core.server.LocalServerImpl
 import java.util.*
 import kotlin.collections.ArrayList
@@ -17,7 +19,11 @@ import kotlin.collections.ArrayList
 class TilapiaCoreImpl: TilapiaCore {
 
     init {
-        EventsManager.registerAnnotationBasedListener(PlayersManager)
+        // Initialize managers
+        PlayersManager
+        CommandsManager
+
+        CommandsManager.registerCommand(CommandTest())
     }
     private val localServer = LocalServerImpl()
     val games = ArrayList<Game>()

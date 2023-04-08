@@ -1,13 +1,18 @@
 package net.tilapia.api.player
 
 import net.tilapia.api.TilapiaCore
+import net.tilapia.api.events.EventsManager
 import net.tilapia.api.events.annotation.Subscribe
+import net.tilapia.api.events.annotation.registerAnnotationBasedListener
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import java.util.UUID
 
 object PlayersManager {
+    init {
+        EventsManager.registerAnnotationBasedListener(this)
+    }
 
     val localPlayers = HashMap<UUID, LocalNetworkPlayer>()
     val players = HashMap<UUID, NetworkPlayer>()
@@ -26,6 +31,10 @@ object PlayersManager {
     }
     operator fun get(uuid: UUID): NetworkPlayer? {
         return localPlayers[uuid]?:players[uuid]
+    }
+
+    fun Player.getNetworkPlayer(): LocalNetworkPlayer {
+        return getAsLocalPlayer(this)
     }
 
 
