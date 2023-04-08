@@ -8,7 +8,7 @@ import java.util.UUID
 
 abstract class NetworkPlayer(
     val tilapiaCore: TilapiaCore,
-    val name: String,
+    val playerName: String,
     val uuid: UUID,
 ) {
 

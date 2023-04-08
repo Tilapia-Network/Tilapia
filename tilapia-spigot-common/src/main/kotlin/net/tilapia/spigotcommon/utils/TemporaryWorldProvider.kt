@@ -11,7 +11,8 @@ object TemporaryWorldProvider {
     }
 
     fun provideTemporaryWorld(worldCreator: WorldCreator): World {
-        val world = Bukkit.createWorld()
+        val world = Bukkit.createWorld(worldCreator)
+        return world
     }
 
 }

@@ -21,7 +21,7 @@ interface ManagedGame {
     fun removePlayer(networkPlayer: LocalNetworkPlayer)
 
     class PlayerJoinResult(val type: PlayerJoinResultType, val message: String = "")
-    enum class PlayerJoinResultType(val success: Boolean) { OK(true), DENIED(false) }
+    enum class PlayerJoinResultType(val success: Boolean) { ACCEPTED(true), DENIED(false) }
 
 }
 

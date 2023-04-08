@@ -4,6 +4,7 @@ import fr.il_totore.manadrop.MinecraftRepositoryHelper
 plugins {
     kotlin("jvm") version "1.8.0"
     id("fr.il_totore.manadrop") version "0.4.3"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = rootProject.group
@@ -29,3 +30,5 @@ spigot {
         main("net.tilapia.lobby.main.Main")
     }
 }
+
+tasks.classes.get().dependsOn("spigotPlugin")
