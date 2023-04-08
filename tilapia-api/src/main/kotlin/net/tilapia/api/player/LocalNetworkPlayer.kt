@@ -10,6 +10,8 @@ abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
 
 
     fun resetPlayerState() {
+        // TODO: Temp solution. Gonna kick the player and re-connect
+        // Gotta find a way to disable player data save
         closeInventory()
         inventory.heldItemSlot = 0
         inventory.clear()
