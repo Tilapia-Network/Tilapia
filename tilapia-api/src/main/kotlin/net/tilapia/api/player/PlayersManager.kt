@@ -1,7 +1,7 @@
 package net.tilapia.api.player
 
 import net.tilapia.api.TilapiaCore
-import net.tilapia.api.events.annotation.Listener
+import net.tilapia.api.events.annotation.Subscribe
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -12,11 +12,11 @@ object PlayersManager {
     val localPlayers = HashMap<UUID, LocalNetworkPlayer>()
     val players = HashMap<UUID, NetworkPlayer>()
 
-    @Listener("playerJoinInit")
+    @Subscribe("playerJoinInit")
     fun onPlayerJoin(event: PlayerJoinEvent) {
         localPlayers[event.player.uniqueId] = TilapiaCore.instance.getInternal().createLocalPlayer(event.player)
     }
-    @Listener("playerLeaveInit")
+    @Subscribe("playerLeaveInit")
     fun onPlayerLeave(event: PlayerQuitEvent) {
         localPlayers.remove(event.player.uniqueId)
     }

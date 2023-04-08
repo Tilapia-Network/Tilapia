@@ -8,7 +8,7 @@ import java.lang.reflect.Modifier
 private fun Any.getListenerMethods(): Collection<Method> {
     return javaClass.methods
         .filter {
-            it.isAnnotationPresent(Listener::class.java) &&
+            it.isAnnotationPresent(Subscribe::class.java) &&
                     it.parameterCount == 1 &&
                     Any::class.java.isAssignableFrom(it.parameterTypes[0]) &&
                     !Modifier.isStatic(it.modifiers)
@@ -18,8 +18,8 @@ private fun Any.getListenerMethods(): Collection<Method> {
 private fun Method.getEventType(): Class<AbstractEvent> {
     return parameterTypes.first() as Class<AbstractEvent>
 }
-private fun Method.getListenerAnnotation(): Listener {
-    return getAnnotation(Listener::class.java)
+private fun Method.getListenerAnnotation(): Subscribe {
+    return getAnnotation(Subscribe::class.java)
 }
 
 private val associatedListeners = HashMap<Any, List<EventListener>>()
@@ -59,6 +59,6 @@ fun EventsManager.unregisterAnnotationBasedListener(listener: Any) {
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Listener(val name: String,
-                          val mustRunBefore: Array<String> = arrayOf(),
-                          val mustRunAfter: Array<String> = arrayOf())
+annotation class Subscribe(val name: String,
+                           val mustRunBefore: Array<String> = arrayOf(),
+                           val mustRunAfter: Array<String> = arrayOf())

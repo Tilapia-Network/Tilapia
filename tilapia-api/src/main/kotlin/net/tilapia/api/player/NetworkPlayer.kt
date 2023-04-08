@@ -19,7 +19,7 @@ abstract class NetworkPlayer(
     val currentGame: Game?
         get() = if (currentGameId == null) null else GamesManager.getGameById(currentGameId!!)
 
-    fun sendToGame(game: Game) {
+    fun sendToGame(game: Game?) {
         tilapiaCore.getInternal().sendToGame(this, game)
     }
 

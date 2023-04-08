@@ -16,5 +16,9 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":fan87-plugin-dev-kit"))
+    implementation("org.reflections:reflections:0.10.2")
     compileOnly(MinecraftDependencyHelper.spigotApi("1.8.8"))
+    compileOnly("org.apache.logging.log4j:log4j-core:2.20.0")
+
 }

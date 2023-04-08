@@ -1,8 +1,41 @@
 package net.tilapia.api.events
 
+import me.fan87.plugindevkit.PluginInstanceGrabber
+import org.apache.logging.log4j.LogManager
+import org.bukkit.Bukkit
+import org.bukkit.event.Event
+import org.bukkit.event.EventPriority
+import org.bukkit.event.Listener
+import org.reflections.Reflections
+
 typealias AbstractEvent = Any
 
-object EventsManager {
+object EventsManager: Listener {
+    val logger = LogManager.getLogger("EventsManager")
+    private val listening = ArrayList<Class<out Event>>()
+
+    init {
+        val reflections = Reflections("org.bukkit.event")
+
+        for (clazz in reflections.getSubTypesOf(Event::class.java)) {
+            if (clazz.declaredMethods.any { it.name == "getHandlerList" }) { // Valid Spigot Event
+                listenForEvent(clazz)
+            }
+        }
+    }
+
+
+    fun listenForEvent(eventType: Class<out Event>) {
+        if (eventType in listening) {
+            logger.warn(IllegalArgumentException("Event ${eventType.simpleName} has already been listened! Ignoring...").stackTraceToString())
+            return
+        }
+        listening.add(eventType)
+        logger.debug("Listening for event ${eventType.simpleName}")
+        Bukkit.getServer().pluginManager.registerEvent(eventType, this, EventPriority.NORMAL, { listener, event ->
+            fireEvent(event)
+        }, PluginInstanceGrabber.getPluginInstance())
+    }
 
     val listenersByName = LinkedHashMap<String, EventListener>()
     val listeners = ArrayList<EventListener>()
