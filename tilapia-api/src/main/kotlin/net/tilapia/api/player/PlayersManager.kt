@@ -4,6 +4,7 @@ import net.tilapia.api.TilapiaCore
 import net.tilapia.api.events.annotation.Listener
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import java.util.UUID
 
 object PlayersManager {
@@ -16,7 +17,7 @@ object PlayersManager {
         localPlayers[event.player.uniqueId] = TilapiaCore.instance.getInternal().createLocalPlayer(event.player)
     }
     @Listener("playerLeaveInit")
-    fun onPlayerLeave(event: PlayerJoinEvent) {
+    fun onPlayerLeave(event: PlayerQuitEvent) {
         localPlayers.remove(event.player.uniqueId)
     }
 

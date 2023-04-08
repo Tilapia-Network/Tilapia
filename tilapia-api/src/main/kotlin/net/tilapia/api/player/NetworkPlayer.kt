@@ -12,11 +12,12 @@ abstract class NetworkPlayer(
     val uuid: UUID,
 ) {
 
-    val currentServer: TilapiaServer
-        get() = currentGame.server
-    lateinit var currentGameId: UUID
-    val currentGame: Game
-        get() = GamesManager.getGameById(currentGameId)!!
+    open val isLocal: Boolean = false
+
+    lateinit var currentServer: TilapiaServer
+    var currentGameId: UUID? = null
+    val currentGame: Game?
+        get() = if (currentGameId == null) null else GamesManager.getGameById(currentGameId!!)
 
     fun sendToGame(game: Game) {
         tilapiaCore.getInternal().sendToGame(this, game)

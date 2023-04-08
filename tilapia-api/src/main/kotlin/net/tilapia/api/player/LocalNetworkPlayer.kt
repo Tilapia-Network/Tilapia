@@ -7,7 +7,7 @@ import org.bukkit.entity.Player
 
 abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
     NetworkPlayer(core, bukkitPlayer.name, bukkitPlayer.uniqueId), Player by bukkitPlayer {
-
+    override val isLocal: Boolean = true
 
     fun resetPlayerState() {
         // TODO: Temp solution. Gonna kick the player and re-connect

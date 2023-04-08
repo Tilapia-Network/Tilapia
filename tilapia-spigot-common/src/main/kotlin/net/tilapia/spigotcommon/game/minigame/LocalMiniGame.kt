@@ -8,8 +8,9 @@ import net.tilapia.api.game.lobby.ManagedLobby
 import net.tilapia.api.game.minigame.ManagedMiniGame
 import net.tilapia.spigotcommon.game.minigame.stage.MiniGameStage
 import net.tilapia.spigotcommon.game.minigame.stage.impl.StageWaiting
+import org.bukkit.World
 
-abstract class LocalMiniGame(core: TilapiaCore, defaultStage: MiniGameStage): ManagedMiniGame(core) {
+abstract class LocalMiniGame(core: TilapiaCore, defaultStage: MiniGameStage, gameWorld: World): ManagedMiniGame(core, gameWorld) {
 
     var currentStage: MiniGameStage = defaultStage
         set(value) {
