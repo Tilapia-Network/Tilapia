@@ -8,9 +8,12 @@ import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockExplodeEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.entity.EntityChangeBlockEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.EntityExplodeEvent
 import org.bukkit.event.entity.EntityInteractEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.ItemSpawnEvent
@@ -32,12 +35,33 @@ class RuleNoDestruction(
     val protectBlockUse: Boolean = true,
     val protectItemUse: Boolean = true,
     val protectBlockBreak: Boolean = true,
+    val protectEntityDestruction: Boolean = true,
     val protectItemPickUp: Boolean = true,
     val protectItemDrop: Boolean = true,
     val protectPlayerPhysical: Boolean = true,
     val protectPlayerInventoryChange: Boolean = true,
     val ignoreCreative: Boolean = true
 ): AbstractRule("NoDestruction", game) {
+
+    @Subscribe("NoDestruction-onEntityDestruction")
+    fun onEntityDestruction(event: EntityInteractEvent) {
+        if (protectEntityDestruction) {
+            event.isCancelled = true
+        }
+    }
+
+    @Subscribe("NoDestruction-onEntityDestruction")
+    fun onEntityExplode(event: EntityExplodeEvent) {
+        if (protectEntityDestruction) {
+            event.isCancelled = true
+        }
+    }
+    @Subscribe("NoDestruction-onEntityDestruction")
+    fun onBlockExplode(event: BlockExplodeEvent) {
+        if (protectEntityDestruction) {
+            event.isCancelled = true
+        }
+    }
 
     @Subscribe("NoDestruction-onEntityDamage")
     fun onEntityDamage(event: EntityDamageEvent) {

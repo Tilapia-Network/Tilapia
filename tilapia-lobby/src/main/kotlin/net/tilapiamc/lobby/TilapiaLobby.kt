@@ -24,6 +24,7 @@ class TilapiaLobby(core: TilapiaCore, world: World): LocalLobby(core, world) {
                 protectItemUse = true,
                 protectBlockUse = false,
                 protectBlockBreak = true,
+                protectEntityDestruction = true,
                 protectItemPickUp = true,
                 protectItemDrop = true,
                 protectPlayerPhysical = true,
