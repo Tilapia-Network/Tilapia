@@ -5,12 +5,12 @@ import net.tilapia.api.server.TilapiaServer
 import java.util.UUID
 
 abstract class Game(
-    val server: TilapiaServer,
-    val gameType: GameType,
-    val gameId: UUID,
-    val managed: Boolean
-) {
+    override val server: TilapiaServer,
+    override val gameType: GameType,
+    override val gameId: UUID,
+    override val managed: Boolean
+): IGame {
 
-    val players = ArrayList<NetworkPlayer>()
+    override val players = ArrayList<NetworkPlayer>()
 
 }

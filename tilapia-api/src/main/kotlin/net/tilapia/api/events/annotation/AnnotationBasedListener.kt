@@ -24,7 +24,7 @@ private fun Method.getListenerAnnotation(): Subscribe {
 
 private val associatedListeners = HashMap<Any, List<EventListener>>()
 
-fun EventsManager.registerAnnotationBasedListener(listener: Any, includeEventSubClasses: Boolean = true) {
+fun EventsManager.registerAnnotationBasedListener(listener: Any, includeEventSubClasses: Boolean = true, filter: (event: AbstractEvent) -> Boolean = { true }) {
     if (listener in associatedListeners) {
         throw IllegalArgumentException("Listener has already been registered!")
     }
@@ -38,7 +38,8 @@ fun EventsManager.registerAnnotationBasedListener(listener: Any, includeEventSub
             annotation.mustRunAfter.toSet(),
             { method.invoke(listener, it) },
             method.getEventType(),
-            includeEventSubClasses
+            includeEventSubClasses,
+            filter
         )
         listeners.add(classEventListener)
         registerListener(classEventListener)
@@ -61,4 +62,5 @@ fun EventsManager.unregisterAnnotationBasedListener(listener: Any) {
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Subscribe(val name: String,
                            val mustRunBefore: Array<String> = arrayOf(),
-                           val mustRunAfter: Array<String> = arrayOf())
+                           val mustRunAfter: Array<String> = arrayOf(),
+    )

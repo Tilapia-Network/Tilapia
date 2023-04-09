@@ -27,9 +27,11 @@ open class ClassEventListener<T: AbstractEvent>(name: String,
                               mustRunAfter: Set<String>,
                               eventHandler: (event: T) -> Unit,
                               val clazz: Class<T>,
-                              val subClasses: Boolean = true):
+                              val subClasses: Boolean = true,
+                              filter: (event: AbstractEvent) -> Boolean = { true }
+    ):
         FilteredEventListener(name, mustRunBefore, mustRunAfter,
-            { if (subClasses) clazz.isAssignableFrom(it.javaClass) else clazz == it.javaClass },
+            { if (subClasses) clazz.isAssignableFrom(it.javaClass) && filter(it) else clazz == it.javaClass && filter(it) },
             {
                 eventHandler(it as T)
             }

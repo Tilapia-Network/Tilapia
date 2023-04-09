@@ -2,17 +2,24 @@ package net.tilapia.api.game
 
 import net.tilapia.api.player.LocalNetworkPlayer
 import net.tilapia.api.player.NetworkPlayer
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.bukkit.World
+import java.util.UUID
 
-interface ManagedGame {
+interface ManagedGame: IGame {
 
     companion object {
         const val REQUIRES_PERMISSION = -1.0
         const val DENIED = 0.0
     }
 
+    val logger: Logger
+
     val gameWorld: World
     fun end()
+
+    fun getManagedGameId(): UUID
 
     fun couldAddPlayer(networkPlayer: NetworkPlayer): Double
 

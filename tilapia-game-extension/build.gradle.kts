@@ -4,7 +4,6 @@ import fr.il_totore.manadrop.MinecraftRepositoryHelper
 plugins {
     kotlin("jvm") version "1.8.0"
     id("fr.il_totore.manadrop") version "0.4.3"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = rootProject.group
@@ -21,16 +20,4 @@ dependencies {
     implementation(project(":tilapia-api"))
     implementation(project(":tilapia-common"))
     implementation(project(":tilapia-spigot-common"))
-    implementation(project(":tilapia-game-extension"))
 }
-
-spigot {
-    desc {
-        named(project.name)
-        version(project.version.toString())
-        main("net.tilapia.lobby.main.Main")
-        depend("tilapia-core")
-    }
-}
-
-tasks.classes.get().dependsOn("spigotPlugin")
