@@ -1,6 +1,6 @@
 package net.tilapiamc.api.commands
 
-import net.tilapia.api.commands.args.CommandArgument
+import net.tilapiamc.api.commands.args.CommandArgument
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import java.lang.RuntimeException

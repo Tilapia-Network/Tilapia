@@ -1,10 +1,10 @@
 package net.tilapiamc.core
 
-import net.tilapia.api.game.Game
-import net.tilapia.api.game.ManagedGame
-import net.tilapia.api.internal.TilapiaInternal
-import net.tilapia.api.player.LocalNetworkPlayer
-import net.tilapia.api.player.NetworkPlayer
+import net.tilapiamc.api.game.Game
+import net.tilapiamc.api.game.ManagedGame
+import net.tilapiamc.api.internal.TilapiaInternal
+import net.tilapiamc.api.player.LocalNetworkPlayer
+import net.tilapiamc.api.player.NetworkPlayer
 import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -27,7 +27,7 @@ class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
             if (game.managed && game is ManagedGame && player.isLocal && player is LocalNetworkPlayer) {
                 player.resetPlayerState()
                 player.teleport(game.gameWorld.spawnLocation)
-                val result = game.preAddPlayer(player)
+                val result = game.preAdd(player)
                 if (result.type.success) {
                     game.add(player)
                 } else {

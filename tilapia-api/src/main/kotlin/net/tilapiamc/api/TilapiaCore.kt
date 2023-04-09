@@ -1,11 +1,11 @@
 package net.tilapiamc.api
 
-import net.tilapia.api.game.Game
-import net.tilapia.api.game.GameType
-import net.tilapia.api.game.minigame.ManagedMiniGame
-import net.tilapia.api.internal.TilapiaInternal
-import net.tilapia.api.player.NetworkPlayer
-import net.tilapia.api.server.TilapiaServer
+import net.tilapiamc.api.game.Game
+import net.tilapiamc.api.game.GameType
+import net.tilapiamc.api.game.minigame.ManagedMiniGame
+import net.tilapiamc.api.internal.TilapiaInternal
+import net.tilapiamc.api.player.NetworkPlayer
+import net.tilapiamc.api.server.TilapiaServer
 import java.lang.reflect.Proxy
 import java.util.UUID
 

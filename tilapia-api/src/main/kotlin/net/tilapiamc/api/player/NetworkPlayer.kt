@@ -1,9 +1,9 @@
 package net.tilapiamc.api.player
 
 import net.tilapiamc.api.TilapiaCore
-import net.tilapia.api.game.Game
-import net.tilapia.api.game.GamesManager
-import net.tilapia.api.server.TilapiaServer
+import net.tilapiamc.api.game.Game
+import net.tilapiamc.api.game.GamesManager
+import net.tilapiamc.api.server.TilapiaServer
 import java.util.UUID
 
 abstract class NetworkPlayer(

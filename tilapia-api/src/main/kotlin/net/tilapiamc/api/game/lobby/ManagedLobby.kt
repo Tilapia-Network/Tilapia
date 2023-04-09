@@ -1,8 +1,8 @@
 package net.tilapiamc.api.game.lobby
 
 import net.tilapiamc.api.TilapiaCore
-import net.tilapia.api.game.GameType
-import net.tilapia.api.game.ManagedGame
+import net.tilapiamc.api.game.GameType
+import net.tilapiamc.api.game.ManagedGame
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bukkit.World

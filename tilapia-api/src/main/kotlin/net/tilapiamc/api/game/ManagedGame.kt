@@ -1,7 +1,11 @@
 package net.tilapiamc.api.game
 
-import net.tilapia.api.player.LocalNetworkPlayer
-import net.tilapia.api.player.NetworkPlayer
+import net.tilapiamc.api.events.EventsManager
+import net.tilapiamc.api.events.game.PlayerJoinGameEvent
+import net.tilapiamc.api.events.game.PlayerPreJoinGameEvent
+import net.tilapiamc.api.events.game.PlayerQuitGameEvent
+import net.tilapiamc.api.player.LocalNetworkPlayer
+import net.tilapiamc.api.player.NetworkPlayer
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bukkit.World
@@ -23,13 +27,21 @@ interface ManagedGame: IGame {
 
     fun couldAddPlayer(networkPlayer: NetworkPlayer): Double
 
+    fun preAdd(networkPlayer: NetworkPlayer): PlayerJoinResult {
+        val event = PlayerPreJoinGameEvent(this, networkPlayer, preAddPlayer(networkPlayer))
+        EventsManager.fireEvent(event)
+        return event.result
+    }
     fun preAddPlayer(networkPlayer: NetworkPlayer): PlayerJoinResult
     fun add(networkPlayer: LocalNetworkPlayer) {
         (this as Game).players.add(networkPlayer)
+        val event = PlayerJoinGameEvent(this, networkPlayer)
+        EventsManager.fireEvent(event)
         addPlayer(networkPlayer)
     }
     fun remove(networkPlayer: LocalNetworkPlayer) {
         (this as Game).players.remove(networkPlayer)
+        EventsManager.fireEvent(PlayerQuitGameEvent(this, networkPlayer))
         removePlayer(networkPlayer)
     }
     fun addPlayer(networkPlayer: LocalNetworkPlayer)

@@ -1,6 +1,6 @@
 package net.tilapiamc.gameextension.rules.impl
 
-import net.tilapia.api.events.annotation.Subscribe
+import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.spigotcommon.game.AbstractRule
 import net.tilapiamc.spigotcommon.game.LocalGame
 import org.bukkit.entity.Player

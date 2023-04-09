@@ -1,9 +1,9 @@
 package net.tilapiamc.api.player
 
 import net.tilapiamc.api.TilapiaCore
-import net.tilapia.api.events.EventsManager
-import net.tilapia.api.events.annotation.Subscribe
-import net.tilapia.api.events.annotation.registerAnnotationBasedListener
+import net.tilapiamc.api.events.EventsManager
+import net.tilapiamc.api.events.annotation.Subscribe
+import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent

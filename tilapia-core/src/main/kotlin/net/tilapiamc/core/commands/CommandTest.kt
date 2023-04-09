@@ -1,7 +1,7 @@
 package net.tilapiamc.core.commands
 
-import net.tilapia.api.commands.NetworkCommand
-import net.tilapia.api.commands.args.impl.stringArg
+import net.tilapiamc.api.commands.NetworkCommand
+import net.tilapiamc.api.commands.args.impl.stringArg
 
 class CommandTest: NetworkCommand("test", "A command for testing") {
 

@@ -1,9 +1,9 @@
 package net.tilapiamc.api.commands
 
-import net.tilapia.api.events.EventsManager
-import net.tilapia.api.events.annotation.Subscribe
-import net.tilapia.api.events.annotation.registerAnnotationBasedListener
-import net.tilapia.api.player.PlayersManager.getNetworkPlayer
+import net.tilapiamc.api.events.EventsManager
+import net.tilapiamc.api.events.annotation.Subscribe
+import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
+import net.tilapiamc.api.player.PlayersManager.getNetworkPlayer
 import org.apache.logging.log4j.LogManager
 import org.bukkit.ChatColor
 import org.bukkit.event.player.PlayerCommandPreprocessEvent

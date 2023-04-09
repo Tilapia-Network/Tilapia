@@ -1,13 +1,12 @@
 package net.tilapiamc.spigotcommon.game
 
-import net.tilapia.api.events.AbstractEvent
-import net.tilapia.api.events.EventsManager
-import net.tilapia.api.events.FilteredEventListener
-import net.tilapia.api.events.annotation.registerAnnotationBasedListener
-import net.tilapia.api.events.annotation.unregisterAnnotationBasedListener
-import net.tilapia.api.game.ManagedGame
-import org.bukkit.event.Event
-import org.bukkit.event.block.BlockEvent
+import net.tilapiamc.api.events.AbstractEvent
+import net.tilapiamc.api.events.EventsManager
+import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
+import net.tilapiamc.api.events.annotation.unregisterAnnotationBasedListener
+import net.tilapiamc.api.game.ManagedGame
+import net.tilapiamc.spigotcommon.game.event.GameEventManager
+import net.tilapiamc.spigotcommon.game.plugin.GamePlugin
 import org.bukkit.event.entity.EntityEvent
 import org.bukkit.event.hanging.HangingEvent
 import org.bukkit.event.inventory.InventoryEvent
@@ -18,6 +17,21 @@ import org.bukkit.event.weather.WeatherEvent
 interface LocalGame: ManagedGame {
     val rules: ArrayList<AbstractRule>
 
+    val plugins: ArrayList<GamePlugin>
+    val gameEventManager: GameEventManager
+
+    fun applyPlugin(plugin: GamePlugin) {
+        plugins.add(plugin)
+        plugin.game = this
+        plugin.eventManager = gameEventManager
+        plugin.onEnable()
+    }
+
+    fun endPlugins() {
+        for (plugin in plugins) {
+            plugin.onDisable()
+        }
+    }
 
     fun addRule(rule: AbstractRule) {
         synchronized(rules) {

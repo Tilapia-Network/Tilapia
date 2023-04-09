@@ -1,8 +1,8 @@
 package net.tilapiamc.core
 
 import net.tilapiamc.api.TilapiaCore
-import net.tilapia.api.game.GamesManager
-import net.tilapia.api.player.LocalNetworkPlayer
+import net.tilapiamc.api.game.GamesManager
+import net.tilapiamc.api.player.LocalNetworkPlayer
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bukkit.ChatColor

@@ -1,6 +1,6 @@
 package net.tilapiamc.api.events.annotation
 
-import net.tilapia.api.events.*
+import net.tilapiamc.api.events.*
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 

@@ -1,6 +1,6 @@
 package net.tilapiamc.api.commands.args
 
-import net.tilapia.api.commands.CommandExecution
+import net.tilapiamc.api.commands.CommandExecution
 import kotlin.reflect.KProperty
 
 abstract class CommandArgument<T>(val name: String, val isRequired: Boolean = true) {

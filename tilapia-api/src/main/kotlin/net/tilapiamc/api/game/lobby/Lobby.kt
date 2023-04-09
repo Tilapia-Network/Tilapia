@@ -1,8 +1,8 @@
 package net.tilapiamc.api.game.lobby
 
-import net.tilapia.api.game.Game
-import net.tilapia.api.game.GameType
-import net.tilapia.api.server.TilapiaServer
+import net.tilapiamc.api.game.Game
+import net.tilapiamc.api.game.GameType
+import net.tilapiamc.api.server.TilapiaServer
 import java.util.*
 
 abstract class Lobby(
