@@ -27,7 +27,7 @@ spigot {
     desc {
         named(project.name)
         version(project.version.toString())
-        main("net.tilapia.core.main.Main")
+        main("net.tilapiamc.core.main.Main")
     }
 }
 
