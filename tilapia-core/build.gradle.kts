@@ -18,6 +18,7 @@ repositories {
 
 dependencies {
     compileOnly(MinecraftDependencyHelper.spigotApi("1.8.8"))
+    implementation(project(":tilapia-command"))
     implementation(project(":tilapia-api"))
     compileOnly("org.apache.logging.log4j:log4j-core:2.20.0")
 }

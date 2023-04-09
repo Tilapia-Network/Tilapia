@@ -3,6 +3,7 @@
 ### Todo
 1. Fetch language files from HTTP
 2. Fetch libraries and load them from HTTP
+3. Tab completion on command system
 
 ### Projects
 (By read-only projects, you could still do pull requests on them)

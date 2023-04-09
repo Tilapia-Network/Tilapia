@@ -1,6 +1,8 @@
 package net.tilapiamc.api.game
 
+import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.Subscribe
+import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import org.bukkit.event.player.PlayerQuitEvent
 import java.util.UUID
@@ -8,6 +10,10 @@ import java.util.UUID
 object GamesManager {
 
     private val games = HashMap<UUID, Game>()
+
+    init {
+        EventsManager.registerAnnotationBasedListener(this)
+    }
 
     fun registerManagedGame(game: Game) {
         games[game.gameId] = game

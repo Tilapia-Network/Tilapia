@@ -1,9 +1,10 @@
 package net.tilapiamc.core.commands
 
-import net.tilapiamc.api.commands.NetworkCommand
-import net.tilapiamc.api.commands.args.impl.stringArg
+import net.tilapiamc.command.NetworkCommand
+import net.tilapiamc.command.args.impl.stringArg
+import org.bukkit.command.CommandSender
 
-class CommandTest: NetworkCommand("test", "A command for testing") {
+class CommandTest: NetworkCommand<CommandSender>("test", "A command for testing") {
 
     init {
         addAlias("t")

@@ -1,9 +1,7 @@
 package net.tilapiamc.core
 
-import net.tilapiamc.api.TilapiaCore
-import net.tilapiamc.api.commands.CommandsManager
+import net.tilapiamc.api.commands.SpigotCommandsManager
 import net.tilapiamc.api.events.EventsManager
-import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.api.events.annotation.unregisterAnnotationBasedListener
 import net.tilapiamc.api.game.Game
@@ -15,7 +13,6 @@ import net.tilapiamc.api.player.PlayersManager
 import net.tilapiamc.api.server.TilapiaServer
 import net.tilapiamc.core.commands.CommandTest
 import net.tilapiamc.core.server.LocalServerImpl
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import java.util.*
 import kotlin.collections.ArrayList
@@ -26,10 +23,10 @@ class TilapiaCoreImpl: net.tilapiamc.api.TilapiaCore {
     init {
         // Initialize managers
         PlayersManager
-        net.tilapiamc.api.commands.CommandsManager
+        SpigotCommandsManager
         EventsManager.registerAnnotationBasedListener(this)
 
-        net.tilapiamc.api.commands.CommandsManager.registerCommand(CommandTest())
+        SpigotCommandsManager.registerCommand(CommandTest())
     }
     private val localServer = LocalServerImpl()
     val games = ArrayList<Game>()
