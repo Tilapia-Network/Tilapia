@@ -4,6 +4,7 @@ import net.tilapiamc.api.events.AbstractEvent
 import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.api.events.annotation.unregisterAnnotationBasedListener
+import net.tilapiamc.api.events.game.GameEvent
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.spigotcommon.game.event.GameEventManager
 import net.tilapiamc.spigotcommon.game.plugin.GamePlugin
@@ -40,7 +41,7 @@ interface LocalGame: ManagedGame {
                 return
             }
             logger.debug("Added rule \"${rule.name}\"")
-            EventsManager.registerAnnotationBasedListener(rule, true) { shouldHandleEvent(it) }
+            gameEventManager.registerListener(rule, true)
             rules.add(rule)
         }
     }
@@ -52,7 +53,7 @@ interface LocalGame: ManagedGame {
                 return
             }
             logger.debug("Removed rule \"${rule.name}\"")
-            EventsManager.unregisterAnnotationBasedListener(rule)
+            gameEventManager.unregisterListener(rule)
             rules.remove(rule)
         }
     }
@@ -75,6 +76,9 @@ interface LocalGame: ManagedGame {
         }
         if (event is WeatherEvent) {
             return event.world == gameWorld
+        }
+        if (event is GameEvent) {
+            return event.game == this
         }
         return true
     }

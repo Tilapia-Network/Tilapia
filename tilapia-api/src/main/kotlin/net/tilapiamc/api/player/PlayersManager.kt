@@ -1,6 +1,5 @@
 package net.tilapiamc.api.player
 
-import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
@@ -33,7 +32,7 @@ object PlayersManager {
         return localPlayers[uuid]?:players[uuid]
     }
 
-    fun Player.getNetworkPlayer(): LocalNetworkPlayer {
+    fun Player.getLocalPlayer(): LocalNetworkPlayer {
         return getAsLocalPlayer(this)
     }
 

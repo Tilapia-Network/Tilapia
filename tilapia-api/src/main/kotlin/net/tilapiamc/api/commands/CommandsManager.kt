@@ -3,7 +3,7 @@ package net.tilapiamc.api.commands
 import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
-import net.tilapiamc.api.player.PlayersManager.getNetworkPlayer
+import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import org.apache.logging.log4j.LogManager
 import org.bukkit.ChatColor
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
@@ -33,7 +33,7 @@ object CommandsManager {
             val split = event.message.split(" ")
             if (split.isEmpty()) {
                 unknownCommand()
-                event.player.getNetworkPlayer().logger.warn("Player has executed empty command")
+                event.player.getLocalPlayer().logger.warn("Player has executed empty command")
             }
             val commandName = split[0].substring(1)
             val args = split.subList(1, split.size)
@@ -47,7 +47,7 @@ object CommandsManager {
                 return
             }
 
-            command.execute(commandName, event.player.getNetworkPlayer(), args.toTypedArray())
+            command.execute(commandName, event.player.getLocalPlayer(), args.toTypedArray())
         } catch (e: Throwable) {
             net.tilapiamc.api.commands.CommandsManager.logger.error(e.stackTraceToString())
             event.player.sendMessage("${ChatColor.RED}Something went wrong while processing the command! Please report it to server administrator.")

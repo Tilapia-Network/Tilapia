@@ -61,7 +61,6 @@ class TilapiaCoreImpl: net.tilapiamc.api.TilapiaCore {
         if (game !in games) {
             throw IllegalArgumentException("Game is not registered!")
         }
-        Bukkit.broadcastMessage("Removing game ${game.gameId} / ${game.players.size}")
         for (player in game.players) {
             val localPlayer = PlayersManager.localPlayers[player.uuid]
             localPlayer!!.kickPlayer("${ChatColor.RED}TODO: Game has been stopped, sending to fall back server")
