@@ -1,5 +1,7 @@
 package net.tilapiamc.core
 
+import me.fan87.plugindevkit.events.EntityTickEvent
+import me.fan87.plugindevkit.events.ServerTickEvent
 import net.tilapiamc.api.commands.SpigotCommandsManager
 import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
@@ -29,6 +31,8 @@ class TilapiaCoreImpl: net.tilapiamc.api.TilapiaCore {
         PlayersManager
         SpigotCommandsManager
         EventsManager.registerAnnotationBasedListener(this)
+        EventsManager.listenForEvent(ServerTickEvent::class.java)
+        EventsManager.listenForEvent(EntityTickEvent::class.java)
 
         SpigotCommandsManager.registerCommand(CommandTest())
         SpigotCommandsManager.registerCommand(CommandJoinLocal())
