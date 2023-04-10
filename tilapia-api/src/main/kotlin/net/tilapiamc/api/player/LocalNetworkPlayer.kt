@@ -13,6 +13,7 @@ abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
     abstract val logger: Logger
     abstract val language: Locale
 
+
     fun getLanguageBundle(): LanguageBundle {
         return tilapiaCore.languageManager.getLanguageBundle(language)
     }
@@ -29,6 +30,7 @@ abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
         foodLevel = 20
         bedSpawnLocation = null
     }
+
 
 
 }

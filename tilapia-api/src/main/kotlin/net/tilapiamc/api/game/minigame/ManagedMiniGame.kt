@@ -3,6 +3,7 @@ package net.tilapiamc.api.game.minigame
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.ManagedGame
+import net.tilapiamc.api.player.LocalNetworkPlayer
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bukkit.World
@@ -30,4 +31,18 @@ abstract class ManagedMiniGame(
         core.removeGame(this)
     }
 
+    fun addSpectator(networkPlayer: LocalNetworkPlayer) {
+        this.spectatorPlayers.add(networkPlayer)
+        super.add(networkPlayer)
+    }
+    override fun add(networkPlayer: LocalNetworkPlayer) {
+        this.inGamePlayers.add(networkPlayer)
+        super.add(networkPlayer)
+    }
+
+    override fun remove(networkPlayer: LocalNetworkPlayer) {
+        this.inGamePlayers.remove(networkPlayer)
+        this.spectatorPlayers.remove(networkPlayer)
+        super.remove(networkPlayer)
+    }
 }

@@ -20,5 +20,6 @@ dependencies {
     implementation(project(":fan87-plugin-dev-kit"))
     implementation(project(":tilapia-api"))
     implementation(project(":tilapia-common"))
+    implementation(project(":tilapia-language"))
     implementation(project(":tilapia-spigot-common"))
 }
