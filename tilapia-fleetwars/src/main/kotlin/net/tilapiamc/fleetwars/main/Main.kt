@@ -10,6 +10,6 @@ import org.bukkit.plugin.java.JavaPlugin
 class Main: JavaPlugin() {
 
     override fun onEnable() {
-        GamesManager.registerManagedGame(FleetWars(TilapiaCore.instance, Bukkit.getWorld("world_the_end")))
+        TilapiaCore.instance.addGame(FleetWars(TilapiaCore.instance, Bukkit.getWorld("world_the_end")))
     }
 }

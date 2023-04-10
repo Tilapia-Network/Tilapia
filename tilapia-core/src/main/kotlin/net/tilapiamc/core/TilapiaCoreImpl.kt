@@ -8,6 +8,8 @@ import net.tilapiamc.api.game.Game
 import net.tilapiamc.api.game.GamesManager
 import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.ManagedGame
+import net.tilapiamc.api.game.minigame.ManagedMiniGame
+import net.tilapiamc.api.game.minigame.MiniGame
 import net.tilapiamc.api.internal.TilapiaInternal
 import net.tilapiamc.api.player.PlayersManager
 import net.tilapiamc.api.server.TilapiaServer
@@ -50,6 +52,9 @@ class TilapiaCoreImpl: net.tilapiamc.api.TilapiaCore {
         }
         if (game in games) {
             throw IllegalArgumentException("Game has already been registered!")
+        }
+        if (game is ManagedGame) {
+            game.start()
         }
         games.add(game)
         GamesManager.registerManagedGame(game)

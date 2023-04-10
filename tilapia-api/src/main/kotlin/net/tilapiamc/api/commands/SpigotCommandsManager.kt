@@ -26,13 +26,13 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
         fun unknownCommand() {
             event.player.sendMessage("${ChatColor.RED}Unknown command! Please refer to our documentation for full commands list.")
         }
+        event.isCancelled = true
         try {
             if (handleCommand(event.player, event.message.substring(1))) {
-                event.isCancelled = true
             } else {
                 if (event.player.isOp) {
+                    event.isCancelled = false
                 } else {
-                    event.isCancelled = true
                     unknownCommand()
                 }
             }
