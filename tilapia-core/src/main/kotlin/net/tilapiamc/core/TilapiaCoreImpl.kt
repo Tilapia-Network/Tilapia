@@ -12,12 +12,15 @@ import net.tilapiamc.api.game.GamesManager
 import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.internal.TilapiaInternal
+import net.tilapiamc.api.language.LanguageManager
 import net.tilapiamc.api.player.PlayersManager
 import net.tilapiamc.api.server.TilapiaServer
 import net.tilapiamc.core.commands.CommandJoinLocal
 import net.tilapiamc.core.commands.CommandLobbyLocal
 import net.tilapiamc.core.commands.CommandTest
+import net.tilapiamc.core.language.LanguageManagerImpl
 import net.tilapiamc.core.server.LocalServerImpl
+import net.tilapiamc.language.LanguageCore
 import org.bukkit.ChatColor
 import java.util.*
 import kotlin.collections.ArrayList
@@ -39,6 +42,8 @@ class TilapiaCoreImpl: TilapiaCore {
     }
     private val localServer = LocalServerImpl()
     val games = ArrayList<Game>()
+    override val languageManager: LanguageManager = LanguageManagerImpl()
+    override val gamesManager: GamesManager = GamesManager()
 
 
     override fun provideGameId(gameType: GameType): UUID {
@@ -60,7 +65,7 @@ class TilapiaCoreImpl: TilapiaCore {
             game.start()
         }
         games.add(game)
-        GamesManager.registerManagedGame(game)
+        gamesManager.registerManagedGame(game)
         EventsManager.registerAnnotationBasedListener(game)
     }
     override fun removeGame(game: Game) {
@@ -72,11 +77,11 @@ class TilapiaCoreImpl: TilapiaCore {
         }
         for (player in game.players) {
             val localPlayer = PlayersManager.localPlayers[player.uuid]
-            localPlayer!!.kickPlayer("${ChatColor.RED}TODO: Game has been stopped, sending to fall back server")
+            localPlayer!!.kickPlayer(localPlayer.getLanguageBundle()[LanguageCore.TEMP_GAME_STOPPED])
 //            TODO("Add to fall back server logic")
         }
         games.remove(game)
-        GamesManager.unregisterManagedGame(game.gameId)
+        gamesManager.unregisterManagedGame(game.gameId)
         EventsManager.unregisterAnnotationBasedListener(game)
     }
 
@@ -86,7 +91,7 @@ class TilapiaCoreImpl: TilapiaCore {
     }
 
     fun onDisable() {
-        for (allGame in GamesManager.getAllGames()) {
+        for (allGame in gamesManager.getAllGames()) {
             if (allGame.managed && allGame is ManagedGame) {
                 allGame.end()
             }

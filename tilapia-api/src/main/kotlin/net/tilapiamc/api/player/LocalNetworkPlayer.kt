@@ -1,15 +1,21 @@
 package net.tilapiamc.api.player
 
-import com.avaje.ebean.bean.NodeUsageListener
 import net.tilapiamc.api.TilapiaCore
+import net.tilapiamc.api.language.LanguageBundle
 import org.apache.logging.log4j.Logger
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
+import java.util.Locale
 
-abstract class LocalNetworkPlayer(core: net.tilapiamc.api.TilapiaCore, val bukkitPlayer: Player):
+abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
     NetworkPlayer(core, bukkitPlayer.name, bukkitPlayer.uniqueId), Player by bukkitPlayer {
     override val isLocal: Boolean = true
     abstract val logger: Logger
+    abstract val language: Locale
+
+    fun getLanguageBundle(): LanguageBundle {
+        return tilapiaCore.languageManager.getLanguageBundle(language)
+    }
 
     fun resetPlayerState() {
         // TODO: Temp solution. Gonna kick the player and re-connect
@@ -23,5 +29,6 @@ abstract class LocalNetworkPlayer(core: net.tilapiamc.api.TilapiaCore, val bukki
         foodLevel = 20
         bedSpawnLocation = null
     }
+
 
 }

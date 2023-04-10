@@ -8,6 +8,7 @@ import net.tilapiamc.api.game.minigame.MiniGame
 import net.tilapiamc.api.internal.TilapiaInternal
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
+import net.tilapiamc.language.LanguageCore
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
@@ -16,7 +17,7 @@ class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
         if (player is LocalNetworkPlayer) {
             player.logger.debug("Sending player to ${game?.gameId}")
             if (game != null) {
-                player.sendMessage("${ChatColor.DARK_GRAY}Sending you to ${ChatColor.GRAY}${game.gameId}")
+                player.sendMessage(player.getLanguageBundle()[LanguageCore.SEND_TO_A_GAME].format(game.gameId))
             }
         }
         if (player.currentGame != null && player is LocalNetworkPlayer) {
@@ -44,11 +45,11 @@ class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
     }
 
     override fun findMiniGameToJoin(player: NetworkPlayer, miniGameType: String): MiniGame? {
-        return GamesManager.getAllGames().filterIsInstance<MiniGame>().firstOrNull { it.miniGameType == miniGameType }
+        return core.gamesManager.getAllGames().filterIsInstance<MiniGame>().firstOrNull { it.miniGameType == miniGameType }
     }
 
     override fun findLobbyToJoin(player: NetworkPlayer, lobbyType: String): Lobby? {
-        return GamesManager.getAllGames().filterIsInstance<Lobby>().firstOrNull { it.lobbyType == lobbyType }
+        return core.gamesManager.getAllGames().filterIsInstance<Lobby>().firstOrNull { it.lobbyType == lobbyType }
     }
 
 

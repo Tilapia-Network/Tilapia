@@ -19,7 +19,7 @@ abstract class NetworkPlayer(
     lateinit var currentServer: TilapiaServer
     var currentGameId: UUID? = null
     val currentGame: Game?
-        get() = if (currentGameId == null) null else GamesManager.getGameById(currentGameId!!)
+        get() = if (currentGameId == null) null else tilapiaCore.gamesManager.getGameById(currentGameId!!)
 
     fun findMiniGameToJoin(gameType: String): MiniGame? {
         return tilapiaCore.getInternal().findMiniGameToJoin(this, gameType)

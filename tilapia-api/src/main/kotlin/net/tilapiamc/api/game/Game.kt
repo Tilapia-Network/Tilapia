@@ -13,4 +13,7 @@ abstract class Game(
 
     override val players = ArrayList<NetworkPlayer>()
 
+    val shortGameId: String
+        get() = gameId.toString().split("-")[0]
+
 }

@@ -7,7 +7,7 @@ import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import org.bukkit.event.player.PlayerQuitEvent
 import java.util.UUID
 
-object GamesManager {
+open class GamesManager {
 
     private val games = HashMap<UUID, Game>()
 

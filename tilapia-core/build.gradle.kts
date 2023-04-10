@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":tilapia-command"))
     implementation(project(":fan87-plugin-dev-kit"))
     implementation(project(":tilapia-api"))
+    implementation(project(":tilapia-language"))
     compileOnly("org.apache.logging.log4j:log4j-core:2.20.0")
 }
 
