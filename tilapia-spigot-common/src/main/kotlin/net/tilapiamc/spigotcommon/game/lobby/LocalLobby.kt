@@ -8,7 +8,7 @@ import net.tilapiamc.spigotcommon.game.event.GameEventManager
 import net.tilapiamc.spigotcommon.game.plugin.GamePlugin
 import org.bukkit.World
 
-abstract class LocalLobby(core: TilapiaCore, gameWorld: World): ManagedLobby(core, gameWorld), LocalGame {
+abstract class LocalLobby(core: TilapiaCore, gameWorld: World, lobbyType: String): ManagedLobby(core, gameWorld, lobbyType), LocalGame {
     override val rules = ArrayList<AbstractRule>()
 
     override val plugins = ArrayList<GamePlugin>()

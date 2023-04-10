@@ -9,7 +9,7 @@ object TilapiaLobbyPlugin {
     lateinit var plugin: Main
 
     fun onEnable() {
-        net.tilapiamc.api.TilapiaCore.instance.addGame(TilapiaLobby(net.tilapiamc.api.TilapiaCore.instance, Bukkit.getWorld("world")))
+        TilapiaCore.instance.addGame(TilapiaLobby(TilapiaCore.instance, Bukkit.getWorld("world"), "main"))
     }
 
     fun onDisable() {

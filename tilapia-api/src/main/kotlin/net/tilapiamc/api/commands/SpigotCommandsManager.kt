@@ -5,10 +5,12 @@ import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import net.tilapiamc.command.CommandException
+import net.tilapiamc.command.CommandExecution
 import net.tilapiamc.command.CommandsManager
 import org.apache.logging.log4j.LogManager
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 
 object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogger("CommandsManager")) {
@@ -45,4 +47,22 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
     }
 
 
+}
+
+
+
+fun CommandExecution<CommandSender>.requiresPlayer(): Player {
+    if (sender is Player) {
+        return sender as Player
+    }
+    throw CommandException("You must be a player to use this command")
+}
+fun CommandExecution<CommandSender>.requiresPermission(permission: String): Player {
+    if (sender is Player) {
+        if (!sender.hasPermission(permission)) {
+            throw CommandException("You don't have the permission to use this command!")
+        }
+        return sender as Player
+    }
+    throw CommandException("You must be a player to use this command")
 }

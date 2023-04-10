@@ -2,6 +2,7 @@ package net.tilapiamc.core
 
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.game.GamesManager
+import net.tilapiamc.api.game.lobby.ManagedLobby
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -22,7 +23,7 @@ class LocalPlayerImpl(core: TilapiaCoreImpl, bukkitPlayer: Player): LocalNetwork
             kickPlayer("${ChatColor.RED}Could not find a game for you to join at the moment!")
             return
         }
-        sendToGame(GamesManager.getAllGames().first())
+        sendToGame(GamesManager.getAllGames().first { it is ManagedLobby })
     }
 
     fun onQuit() {

@@ -9,17 +9,22 @@ import org.bukkit.World
 import java.util.*
 
 abstract class ManagedLobby(
-    val core: net.tilapiamc.api.TilapiaCore,
-    override val gameWorld: World
-
-): Lobby(core.getLocalServer(), core.provideGameId(GameType.LOBBY), true), ManagedGame {
+    val core: TilapiaCore,
+    override val gameWorld: World,
+    lobbyType: String
+): Lobby(core.getLocalServer(), core.provideGameId(GameType.LOBBY), true, lobbyType), ManagedGame {
     override val logger: Logger = LogManager.getLogger("Lobby $gameId")
 
     override fun end() {
+        onEnd()
         core.removeGame(this)
     }
 
     override fun getManagedGameId(): UUID {
         return gameId
+    }
+
+    override fun start() {
+        onStart()
     }
 }

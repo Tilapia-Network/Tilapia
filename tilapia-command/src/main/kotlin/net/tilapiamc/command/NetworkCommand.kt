@@ -16,9 +16,6 @@ abstract class NetworkCommand<T>(name: String, description: String): AbstractCom
     }
 
 
-    open fun canUseCommand(sender: T): Boolean {
-        return true
-    }
 
     override fun execute(commandAlias: String, sender: T, args: Array<String>) {
         onCommand(CommandExecution(this, sender, commandAlias, args, args))
@@ -30,6 +27,11 @@ abstract class NetworkCommand<T>(name: String, description: String): AbstractCom
 
     val args = ArrayList<CommandArgument<*>>()
 
+    private var canUseCommand: T.() -> Boolean = { true }
+
+    fun canUseCommand(action: T.() -> Boolean) {
+        this.canUseCommand = action
+    }
     private var onCommand: CommandExecution<T>.() -> Boolean = { false }
     fun onCommand(action: CommandExecution<T>.() -> Boolean) {
         this.onCommand = action

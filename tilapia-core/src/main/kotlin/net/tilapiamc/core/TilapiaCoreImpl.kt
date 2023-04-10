@@ -11,6 +11,8 @@ import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.internal.TilapiaInternal
 import net.tilapiamc.api.player.PlayersManager
 import net.tilapiamc.api.server.TilapiaServer
+import net.tilapiamc.core.commands.CommandJoinLocal
+import net.tilapiamc.core.commands.CommandLobbyLocal
 import net.tilapiamc.core.commands.CommandTest
 import net.tilapiamc.core.server.LocalServerImpl
 import org.bukkit.ChatColor
@@ -27,6 +29,8 @@ class TilapiaCoreImpl: net.tilapiamc.api.TilapiaCore {
         EventsManager.registerAnnotationBasedListener(this)
 
         SpigotCommandsManager.registerCommand(CommandTest())
+        SpigotCommandsManager.registerCommand(CommandJoinLocal())
+        SpigotCommandsManager.registerCommand(CommandLobbyLocal())
     }
     private val localServer = LocalServerImpl()
     val games = ArrayList<Game>()

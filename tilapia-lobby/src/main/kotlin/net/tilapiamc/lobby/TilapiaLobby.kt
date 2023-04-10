@@ -9,7 +9,7 @@ import net.tilapiamc.gameextension.rules.impl.RuleNoTimeChange
 import net.tilapiamc.spigotcommon.game.lobby.LocalLobby
 import org.bukkit.World
 
-class TilapiaLobby(core: TilapiaCore, world: World): LocalLobby(core, world) {
+class TilapiaLobby(core: TilapiaCore, world: World, lobbyType: String): LocalLobby(core, world, lobbyType) {
 
     init {
         addRule(RuleNoTimeChange(this))
@@ -33,6 +33,15 @@ class TilapiaLobby(core: TilapiaCore, world: World): LocalLobby(core, world) {
             )
         )
     }
+
+    override fun onStart() {
+
+    }
+
+    override fun onEnd() {
+
+    }
+
 
     override fun couldAddPlayer(networkPlayer: NetworkPlayer): Double {
         return 1.0

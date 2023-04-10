@@ -21,7 +21,10 @@ interface ManagedGame: IGame {
     val logger: Logger
 
     val gameWorld: World
+    fun onStart()
+    fun onEnd()
     fun end()
+    fun start()
 
     fun getManagedGameId(): UUID
 
