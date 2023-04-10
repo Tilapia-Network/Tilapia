@@ -15,8 +15,6 @@ class StageWaiting(miniGame: LocalMiniGame): MiniGameStage(miniGame, "Waiting") 
     override fun onStart() {
         addRule(RuleNoTimeChange(miniGame))
         addRule(RuleNoDestruction(miniGame))
-
-        Bukkit.broadcastMessage("Stage waiting started")
     }
 
     override fun onEnd() {
