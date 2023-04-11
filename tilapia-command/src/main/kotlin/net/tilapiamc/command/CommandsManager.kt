@@ -25,6 +25,24 @@ open class CommandsManager<T>(val logger: Logger) {
         command.execute(commandName, sender, args.toTypedArray())
         return true
     }
+    fun handleTabComplete(sender: T, commandIn: String): Collection<String> {
+        val split = commandIn.split(" ")
+        val commandsList = ArrayList<String>()
+        commandsList.addAll(commands.map { "/" + it.name })
+        for (strings in commands.map { it.aliases }) {
+            commandsList.addAll(strings.map { "/$it" })
+        }
+        if (split.isEmpty()) {
+            return commandsList
+        }
+        val commandName = split[0]
+        val args = split.subList(1, split.size)
+        if (split.size <= 1) {
+            return commandsList.filter { it.startsWith("/$commandName") }
+        }
+        val command = commands.firstOrNull { it.matches(commandName, sender) } ?: return arrayListOf()
+        return command.tabComplete(commandName, sender, args.toTypedArray())
+    }
 
 
 

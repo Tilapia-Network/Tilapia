@@ -5,7 +5,7 @@ import java.lang.RuntimeException
 
 abstract class NetworkCommand<T>(name: String, description: String): AbstractCommand<T>(name, description) {
 
-    val aliases = ArrayList<String>()
+    override val aliases = ArrayList<String>()
 
     fun addAlias(vararg alias: String) {
         aliases.addAll(alias)
@@ -15,14 +15,22 @@ abstract class NetworkCommand<T>(name: String, description: String): AbstractCom
         return if (commandName == name || commandName in aliases) canUseCommand(sender) else false
     }
 
-
-
-    override fun execute(commandAlias: String, sender: T, args: Array<String>) {
-        onCommand(CommandExecution(this, sender, commandAlias, args, args))
+    fun parseArgs(input: Array<String>): Array<String> {
+        return input
     }
 
-    override fun tabComplete(commandAlias: String, sender: T, args: Array<String>): Array<String> {
-        return arrayOf()
+    override fun execute(commandAlias: String, sender: T, args: Array<String>) {
+        onCommand(CommandExecution(this, sender, commandAlias, args, parseArgs(args)))
+    }
+
+    override fun tabComplete(commandAlias: String, sender: T, args: Array<String>): Collection<String> {
+        val parsed = parseArgs(args)
+        val currentArgumentIndex = (parsed.size - 1).coerceAtLeast(0)
+        if (currentArgumentIndex >= this.args.size) {
+            return listOf()
+        }
+        val targetArgument = this.args[currentArgumentIndex]
+        return targetArgument.tabComplete(parsed[currentArgumentIndex])
     }
 
     val args = ArrayList<CommandArgument<*>>()

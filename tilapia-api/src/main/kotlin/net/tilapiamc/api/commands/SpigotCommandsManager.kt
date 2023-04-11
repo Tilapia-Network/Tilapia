@@ -1,8 +1,14 @@
 package net.tilapiamc.api.commands
 
+import com.comphenix.packetwrapper.WrapperPlayClientTabComplete
+import com.comphenix.packetwrapper.WrapperPlayServerTabComplete
+import com.comphenix.protocol.PacketType
+import com.mojang.brigadier.suggestion.Suggestion
 import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
+import net.tilapiamc.api.events.packet.PacketReceiveEvent
+import net.tilapiamc.api.events.packet.PacketSendEvent
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import net.tilapiamc.command.CommandException
 import net.tilapiamc.command.CommandExecution
@@ -11,6 +17,7 @@ import org.apache.logging.log4j.LogManager
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerChatTabCompleteEvent
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 
 object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogger("CommandsManager")) {
@@ -23,6 +30,7 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
 
     @Subscribe("commandsManagerExecute")
     fun onCommand(event: PlayerCommandPreprocessEvent) {
+        println(event.message)
         fun unknownCommand() {
             event.player.sendMessage("${ChatColor.RED}Unknown command! Please refer to our documentation for full commands list.")
         }
@@ -43,7 +51,36 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
             event.player.sendMessage("${ChatColor.RED}Error while handling the command! Please contact server administrator.")
             return
         }
+    }
 
+    val tabCompletions = HashMap<Player, String>()
+
+    @Subscribe("commandsManagerTabCompleteListen")
+    fun tabCompleteListen(event: PacketReceiveEvent) {
+        if (event.original.packetType != PacketType.Play.Client.TAB_COMPLETE) return
+        tabCompletions[event.player] = event.original.packet.strings.read(0)
+    }
+
+    @Subscribe("commandsManagerTabComplete")
+    fun onTabComplete(event: PacketSendEvent) {
+        if (event.original.packetType != PacketType.Play.Server.TAB_COMPLETE) return
+        val chatMessage = tabCompletions[event.player]?:""
+        if (!chatMessage.startsWith("/")) return
+        try {
+            val result = handleTabComplete(event.player, chatMessage.substring(1))
+            val out = ArrayList<String>()
+            out.addAll(event.original.packet.stringArrays.read(0))
+            if (!event.player.isOp) {
+                out.clear()
+            }
+            out.addAll(result)
+            event.original.packet.stringArrays.write(0, out.toTypedArray())
+        } catch (e: CommandException) {
+            event.player.sendMessage("${ChatColor.RED}${e.message}")
+        } catch (e: Throwable) {
+            event.player.getLocalPlayer().logger.error("Error while tab completing (\"${chatMessage}\")", e)
+            return
+        }
     }
 
 

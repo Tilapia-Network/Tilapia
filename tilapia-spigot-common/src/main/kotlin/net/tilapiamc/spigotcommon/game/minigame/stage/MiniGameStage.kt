@@ -47,6 +47,9 @@ abstract class MiniGameStage(
 
     fun end() {
         endPlugins()
+        for (rule in ArrayList(rules)) {
+            removeRule(rule)
+        }
         onEnd()
     }
     abstract fun onEnd()

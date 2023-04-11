@@ -1,6 +1,14 @@
 package net.tilapiamc.api.events
 
+import com.comphenix.protocol.PacketType
+import com.comphenix.protocol.ProtocolLibrary
+import com.comphenix.protocol.events.PacketAdapter
+import com.comphenix.protocol.events.PacketEvent
+import com.comphenix.protocol.injector.PacketFilterManager
+import com.comphenix.protocol.injector.packet.PacketRegistry
 import me.fan87.plugindevkit.PluginInstanceGrabber
+import net.tilapiamc.api.events.packet.PacketReceiveEvent
+import net.tilapiamc.api.events.packet.PacketSendEvent
 import org.apache.logging.log4j.LogManager
 import org.bukkit.Bukkit
 import org.bukkit.event.Event
@@ -22,6 +30,19 @@ object EventsManager: Listener {
                 listenForEvent(clazz)
             }
         }
+
+        ProtocolLibrary.getProtocolManager().addPacketListener(object : PacketAdapter(PluginInstanceGrabber.getPluginInstance(), PacketType.values().filter {
+            PacketRegistry.getServerPacketTypes().contains(it) || PacketRegistry.getClientPacketTypes().contains(it)
+        }) {
+            override fun onPacketSending(event: PacketEvent) {
+                fireEvent(PacketSendEvent(event))
+            }
+
+            override fun onPacketReceiving(event: PacketEvent) {
+                fireEvent(PacketReceiveEvent(event))
+            }
+        })
+
     }
 
 
@@ -57,76 +78,8 @@ object EventsManager: Listener {
     }
 
     private fun sortListeners() {
-        val beforeEdges = mutableMapOf<String, MutableList<String>>()
-        val afterEdges = mutableMapOf<String, MutableList<String>>()
-        val indegrees = mutableMapOf<String, Int>()
-
-        // Build graph
-        for (listener in listeners) {
-            if (!beforeEdges.containsKey(listener.name)) {
-                beforeEdges[listener.name] = mutableListOf()
-            }
-            if (!afterEdges.containsKey(listener.name)) {
-                afterEdges[listener.name] = mutableListOf()
-            }
-            for (before in listener.mustRunBefore.filter { it in listeners.map { it.name } }) {
-                if (!beforeEdges.containsKey(before)) {
-                    beforeEdges[before] = mutableListOf()
-                }
-                beforeEdges[before]!!.add(listener.name)
-            }
-            for (after in listener.mustRunAfter.filter { it in listeners.map { it.name } }) {
-                if (!afterEdges.containsKey(after)) {
-                    afterEdges[after] = mutableListOf()
-                }
-                afterEdges[after]!!.add(listener.name)
-            }
-            indegrees[listener.name] = beforeEdges[listener.name]!!.size
-        }
-
-        val sortedObjects = mutableListOf<EventListener>()
-
-        while (true) {
-            val candidates = mutableListOf<String>()
-
-            // Find nodes with no incoming edges
-            for ((name, indegree) in indegrees) {
-                if (indegree == 0) {
-                    candidates.add(name)
-                }
-            }
-
-            if (candidates.isEmpty()) {
-                // There is a cycle in the graph
-                throw IllegalArgumentException("Circular dependency detected")
-            }
-
-            // Add nodes to the output list
-            for (name in candidates) {
-                sortedObjects.addAll(listeners.filter { it.name == name })
-                indegrees.remove(name)
-
-                // Remove outgoing edges
-                for (nextName in afterEdges[name]!!) {
-                    beforeEdges[nextName]!!.remove(name)
-                    indegrees[nextName] = indegrees[nextName]!! - 1
-                }
-            }
-
-            // Remove incoming edges
-            for (name in candidates) {
-                for (prevName in beforeEdges[name]!!) {
-                    afterEdges[prevName]!!.remove(name)
-                }
-            }
-
-            if (indegrees.isEmpty()) {
-                // All nodes have been sorted
-                break
-            }
-        }
-        listeners.clear()
-        listeners.addAll(sortedObjects)
+        val comparator = ListenerComparator()
+        listeners.sortWith(comparator)
     }
 
     fun fireEvent(event: AbstractEvent) {
@@ -135,4 +88,56 @@ object EventsManager: Listener {
         }
     }
 
+}
+
+class ListenerComparator : Comparator<EventListener> {
+    private val visited: MutableSet<String>
+    private val recursionStack: MutableSet<String>
+
+    init {
+        visited = HashSet()
+        recursionStack = HashSet()
+    }
+
+    override fun compare(obj1: EventListener, obj2: EventListener): Int {
+        visited.clear()
+        recursionStack.clear()
+
+        if (hasCycle(obj1, obj2)) {
+            error("Circular dependency detected")
+        }
+
+        if (obj1.mustRunAfter.contains(obj2.name)) {
+            return 1
+        }
+        if (obj2.mustRunAfter.contains(obj1.name)) {
+            return -1
+        }
+        if (obj1.mustRunBefore.contains(obj2.name)) {
+            return -1
+        }
+        return if (obj2.mustRunBefore.contains(obj1.name)) {
+            1
+        } else obj1.name.compareTo(obj2.name)
+
+    }
+
+    private fun hasCycle(obj1: EventListener, obj2: EventListener): Boolean {
+        visited.add(obj1.name)
+        recursionStack.add(obj1.name)
+
+        for (name in obj1.mustRunAfter) {
+            if (!visited.contains(name)) {
+                val next = EventsManager.listenersByName[name]
+                if (next != null && hasCycle(next, obj2)) {
+                    return true
+                }
+            } else if (recursionStack.contains(name)) {
+                return true
+            }
+        }
+
+        recursionStack.remove(obj1.name)
+        return false
+    }
 }

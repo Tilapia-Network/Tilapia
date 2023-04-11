@@ -25,7 +25,7 @@ open class GamesManager {
     fun getAllGames(): Set<Game> = games.values.toSet()
     fun getGameById(uuid: UUID): Game? = games[uuid]
 
-    @Subscribe("GamesManager-onPlayerQuit")
+    @Subscribe("GamesManager-onPlayerQuit", mustRunBefore = ["playerLeaveInit"])
     fun onPlayerQuit(event: PlayerQuitEvent) {
         for (game in games.values.filter { event.player.uniqueId in it.players.map { it.uuid } }) {
             if (game is ManagedGame) {

@@ -1,5 +1,6 @@
 package net.tilapiamc.api.player
 
+import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
@@ -18,7 +19,7 @@ object PlayersManager {
 
     @Subscribe("playerJoinInit")
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        localPlayers[event.player.uniqueId] = net.tilapiamc.api.TilapiaCore.instance.getInternal().createLocalPlayer(event.player)
+        localPlayers[event.player.uniqueId] = TilapiaCore.instance.getInternal().createLocalPlayer(event.player)
     }
     @Subscribe("playerLeaveInit")
     fun onPlayerLeave(event: PlayerQuitEvent) {

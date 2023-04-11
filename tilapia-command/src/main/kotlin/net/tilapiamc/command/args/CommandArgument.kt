@@ -8,6 +8,10 @@ abstract class CommandArgument<T>(val name: String, val isRequired: Boolean = tr
 
     var index = 0
 
+    open fun tabComplete(token: String): Collection<String> {
+        return listOf()
+    }
+
     fun CommandExecution<*>.getArgString(): String? {
         if (parsedArgs.size > index) {
             return parsedArgs[index]
