@@ -15,8 +15,8 @@ class TilapiaLobby(core: TilapiaCore, world: World, lobbyType: String): LocalLob
 
     init {
         applyPlugin(PluginNoBoatCrash())
-        applyPlugin(PluginSpeedyBoat_1_8(true, {128f}) {
-            0.35*4
+        applyPlugin(PluginSpeedyBoat_1_8(true, {6f}) {
+            0.35*6
         })
         addRule(RuleNoTimeChange(this))
         addRule(
