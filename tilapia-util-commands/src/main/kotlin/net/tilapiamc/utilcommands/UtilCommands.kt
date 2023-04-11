@@ -2,6 +2,7 @@ package net.tilapiamc.utilcommands
 
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.commands.SpigotCommandsManager
+import net.tilapiamc.utilcommands.commands.CommandForceFly
 import net.tilapiamc.utilcommands.commands.CommandPlugins
 import net.tilapiamc.utilcommands.commands.gamemode.*
 import org.bukkit.plugin.java.JavaPlugin
@@ -16,6 +17,7 @@ class UtilCommands: JavaPlugin() {
         SpigotCommandsManager.registerCommand(CommandGmspec())
         SpigotCommandsManager.registerCommand(CommandGms())
         SpigotCommandsManager.registerCommand(CommandGameMode())
+        SpigotCommandsManager.registerCommand(CommandForceFly())
     }
 
     override fun onDisable() {

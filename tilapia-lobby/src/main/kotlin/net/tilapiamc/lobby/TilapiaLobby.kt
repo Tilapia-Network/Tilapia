@@ -4,6 +4,7 @@ import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
+import net.tilapiamc.gameextension.plugins.PluginSpeedyBoat_1_8
 import net.tilapiamc.gameextension.rules.impl.RuleNoDestruction
 import net.tilapiamc.gameextension.rules.impl.RuleNoTimeChange
 import net.tilapiamc.spigotcommon.game.lobby.LocalLobby
@@ -12,6 +13,9 @@ import org.bukkit.World
 class TilapiaLobby(core: TilapiaCore, world: World, lobbyType: String): LocalLobby(core, world, lobbyType) {
 
     init {
+        applyPlugin(PluginSpeedyBoat_1_8 {
+            128f
+        })
         addRule(RuleNoTimeChange(this))
         addRule(
             RuleNoDestruction(this,

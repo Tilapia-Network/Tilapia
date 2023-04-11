@@ -1,4 +1,4 @@
-package net.tilapiamc.gameextension.rules.impl.minigame
+package net.tilapiamc.gameextension.minigame
 
 import me.fan87.plugindevkit.events.ServerTickEvent
 import net.tilapiamc.api.events.annotation.Subscribe

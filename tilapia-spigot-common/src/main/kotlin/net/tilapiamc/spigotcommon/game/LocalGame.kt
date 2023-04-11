@@ -1,5 +1,6 @@
 package net.tilapiamc.spigotcommon.game
 
+import com.comphenix.protocol.injector.server.TemporaryPlayer
 import net.tilapiamc.api.events.AbstractEvent
 import net.tilapiamc.api.events.game.GameEvent
 import net.tilapiamc.api.game.ManagedGame
@@ -70,6 +71,9 @@ interface LocalGame: ManagedGame {
             return event.entity.world == gameWorld
         }
         if (event is PlayerEvent) {
+            if (event.player is TemporaryPlayer) {
+                return false
+            }
             return event.player.world == gameWorld && event.player.uniqueId in players.map { it.uuid }
         }
         if (event is HangingEvent) {

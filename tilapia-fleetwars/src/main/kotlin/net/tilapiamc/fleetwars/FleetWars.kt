@@ -5,7 +5,7 @@ import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.fleetwars.stages.StageInGame
-import net.tilapiamc.gameextension.rules.impl.minigame.StageWaiting
+import net.tilapiamc.gameextension.minigame.StageWaiting
 import net.tilapiamc.spigotcommon.game.minigame.LocalMiniGame
 import net.tilapiamc.spigotcommon.game.minigame.stage.MiniGameStage
 import org.bukkit.Bukkit

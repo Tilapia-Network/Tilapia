@@ -1,7 +1,7 @@
 package net.tilapiamc.fleetwars.stages
 
 import net.tilapiamc.fleetwars.FleetWars
-import net.tilapiamc.gameextension.rules.impl.minigame.StageWaiting
+import net.tilapiamc.gameextension.minigame.StageWaiting
 import net.tilapiamc.spigotcommon.game.minigame.stage.MiniGameStage
 
 class StageInGame(override val miniGame: FleetWars): MiniGameStage(miniGame, "FleetWarsInGame") {

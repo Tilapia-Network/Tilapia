@@ -23,9 +23,11 @@ import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerPickupItemEvent
+import org.bukkit.event.vehicle.VehicleDestroyEvent
 
 class RuleNoDestruction(
     game: LocalGame,
+    val protectVehicles: Boolean = true,
     val protectEntities: Boolean = true,
     val protectUseEntities: Boolean = true,
     val protectPlayers: Boolean = true,
@@ -80,6 +82,13 @@ class RuleNoDestruction(
             return
         }
         if (protectEntities) {
+            event.isCancelled = true
+            return
+        }
+    }
+    @Subscribe("NoDestruction-onVehicleDestroy")
+    fun onVehicleDestroy(event: VehicleDestroyEvent) {
+        if (protectVehicles) {
             event.isCancelled = true
             return
         }

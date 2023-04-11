@@ -29,6 +29,7 @@ abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
         saturation = 1f
         foodLevel = 20
         bedSpawnLocation = null
+        leaveVehicle()
     }
 
 

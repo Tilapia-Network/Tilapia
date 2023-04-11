@@ -82,6 +82,7 @@ object EventsManager: Listener {
         listeners.sortWith(comparator)
     }
 
+    @JvmStatic
     fun fireEvent(event: AbstractEvent) {
         for (listener in ArrayList(listeners)) {
             listener(event)
