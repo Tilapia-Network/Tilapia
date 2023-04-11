@@ -13,6 +13,7 @@ import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import net.tilapiamc.command.CommandException
 import net.tilapiamc.command.CommandExecution
 import net.tilapiamc.command.CommandsManager
+import net.tilapiamc.command.UsageException
 import org.apache.logging.log4j.LogManager
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
@@ -30,9 +31,8 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
 
     @Subscribe("commandsManagerExecute")
     fun onCommand(event: PlayerCommandPreprocessEvent) {
-        println(event.message)
         fun unknownCommand() {
-            event.player.sendMessage("${ChatColor.RED}Unknown command! Please refer to our documentation for full commands list.")
+            event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.COMMAND_NOT_FOUND])
         }
         event.isCancelled = true
         try {
@@ -44,11 +44,13 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
                     unknownCommand()
                 }
             }
+        } catch (e: UsageException) {
+            event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.COMMAND_INVALID_USAGE].format(e.message))
         } catch (e: CommandException) {
             event.player.sendMessage("${ChatColor.RED}${e.message}")
         } catch (e: Throwable) {
             event.player.getLocalPlayer().logger.error("Error while handling command (\"${event.message}\")", e)
-            event.player.sendMessage("${ChatColor.RED}Error while handling the command! Please contact server administrator.")
+            event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.COMMAND_ERROR])
             return
         }
     }

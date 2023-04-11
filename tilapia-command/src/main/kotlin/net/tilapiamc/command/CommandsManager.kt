@@ -28,8 +28,8 @@ open class CommandsManager<T>(val logger: Logger) {
     fun handleTabComplete(sender: T, commandIn: String): Collection<String> {
         val split = commandIn.split(" ")
         val commandsList = ArrayList<String>()
-        commandsList.addAll(commands.map { "/" + it.name })
-        for (strings in commands.map { it.aliases }) {
+        commandsList.addAll(commands.filter { it.matches(it.name, sender) }.map { "/" + it.name })
+        for (strings in commands.filter { it.matches(it.name, sender) }.map { it.aliases }) {
             commandsList.addAll(strings.map { "/$it" })
         }
         if (split.isEmpty()) {

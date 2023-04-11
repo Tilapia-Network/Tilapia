@@ -1,41 +1,35 @@
 package net.tilapiamc.command
 
 import net.tilapiamc.command.args.CommandArgument
-import java.lang.RuntimeException
 
-abstract class NetworkCommand<T>(name: String, description: String): AbstractCommand<T>(name, description) {
+class NetworkSubCommand<T>(val parent: NetworkCommand<T>, val depth: Int = 0, val name: String, val description: String) {
 
-    companion object {
-        fun parseArgs(input: Array<String>): Array<String> {
-            return input
-        }
 
-    }
-
-    override val aliases = ArrayList<String>()
+    val aliases = ArrayList<String>()
 
     fun addAlias(vararg alias: String) {
         aliases.addAll(alias)
     }
 
-    override fun matches(commandName: String, sender: T): Boolean {
-        return if (commandName == name || commandName in aliases) canUseCommand(sender) else false
+    fun matches(commandName: String, sender: T): Boolean {
+        return if (commandName == name || commandName in aliases) canUseCommandAction(sender) else false
     }
 
-
-    override fun execute(commandAlias: String, sender: T, args: Array<String>) {
-        val parsed = parseArgs(args)
+    fun execute(commandAlias: String, sender: T, args: Array<String>) {
+        val parsed = NetworkCommand.parseArgs(args)
         val subCommand = subCommands.firstOrNull { it.matches(parsed[0], sender) }
         if (subCommand != null) {
             subCommand.execute(commandAlias, sender, args)
         } else {
-            onCommand(CommandExecution(this, sender, commandAlias, args, parseArgs(args)))
+            onCommandAction(CommandExecution(parent, sender, commandAlias, args, NetworkCommand.parseArgs(args)))
         }
     }
 
-    override fun tabComplete(commandAlias: String, sender: T, args: Array<String>): Collection<String> {
-        val parsed = parseArgs(args)
-        val currentArgumentIndex = parsed.size - 1
+    fun tabComplete(commandAlias: String, sender: T, args: Array<String>): Collection<String> {
+        val parsed = NetworkCommand.parseArgs(args).toList().let {
+            it.subList(depth + 1, it.size)
+        }
+        val currentArgumentIndex = (parsed.size - 1)
         if (currentArgumentIndex >= this.args.size) {
             return listOf()
         }
@@ -57,14 +51,14 @@ abstract class NetworkCommand<T>(name: String, description: String): AbstractCom
 
     val args = ArrayList<CommandArgument<*>>()
 
-    private var canUseCommand: T.() -> Boolean = { true }
+    var canUseCommandAction: T.() -> Boolean = { true }
 
     fun canUseCommand(action: T.() -> Boolean) {
-        this.canUseCommand = action
+        this.canUseCommandAction = action
     }
-    private var onCommand: CommandExecution<T>.() -> Boolean = { false }
+    var onCommandAction: CommandExecution<T>.() -> Boolean = { false }
     fun onCommand(action: CommandExecution<T>.() -> Boolean) {
-        this.onCommand = action
+        this.onCommandAction = action
     }
 
     fun <T: CommandArgument<*>> addArgument(arg: T): T {
@@ -76,26 +70,16 @@ abstract class NetworkCommand<T>(name: String, description: String): AbstractCom
         return arg
     }
 
-    override fun getUsageString(): String {
+    fun getUsageString(): String {
         return ""
     }
-    val subCommands: List<NetworkSubCommand<T>> = ArrayList()
 
+    val subCommands = ArrayList<NetworkSubCommand<T>>()
     fun subCommand(name: String, description: String, action: NetworkSubCommand<T>.() -> Unit) {
-        val subCommand = NetworkSubCommand<T>(this, 0, name, description)
+        val subCommand = NetworkSubCommand<T>(parent, depth + 1, name, description)
         subCommand.action()
-        (subCommands as MutableList).add(subCommand)
+        subCommands.add(subCommand)
     }
 
-}
 
-class CommandExecution<T>(val command: NetworkCommand<T>, val sender: T, val commandAlias: String, val rawArgs: Array<String>, val parsedArgs: Array<String>) {
-    fun commandError(message: String): Nothing {
-        throw CommandException(message)
-    }
-    fun invalidUsage(): Nothing {
-        throw UsageException("/${command.name} ${command.getUsageString()}")
-    }
 }
-open class CommandException(message: String): RuntimeException(message)
-class UsageException(message: String): CommandException(message)
