@@ -8,6 +8,7 @@ import net.tilapiamc.api.internal.TilapiaInternal
 import net.tilapiamc.api.language.LanguageManager
 import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.api.server.TilapiaServer
+import org.bukkit.plugin.java.JavaPlugin
 import java.lang.reflect.Proxy
 import java.util.UUID
 
@@ -28,6 +29,8 @@ interface TilapiaCore {
     fun removeGame(game: Game)
 
     fun getInternal(): TilapiaInternal
+
+    fun getPlugin(): JavaPlugin
 
 
 }

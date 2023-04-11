@@ -32,6 +32,5 @@ dependencies {
     implementation("org.ow2.asm:asm-commons:9.4")
     implementation("org.ow2.asm:asm-util:9.4")
     implementation("com.github.fan87:Regular-Bytecode-Expression:2.1.1")
-    implementation("com.github.fan87.Java-Injector:native-agent:master-SNAPSHOT")
     implementation(kotlin("reflect"))
 }

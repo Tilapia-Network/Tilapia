@@ -19,9 +19,11 @@ import net.tilapiamc.core.commands.CommandJoinLocal
 import net.tilapiamc.core.commands.CommandLobbyLocal
 import net.tilapiamc.core.commands.CommandTest
 import net.tilapiamc.core.language.LanguageManagerImpl
+import net.tilapiamc.core.main.Main
 import net.tilapiamc.core.server.LocalServerImpl
 import net.tilapiamc.language.LanguageCore
 import org.bukkit.ChatColor
+import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -88,6 +90,10 @@ class TilapiaCoreImpl: TilapiaCore {
     private val internal = TilapiaInternalImpl(this)
     override fun getInternal(): TilapiaInternal {
         return internal
+    }
+
+    override fun getPlugin(): JavaPlugin {
+        return JavaPlugin.getPlugin(Main::class.java)
     }
 
     fun onDisable() {

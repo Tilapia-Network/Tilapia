@@ -41,7 +41,7 @@ open class CommandsManager<T>(val logger: Logger) {
         if (split.size <= 1) {
             return commandsList.filter { it.startsWith("/$commandName") }
         }
-        val command = commands.firstOrNull { it.matches(commandName, sender) } ?: return arrayListOf()
+        val command = commands.firstOrNull { it.matches(commandName, sender) } ?: return original
         return command.tabComplete(commandName, sender, args.toTypedArray())
     }
 

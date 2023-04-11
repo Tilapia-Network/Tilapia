@@ -23,6 +23,7 @@ import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerPickupItemEvent
+import org.bukkit.event.vehicle.VehicleDamageEvent
 import org.bukkit.event.vehicle.VehicleDestroyEvent
 
 class RuleNoDestruction(
@@ -86,8 +87,11 @@ class RuleNoDestruction(
             return
         }
     }
-    @Subscribe("NoDestruction-onVehicleDestroy")
-    fun onVehicleDestroy(event: VehicleDestroyEvent) {
+    @Subscribe("NoDestruction-onVehicleDamage")
+    fun onVehicleDamage(event: VehicleDamageEvent) {
+        if (ignoreCreative && event.attacker is Player && (event.attacker as Player).gameMode == GameMode.CREATIVE) {
+            return
+        }
         if (protectVehicles) {
             event.isCancelled = true
             return

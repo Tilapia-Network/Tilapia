@@ -18,5 +18,5 @@ repositories {
 
 dependencies {
     compileOnly("net.md-5:bungeecord-chat:1.8-SNAPSHOT")
-    implementation(project(":tilapia-api"))
+    compileOnly(project(":tilapia-api"))
 }
