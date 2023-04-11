@@ -52,10 +52,10 @@ abstract class NetworkCommand<T>(name: String, description: String): AbstractCom
             return subCommand?.tabComplete(commandAlias, sender, args)?: arrayListOf()
         }
         val targetArgument = this.args[currentArgumentIndex]
-        return targetArgument.tabComplete(parsed[currentArgumentIndex])
+        return targetArgument.tabComplete(sender, parsed[currentArgumentIndex])
     }
 
-    val args = ArrayList<CommandArgument<*>>()
+    val args = ArrayList<CommandArgument<*, T>>()
 
     private var canUseCommand: T.() -> Boolean = { true }
 
@@ -67,7 +67,7 @@ abstract class NetworkCommand<T>(name: String, description: String): AbstractCom
         this.onCommand = action
     }
 
-    fun <T: CommandArgument<*>> addArgument(arg: T): T {
+    fun <A: CommandArgument<*, T>> addArgument(arg: A): A {
         if (arg.isRequired && args.any { !it.isRequired }) {
             throw IllegalArgumentException("Argument: ${arg.name} is required but there are already optional arguments")
         }

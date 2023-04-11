@@ -25,10 +25,11 @@ open class CommandsManager<T>(val logger: Logger) {
         command.execute(commandName, sender, args.toTypedArray())
         return true
     }
-    fun handleTabComplete(sender: T, commandIn: String): Collection<String> {
+    fun handleTabComplete(sender: T, commandIn: String, original: Collection<String>): Collection<String> {
         val split = commandIn.split(" ")
         val commandsList = ArrayList<String>()
         commandsList.addAll(commands.filter { it.matches(it.name, sender) }.map { "/" + it.name })
+        commandsList.addAll(original.filter { it !in commandsList })
         for (strings in commands.filter { it.matches(it.name, sender) }.map { it.aliases }) {
             commandsList.addAll(strings.map { "/$it" })
         }

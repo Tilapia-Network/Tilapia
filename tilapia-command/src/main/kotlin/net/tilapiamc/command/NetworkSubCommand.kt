@@ -46,10 +46,10 @@ class NetworkSubCommand<T>(val parent: NetworkCommand<T>, val depth: Int = 0, va
             return subCommand?.tabComplete(commandAlias, sender, args)?: arrayListOf()
         }
         val targetArgument = this.args[currentArgumentIndex]
-        return targetArgument.tabComplete(parsed[currentArgumentIndex])
+        return targetArgument.tabComplete(sender, parsed[currentArgumentIndex])
     }
 
-    val args = ArrayList<CommandArgument<*>>()
+    val args = ArrayList<CommandArgument<*, T>>()
 
     var canUseCommandAction: T.() -> Boolean = { true }
 
@@ -61,7 +61,7 @@ class NetworkSubCommand<T>(val parent: NetworkCommand<T>, val depth: Int = 0, va
         this.onCommandAction = action
     }
 
-    fun <T: CommandArgument<*>> addArgument(arg: T): T {
+    fun <A: CommandArgument<*, T>> addArgument(arg: A): A {
         if (arg.isRequired && args.any { !it.isRequired }) {
             throw IllegalArgumentException("Argument: ${arg.name} is required but there are already optional arguments")
         }

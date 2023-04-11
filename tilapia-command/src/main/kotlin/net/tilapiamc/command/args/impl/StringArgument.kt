@@ -5,16 +5,16 @@ import net.tilapiamc.command.NetworkCommand
 import net.tilapiamc.command.args.CommandArgument
 import kotlin.reflect.KProperty
 
-class StringArgument(name: String, isRequired: Boolean = true): CommandArgument<String>(name, isRequired) {
+class StringArgument<T>(name: String, isRequired: Boolean = true): CommandArgument<String, T>(name, isRequired) {
 
 
-    override fun getValue(any: Any?, property: KProperty<*>): CommandExecution<*>.() -> String? {
+    override fun getValue(any: Any?, property: KProperty<*>): CommandExecution<T>.() -> String? {
         return { getArgString() }
     }
 
 
 }
 
-fun NetworkCommand<*>.stringArg(name: String, isRequired: Boolean = true): StringArgument {
+fun <T> NetworkCommand<T>.stringArg(name: String, isRequired: Boolean = true): StringArgument<T> {
     return addArgument(StringArgument(name, isRequired))
 }
