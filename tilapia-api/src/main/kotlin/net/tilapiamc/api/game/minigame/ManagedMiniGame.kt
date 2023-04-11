@@ -16,7 +16,8 @@ abstract class ManagedMiniGame(
     miniGameType: String
 ): MiniGame(core.getLocalServer(), core.provideGameId(GameType.MINIGAME), true, lobbyType, miniGameType), ManagedGame {
     override val logger: Logger = LogManager.getLogger("Game $gameId")
-
+    val inGamePlayers = ArrayList<LocalNetworkPlayer>()
+    val spectatorPlayers = ArrayList<LocalNetworkPlayer>()
     override fun getManagedGameId(): UUID {
         return gameId
     }

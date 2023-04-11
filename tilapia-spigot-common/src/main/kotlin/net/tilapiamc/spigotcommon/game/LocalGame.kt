@@ -1,13 +1,11 @@
 package net.tilapiamc.spigotcommon.game
 
 import net.tilapiamc.api.events.AbstractEvent
-import net.tilapiamc.api.events.EventsManager
-import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
-import net.tilapiamc.api.events.annotation.unregisterAnnotationBasedListener
 import net.tilapiamc.api.events.game.GameEvent
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.spigotcommon.game.event.GameEventManager
 import net.tilapiamc.spigotcommon.game.plugin.GamePlugin
+import org.bukkit.event.block.BlockEvent
 import org.bukkit.event.entity.EntityEvent
 import org.bukkit.event.hanging.HangingEvent
 import org.bukkit.event.inventory.InventoryEvent
@@ -85,6 +83,9 @@ interface LocalGame: ManagedGame {
         }
         if (event is WeatherEvent) {
             return event.world == gameWorld
+        }
+        if (event is BlockEvent) {
+            return event.block.world == gameWorld
         }
         if (event is GameEvent) {
             return event.game == this

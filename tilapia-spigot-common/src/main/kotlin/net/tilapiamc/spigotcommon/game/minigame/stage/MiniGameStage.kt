@@ -5,7 +5,7 @@ import net.tilapiamc.spigotcommon.game.minigame.LocalMiniGame
 import net.tilapiamc.spigotcommon.game.plugin.GamePlugin
 
 abstract class MiniGameStage(
-    val miniGame: LocalMiniGame,
+    open val miniGame: LocalMiniGame,
     val name: String,
 ) {
 

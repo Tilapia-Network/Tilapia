@@ -12,7 +12,6 @@ abstract class MiniGame(
     server: TilapiaServer, gameId: UUID, managed: Boolean, val lobbyType: String, val miniGameType: String
 ): Game(server, GameType.MINIGAME, gameId, managed) {
 
-    val inGamePlayers = ArrayList<LocalNetworkPlayer>()
-    val spectatorPlayers = ArrayList<LocalNetworkPlayer>()
+
 
 }

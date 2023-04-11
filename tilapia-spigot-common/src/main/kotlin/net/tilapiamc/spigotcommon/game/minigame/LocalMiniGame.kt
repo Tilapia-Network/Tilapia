@@ -8,6 +8,8 @@ import net.tilapiamc.api.events.annotation.unregisterAnnotationBasedListener
 import net.tilapiamc.api.events.game.GameEvent
 import net.tilapiamc.api.game.lobby.ManagedLobby
 import net.tilapiamc.api.game.minigame.ManagedMiniGame
+import net.tilapiamc.api.player.LocalNetworkPlayer
+import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.spigotcommon.game.AbstractRule
 import net.tilapiamc.spigotcommon.game.LocalGame
 import net.tilapiamc.spigotcommon.game.event.GameEventManager
@@ -22,6 +24,8 @@ abstract class LocalMiniGame(core: TilapiaCore, gameWorld: World, lobbyType: Str
     override val plugins = ArrayList<GamePlugin>()
     override val gameEventManager = GameEventManager(this)
     abstract val defaultStage: MiniGameStage
+    val localPlayers: List<LocalNetworkPlayer>
+        get() = super.players.filterIsInstance<LocalNetworkPlayer>()
 
     override fun end() {
         super.end()
@@ -34,10 +38,10 @@ abstract class LocalMiniGame(core: TilapiaCore, gameWorld: World, lobbyType: Str
                 throw NullPointerException("Stage could not be null")
             }
             if (field != null) {
-                EventsManager.unregisterAnnotationBasedListener(field!!)
+                gameEventManager.unregisterListener(field!!)
                 field!!.end()
             }
-            EventsManager.registerAnnotationBasedListener(value)
+            gameEventManager.registerListener(value)
             value.start()
             field = value
         }

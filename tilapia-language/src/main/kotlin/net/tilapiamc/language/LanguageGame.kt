@@ -10,6 +10,7 @@ object LanguageGame {
 
     val WAITING_WAITING_MSG by LanguageKeyDelegation("${ChatColor.RED}正在等待更多玩家...")
     val WAITING_COUNTDOWN_MSG by LanguageKeyDelegation("${ChatColor.YELLOW}遊戲將在%1\$d秒後開始")
+    val WAITING_WAITING by LanguageKeyDelegation("${ChatColor.YELLOW}遊戲將在%1\$d秒後開始")
     val WAITING_COUNTDOWN by LanguageKeyDelegation("${ChatColor.YELLOW}遊戲將在%1\$d秒後開始")
 
 }

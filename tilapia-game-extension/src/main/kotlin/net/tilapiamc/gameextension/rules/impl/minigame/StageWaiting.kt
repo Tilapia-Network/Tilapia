@@ -12,9 +12,9 @@ import net.tilapiamc.spigotcommon.game.minigame.LocalMiniGame
 import net.tilapiamc.spigotcommon.game.minigame.stage.MiniGameStage
 
 class StageWaiting(miniGame: LocalMiniGame,
-                   val countDownTime: Int,
-                   val minPlayers: Int,
+                   val countDownTime: (Int) -> Int,
                    val maxPlayers: Int,
+                   val finishCallBack: () -> Unit
 ): MiniGameStage(miniGame, "Waiting") {
 
     var time = -1
@@ -29,12 +29,14 @@ class StageWaiting(miniGame: LocalMiniGame,
 
     @Subscribe("waiting-onTick")
     fun onTick(event: ServerTickEvent) {
-        updateTime()
+        if (time != -1) {
+            updateTime()
+        }
     }
 
     @Subscribe("waiting-onPlayerJoin")
     fun onPlayerJoin(event: PlayerJoinGameEvent) {
-        updatePlayers(event.player)
+        updatePlayers(event.player, true)
         for (player in miniGame.players) {
             val localNetworkPlayer = player as LocalNetworkPlayer
             localNetworkPlayer.sendMessage(localNetworkPlayer.getLanguageBundle()[LanguageGame.WAITING_PLAYER_JOIN].format(
@@ -44,7 +46,7 @@ class StageWaiting(miniGame: LocalMiniGame,
     }
     @Subscribe("waiting-onPlayerQuit")
     fun onPlayerQuit(event: PlayerQuitGameEvent) {
-        updatePlayers(event.player)
+        updatePlayers(event.player, false)
         for (player in miniGame.players) {
             val localNetworkPlayer = player as LocalNetworkPlayer
             localNetworkPlayer.sendMessage(localNetworkPlayer.getLanguageBundle()[LanguageGame.WAITING_PLAYER_QUIT].format(
@@ -53,26 +55,50 @@ class StageWaiting(miniGame: LocalMiniGame,
         }
     }
 
-    fun updatePlayers(player: LocalNetworkPlayer) {
-        if (miniGame.inGamePlayers.size >= minPlayers) {
-            if (time <= 0) {
-                time = countDownTime
+    fun updatePlayers(player: LocalNetworkPlayer, join: Boolean) {
+        val oldTime = time
+        val newTime = countDownTime(miniGame.inGamePlayers.size)
+        if (newTime != oldTime) {
+            if (newTime == -1) {
+                time = -1
+                for (player1 in miniGame.players.filterIsInstance<LocalNetworkPlayer>()) {
+                    player1.sendMessage(player1.getLanguageBundle()[LanguageGame.WAITING_WAITING])
+                }
+            } else if (newTime < oldTime || oldTime == -1) {
+                time = newTime
+                for (player1 in miniGame.players.filterIsInstance<LocalNetworkPlayer>()) {
+                    player1.sendMessage(player1.getLanguageBundle()[LanguageGame.WAITING_COUNTDOWN].format(time / 20))
+                }
             }
-            player.sendMessage(player.getLanguageBundle()[LanguageGame.WAITING_COUNTDOWN_MSG].format(time / 20))
-        } else {
-            time = -1
-            player.sendMessage(player.getLanguageBundle()[LanguageGame.WAITING_WAITING_MSG])
         }
+        if (join) {
+            if (time == -1) {
+                player.sendMessage(player.getLanguageBundle()[LanguageGame.WAITING_WAITING_MSG])
+            } else {
+                player.sendMessage(player.getLanguageBundle()[LanguageGame.WAITING_COUNTDOWN_MSG].format(time / 20))
+            }
+        }
+
     }
 
     fun updateTime() {
         time--
+        if (time == 0) {
+            countdownFinish()
+            return
+        }
         if (time % 20 == 0) {
-            for (player in miniGame.inGamePlayers) {
-                player.sendMessage(player.getLanguageBundle()[LanguageGame.WAITING_COUNTDOWN].format(time / 20))
+            val sec = time / 20
+            if (sec <= 5 || sec % 5 == 0) {
+                for (player in miniGame.inGamePlayers) {
+                    player.sendMessage(player.getLanguageBundle()[LanguageGame.WAITING_COUNTDOWN].format(time / 20))
+                }
             }
         }
-        if (time )
+    }
+
+    fun countdownFinish() {
+        finishCallBack()
     }
 
 }
