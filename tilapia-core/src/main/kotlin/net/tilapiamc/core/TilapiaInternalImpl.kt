@@ -1,7 +1,6 @@
 package net.tilapiamc.core
 
 import net.tilapiamc.api.game.Game
-import net.tilapiamc.api.game.GamesManager
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.game.lobby.Lobby
 import net.tilapiamc.api.game.minigame.MiniGame
@@ -9,7 +8,6 @@ import net.tilapiamc.api.internal.TilapiaInternal
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.language.LanguageCore
-import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
 class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
@@ -45,11 +43,11 @@ class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
     }
 
     override fun findMiniGameToJoin(player: NetworkPlayer, miniGameType: String): MiniGame? {
-        return core.gamesManager.getAllGames().filterIsInstance<MiniGame>().firstOrNull { it.miniGameType == miniGameType }
+        return core.gamesManager.getAllLocalGames().filterIsInstance<MiniGame>().firstOrNull { it.miniGameType == miniGameType }
     }
 
     override fun findLobbyToJoin(player: NetworkPlayer, lobbyType: String): Lobby? {
-        return core.gamesManager.getAllGames().filterIsInstance<Lobby>().firstOrNull { it.lobbyType == lobbyType }
+        return core.gamesManager.getAllLocalGames().filterIsInstance<Lobby>().firstOrNull { it.lobbyType == lobbyType }
     }
 
 

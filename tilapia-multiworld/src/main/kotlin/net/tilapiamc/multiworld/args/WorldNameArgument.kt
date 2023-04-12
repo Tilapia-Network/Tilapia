@@ -46,7 +46,7 @@ class WorldNameArgument<S>(name: String, val requireRegistered: Boolean, val req
     }
 }
 
-fun <T> ArgumentsContainer<T>.worldNameArg(name: String, requireRegistered: Boolean, requireLoaded: Boolean, checkIllegal: Boolean = true, isRequired: Boolean = false): WorldNameArgument<T> {
+fun <T> ArgumentsContainer<T>.worldNameArg(name: String, requireRegistered: Boolean, requireLoaded: Boolean, checkIllegal: Boolean = true, isRequired: Boolean = true): WorldNameArgument<T> {
     return addArgument(WorldNameArgument(name, requireRegistered, requireLoaded, checkIllegal, isRequired))
 }
 

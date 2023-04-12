@@ -24,7 +24,7 @@ open class GamesManager {
         games.remove(uuid)
     }
 
-    fun getAllGames(): Set<Game> = games.values.toSet()
+    fun getAllLocalGames(): Set<Game> = games.values.toSet()
     fun getGameById(uuid: UUID): Game? = games[uuid]
 
     @Subscribe("GamesManager-onPlayerQuit", mustRunBefore = ["playerLeaveInit"])

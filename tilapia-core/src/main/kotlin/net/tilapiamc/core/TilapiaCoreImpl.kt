@@ -23,7 +23,6 @@ import net.tilapiamc.core.main.Main
 import net.tilapiamc.core.server.LocalServerImpl
 import net.tilapiamc.language.LanguageCore
 import net.tilapiamc.language.LanguageGame
-import org.bukkit.ChatColor
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 import kotlin.collections.ArrayList
@@ -107,7 +106,7 @@ class TilapiaCoreImpl: TilapiaCore {
     }
 
     fun onDisable() {
-        for (allGame in gamesManager.getAllGames()) {
+        for (allGame in gamesManager.getAllLocalGames()) {
             if (allGame.managed && allGame is ManagedGame) {
                 allGame.end()
             }
