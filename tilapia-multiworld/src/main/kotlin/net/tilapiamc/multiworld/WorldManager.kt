@@ -2,6 +2,7 @@ package net.tilapiamc.multiworld
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
+import net.tilapiamc.api.generators.Generators
 import org.apache.logging.log4j.LogManager
 import org.bukkit.Bukkit
 import org.bukkit.World
@@ -19,7 +20,10 @@ object WorldManager {
         .create()
 
     private val logger = LogManager.getLogger("MultiWorld")
-    private val worldsFile = File(JavaPlugin.getPlugin(MultiWorld::class.java).dataFolder, "worlds.json")
+    private val worldsFile = File(JavaPlugin.getPlugin(MultiWorld::class.java).dataFolder, "worlds.json").also {
+        it.parentFile.mkdirs()
+        it.createNewFile()
+    }
     fun save() {
         logger.debug("Saving worlds...")
         val out = JsonArray()
@@ -54,9 +58,14 @@ object WorldManager {
         registeredWorlds.add(world)
         save()
     }
-    fun createWorld(world: TilapiaWorld, seed: Int? = null): World {
+    fun createWorld(world: TilapiaWorld, seed: String? = null): World {
         val worldCreator = WorldCreator.name(world.name)
-        worldCreator.generator(world.generator)
+        if (world.generator?.isNotEmpty() == true) {
+            worldCreator.generator(Generators.generators[world.generator]?.invoke(world.generatorParameters)?:throw IllegalArgumentException("Generator named ${world.generator} is not found"))
+        }
+        if (world.generatorParameters?.isNotEmpty() == true) {
+            worldCreator.generatorSettings(world.generatorParameters)
+        }
         worldCreator.type(world.worldType)
         val theWorld = Bukkit.getServer().createWorld(worldCreator)
         worlds[world] = theWorld;

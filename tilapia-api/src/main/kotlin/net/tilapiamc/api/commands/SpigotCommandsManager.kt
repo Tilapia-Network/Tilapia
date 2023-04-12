@@ -123,7 +123,7 @@ fun BukkitCommandExecution.requiresPermission(permission: String): Player {
 }
 
 open class BukkitSubCommand(parent: BukkitCommand, depth: Int, name: String, val descriptionKey: LanguageKey)
-    : NetworkSubCommand<CommandSender>(parent, depth, name, descriptionKey.defaultValue) {
+    : NetworkSubCommand<CommandSender>(parent.name, parent, depth, name, descriptionKey.defaultValue) {
 
 
     init {

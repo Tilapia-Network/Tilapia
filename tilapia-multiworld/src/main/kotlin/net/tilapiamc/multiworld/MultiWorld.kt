@@ -1,6 +1,7 @@
 package net.tilapiamc.multiworld
 
 import net.tilapiamc.api.commands.*
+import net.tilapiamc.multiworld.args.GeneratorNotFoundException
 import net.tilapiamc.multiworld.args.IllegalWorldNameException
 import net.tilapiamc.multiworld.args.WorldNotFoundException
 import net.tilapiamc.multiworld.subcommands.*
@@ -26,6 +27,7 @@ class MultiWorldCommand: BukkitCommand("multiworld", "多世界插件的主要�
     init {
         val worldNotLoaded = getCommandLanguageKey("ERROR_WORLD_NOT_LOADED", "${ChatColor.RED}世界 %1\$s 並未被載入！")
         val worldNotRegistered = getCommandLanguageKey("ERROR_WORLD_NOT_REGISTERED", "${ChatColor.RED}世界 %1\$s 並未被註冊！")
+        val generatorNotFound = getCommandLanguageKey("ERROR_GENERATOR_NOT_FOUND", "${ChatColor.RED}找不到名為 %1\$s 的世界生成器！")
         val illegalWorldName = getCommandLanguageKey("ERROR_ILLEGAL_WORLD_NAME", "${ChatColor.RED}%1\$s 並不是一個有效的世界名稱！")
         addAlias("mv")
         addAlias("mw")
@@ -40,6 +42,9 @@ class MultiWorldCommand: BukkitCommand("multiworld", "多世界插件的主要�
                 true
             } else if (e is IllegalWorldNameException) {
                 sender.sendMessage(sender.getSenderLanguageBundle()[illegalWorldName].format(e.worldName))
+                true
+            }  else if (e is GeneratorNotFoundException) {
+                sender.sendMessage(sender.getSenderLanguageBundle()[generatorNotFound].format(e.generatorName))
                 true
             } else {
                 false

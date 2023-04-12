@@ -32,5 +32,5 @@ class EnumNotFoundException(val value: String, val enumValues: Collection<String
     :CommandException("Unknown enum value: $value")
 
 inline fun <T, reified E: Enum<*>> ArgumentsContainer<T>.enumArg(name: String, noinline allowIndex: (T) -> Boolean = { false }, noinline exposeValues: (T) -> Boolean = { true }, isRequired: Boolean = true): EnumArgument<T, E> {
-    return addArgument(EnumArgument(E::class.java, name, allowIndex, exposeValues, isRequired))
+    return addArgument(EnumArgument<T, E>(E::class.java, name, allowIndex, exposeValues, isRequired))
 }

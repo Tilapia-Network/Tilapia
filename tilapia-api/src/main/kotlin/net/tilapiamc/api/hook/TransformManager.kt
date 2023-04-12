@@ -1,6 +1,7 @@
 package net.tilapiamc.api.hook
 
 import me.fan87.javainjector.NativeInstrumentation
+import org.bukkit.block.Biome
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
@@ -51,7 +52,6 @@ object TransformManager {
 
             CheckClassAdapter.verify(ClassReader(result), TransformManager::class.java.classLoader, false, PrintWriter(System.err, true));
 
-            File("/tmp/Test.class").writeBytes(result)
             instrumentation.redefineClasses(ClassDefinition(classTransformer.targetClass, result))
         } else {
             val transformer = ClassFileTransformer { loader, className, classBeingRedefined, protectionDomain, classfileBuffer ->
@@ -74,7 +74,6 @@ object TransformManager {
                         }
                         CheckClassAdapter.verify(ClassReader(result), TransformManager::class.java.classLoader, false, PrintWriter(System.err, true));
                         classesCache[classBeingRedefined] = classNode
-                        File("/tmp/Test.class").writeBytes(result)
                         result
                     } else {
                         classfileBuffer

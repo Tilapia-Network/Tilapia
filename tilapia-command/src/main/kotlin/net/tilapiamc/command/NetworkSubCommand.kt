@@ -2,7 +2,7 @@ package net.tilapiamc.command
 
 import net.tilapiamc.command.args.CommandArgument
 
-open class NetworkSubCommand<T>(val parent: NetworkCommand<T, *>, val depth: Int = 0, val name: String, val description: String): ArgumentsContainer<T> {
+open class NetworkSubCommand<T>(val usagePrefix: String, val parent: NetworkCommand<T, *>, val depth: Int = 0, val name: String, val description: String): ArgumentsContainer<T> {
     override val args = ArrayList<CommandArgument<*, T>>()
 
 
@@ -24,7 +24,7 @@ open class NetworkSubCommand<T>(val parent: NetworkCommand<T, *>, val depth: Int
         if (subCommand != null) {
             subCommand.execute(commandAlias, sender, args)
         } else {
-            onCommandAction(CommandExecution(parent, sender, commandAlias, args, parsed.toTypedArray()))
+            onCommandAction(CommandExecution(parent, "/$usagePrefix $name ${getUsageString()}", sender, commandAlias, args, parsed.toTypedArray()))
         }
     }
 
@@ -70,7 +70,7 @@ open class NetworkSubCommand<T>(val parent: NetworkCommand<T, *>, val depth: Int
 
     val subCommands = ArrayList<NetworkSubCommand<T>>()
     fun subCommand(name: String, description: String, action: NetworkSubCommand<T>.() -> Unit) {
-        val subCommand = NetworkSubCommand<T>(parent, depth + 1, name, description)
+        val subCommand = NetworkSubCommand<T>("$usagePrefix $name", parent, depth + 1, name, description)
         subCommand.action()
         subCommands.add(subCommand)
     }

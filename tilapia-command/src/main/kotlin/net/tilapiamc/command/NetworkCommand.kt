@@ -34,7 +34,7 @@ abstract class NetworkCommand<T, S: NetworkSubCommand<T>>(
             if (subCommand != null) {
                 subCommand.execute(commandAlias, sender, args)
             } else {
-                onCommand(CommandExecution(this, sender, commandAlias, args, parseArgs(args)))
+                onCommand(CommandExecution(this, "/$name ${getUsageString()}", sender, commandAlias, args, parseArgs(args)))
             }
         } catch (e: Throwable) {
             for (exceptionHandler in exceptionHandlers) {
@@ -94,12 +94,12 @@ abstract class NetworkCommand<T, S: NetworkSubCommand<T>>(
 
 }
 
-class CommandExecution<T>(val command: NetworkCommand<T, *>, val sender: T, val commandAlias: String, val rawArgs: Array<String>, val parsedArgs: Array<String>) {
+class CommandExecution<T>(val command: NetworkCommand<T, *>, val usageString: String, val sender: T, val commandAlias: String, val rawArgs: Array<String>, val parsedArgs: Array<String>) {
     fun commandError(message: String): Nothing {
         throw CommandException(message)
     }
     fun invalidUsage(): Nothing {
-        throw UsageException("/${command.name} ${command.getUsageString()}")
+        throw UsageException(usageString)
     }
 }
 open class CommandException(message: String): RuntimeException(message)
