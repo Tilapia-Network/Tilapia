@@ -45,10 +45,13 @@ object WorldManager {
         }
     }
 
-    fun createWorld(world: TilapiaWorld, seed: Int? = null) {
+    fun createWorld(world: TilapiaWorld, seed: Int? = null): World {
         val worldCreator = WorldCreator.name(world.name)
         worldCreator.generator(world.generator)
-        Bukkit.getServer().createWorld(worldCreator)
+        worldCreator.type(world.worldType)
+        val theWorld = Bukkit.getServer().createWorld(worldCreator)
+        worlds[world] = theWorld;
+        return theWorld
     }
 
 }

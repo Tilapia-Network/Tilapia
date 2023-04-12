@@ -4,7 +4,9 @@ import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
+import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.PlayerRespawnEvent
 import java.util.UUID
 
 open class GamesManager {
@@ -32,6 +34,10 @@ open class GamesManager {
                 game.remove(event.player.getLocalPlayer())
             }
         }
+    }
+    @Subscribe("GamesManager-onPlayerRespawn")
+    fun onPlayerRespawn(event: PlayerRespawnEvent) {
+        event.respawnLocation = event.player.world.spawnLocation
     }
 
 }
