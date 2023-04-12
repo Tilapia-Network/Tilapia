@@ -1,5 +1,6 @@
 package net.tilapiamc.command.args.impl
 
+import net.tilapiamc.command.ArgumentsContainer
 import net.tilapiamc.command.CommandException
 import net.tilapiamc.command.CommandExecution
 import net.tilapiamc.command.NetworkCommand
@@ -30,6 +31,6 @@ class EnumArgument<T, E: Enum<*>>(val enumClass: Class<E>, name: String, val all
 class EnumNotFoundException(val value: String, val enumValues: Collection<String>, val exposeValues: Boolean)
     :CommandException("Unknown enum value: $value")
 
-inline fun <T, reified E: Enum<*>> NetworkCommand<T, *>.enumArg(name: String, noinline allowIndex: (T) -> Boolean = { false }, noinline exposeValues: (T) -> Boolean = { true }, isRequired: Boolean = true): EnumArgument<T, E> {
+inline fun <T, reified E: Enum<*>> ArgumentsContainer<T>.enumArg(name: String, noinline allowIndex: (T) -> Boolean = { false }, noinline exposeValues: (T) -> Boolean = { true }, isRequired: Boolean = true): EnumArgument<T, E> {
     return addArgument(EnumArgument(E::class.java, name, allowIndex, exposeValues, isRequired))
 }

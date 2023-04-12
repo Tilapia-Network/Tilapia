@@ -49,7 +49,7 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
         } catch (e: EnumNotFoundException) {
             if (e.exposeValues) {
                 event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.COMMAND_ENUM_NOT_FOUND_VALUE_EXPOSED]
-                    .format(e.value, "${ChatColor.YELLOW}${e.enumValues.joinToString("${ChatColor.RED}, ${ChatColor.YELLOW}")}"))
+                    .format(e.value, e.enumValues.joinToString(", ")))
             } else {
                 event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.COMMAND_ENUM_NOT_FOUND].format(e.value))
             }
@@ -97,11 +97,14 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
 
 
 
-fun BukkitCommandExecution.getLanguageBundle(): LanguageBundle {
-    if (sender is Player) {
-        return (sender as Player).getLocalPlayer().getLanguageBundle()
+fun CommandSender.getSenderLanguageBundle(): LanguageBundle {
+    if (this is Player) {
+        return (this as Player).getLocalPlayer().getLanguageBundle()
     }
     return TilapiaCore.instance.languageManager.getLanguageBundle(Locale.TRADITIONAL_CHINESE)
+}
+fun BukkitCommandExecution.getLanguageBundle(): LanguageBundle {
+    return sender.getSenderLanguageBundle()
 }
 fun BukkitCommandExecution.requiresPlayer(): Player {
     if (sender is Player) {

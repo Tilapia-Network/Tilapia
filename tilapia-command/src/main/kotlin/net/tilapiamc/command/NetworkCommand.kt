@@ -5,7 +5,8 @@ import java.lang.RuntimeException
 
 abstract class NetworkCommand<T, S: NetworkSubCommand<T>>(
     val subCommandFactory: (parent: NetworkCommand<T, S>, depth: Int, name: String, description: String) -> S,
-    name: String): AbstractCommand<T>(name) {
+    name: String): ArgumentsContainer<T>, AbstractCommand<T>(name) {
+    override val args = ArrayList<CommandArgument<*, T>>()
 
     companion object {
         fun parseArgs(input: Array<String>): Array<String> {
@@ -24,14 +25,24 @@ abstract class NetworkCommand<T, S: NetworkSubCommand<T>>(
         return if (commandName == name || commandName in aliases) canUseCommand(sender) else false
     }
 
+    val exceptionHandlers = ArrayList<(e: Throwable, sender: T, args: Array<String>) -> Boolean>()
 
     override fun execute(commandAlias: String, sender: T, args: Array<String>) {
-        val parsed = parseArgs(args)
-        val subCommand = if (parsed.isNotEmpty()) subCommands.firstOrNull { it.matches(parsed[0], sender) } else null
-        if (subCommand != null) {
-            subCommand.execute(commandAlias, sender, args)
-        } else {
-            onCommand(CommandExecution(this, sender, commandAlias, args, parseArgs(args)))
+        try {
+            val parsed = parseArgs(args)
+            val subCommand = if (parsed.isNotEmpty()) subCommands.firstOrNull { it.matches(parsed[0], sender) } else null
+            if (subCommand != null) {
+                subCommand.execute(commandAlias, sender, args)
+            } else {
+                onCommand(CommandExecution(this, sender, commandAlias, args, parseArgs(args)))
+            }
+        } catch (e: Throwable) {
+            for (exceptionHandler in exceptionHandlers) {
+                if (exceptionHandler(e, sender, args)) {
+                    return
+                }
+            }
+            throw e
         }
     }
 
@@ -39,7 +50,7 @@ abstract class NetworkCommand<T, S: NetworkSubCommand<T>>(
         val parsed = parseArgs(args)
         val currentArgumentIndex = parsed.size - 1
         if (subCommands.isNotEmpty()) {
-            if (currentArgumentIndex <= 1) {
+            if (currentArgumentIndex <= 0) {
                 val commandsList = ArrayList<String>()
                 commandsList.addAll(subCommands.filter { it.matches(it.name, sender) }.map { it.name })
                 for (strings in subCommands.filter { it.matches(it.name, sender) }.map { it.aliases }) {
@@ -57,7 +68,6 @@ abstract class NetworkCommand<T, S: NetworkSubCommand<T>>(
         return targetArgument.tabComplete(sender, parsed[currentArgumentIndex])
     }
 
-    val args = ArrayList<CommandArgument<*, T>>()
 
     private var canUseCommand: T.() -> Boolean = { true }
 
@@ -69,14 +79,7 @@ abstract class NetworkCommand<T, S: NetworkSubCommand<T>>(
         this.onCommand = action
     }
 
-    fun <A: CommandArgument<*, T>> addArgument(arg: A): A {
-        if (arg.isRequired && args.any { !it.isRequired }) {
-            throw IllegalArgumentException("Argument: ${arg.name} is required but there are already optional arguments")
-        }
-        arg.index = args.size
-        args.add(arg)
-        return arg
-    }
+
 
     override fun getUsageString(): String {
         return args.joinToString(" ")
@@ -101,3 +104,16 @@ class CommandExecution<T>(val command: NetworkCommand<T, *>, val sender: T, val 
 }
 open class CommandException(message: String): RuntimeException(message)
 class UsageException(message: String): CommandException(message)
+
+interface ArgumentsContainer<T> {
+    val args: ArrayList<CommandArgument<*, T>>
+
+    fun <A: CommandArgument<*, T>> addArgument(arg: A): A {
+        if (arg.isRequired && args.any { !it.isRequired }) {
+            throw IllegalArgumentException("Argument: ${arg.name} is required but there are already optional arguments")
+        }
+        arg.index = args.size
+        args.add(arg)
+        return arg
+    }
+}

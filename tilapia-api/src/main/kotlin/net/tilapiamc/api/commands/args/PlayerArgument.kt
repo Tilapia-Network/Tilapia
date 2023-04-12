@@ -4,6 +4,7 @@ import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.game.minigame.ManagedMiniGame
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
+import net.tilapiamc.command.ArgumentsContainer
 import net.tilapiamc.command.CommandException
 import net.tilapiamc.command.CommandExecution
 import net.tilapiamc.command.NetworkCommand
@@ -47,6 +48,6 @@ class PlayerArgument<T>(name: String, isRequired: Boolean = true): CommandArgume
 
 class PlayerNotFoundException(val playerName: String): CommandException("Player not found: $playerName")
 
-fun <T> NetworkCommand<T, *>.playerArg(name: String, isRequired: Boolean = true): PlayerArgument<T> {
+fun <T> ArgumentsContainer<T>.playerArg(name: String, isRequired: Boolean = true): PlayerArgument<T> {
     return addArgument(PlayerArgument(name, isRequired))
 }

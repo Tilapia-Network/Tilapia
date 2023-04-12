@@ -2,7 +2,8 @@ package net.tilapiamc.command
 
 import net.tilapiamc.command.args.CommandArgument
 
-open class NetworkSubCommand<T>(val parent: NetworkCommand<T, *>, val depth: Int = 0, val name: String, val description: String) {
+open class NetworkSubCommand<T>(val parent: NetworkCommand<T, *>, val depth: Int = 0, val name: String, val description: String): ArgumentsContainer<T> {
+    override val args = ArrayList<CommandArgument<*, T>>()
 
 
     val aliases = ArrayList<String>()
@@ -23,7 +24,7 @@ open class NetworkSubCommand<T>(val parent: NetworkCommand<T, *>, val depth: Int
         if (subCommand != null) {
             subCommand.execute(commandAlias, sender, args)
         } else {
-            onCommandAction(CommandExecution(parent, sender, commandAlias, args, NetworkCommand.parseArgs(args)))
+            onCommandAction(CommandExecution(parent, sender, commandAlias, args, parsed.toTypedArray()))
         }
     }
 
@@ -36,7 +37,7 @@ open class NetworkSubCommand<T>(val parent: NetworkCommand<T, *>, val depth: Int
             return listOf()
         }
         if (subCommands.isNotEmpty()) {
-            if (currentArgumentIndex <= 1) {
+            if (currentArgumentIndex <= 0) {
                 val commandsList = ArrayList<String>()
                 commandsList.addAll(subCommands.filter { it.canUseCommandAction(sender) }.map { it.name })
                 for (strings in subCommands.filter { it.canUseCommandAction(sender) }.map { it.aliases }) {
@@ -51,7 +52,6 @@ open class NetworkSubCommand<T>(val parent: NetworkCommand<T, *>, val depth: Int
         return targetArgument.tabComplete(sender, parsed[currentArgumentIndex])
     }
 
-    val args = ArrayList<CommandArgument<*, T>>()
 
     var canUseCommandAction: T.() -> Boolean = { true }
 
@@ -63,14 +63,6 @@ open class NetworkSubCommand<T>(val parent: NetworkCommand<T, *>, val depth: Int
         this.onCommandAction = action
     }
 
-    fun <A: CommandArgument<*, T>> addArgument(arg: A): A {
-        if (arg.isRequired && args.any { !it.isRequired }) {
-            throw IllegalArgumentException("Argument: ${arg.name} is required but there are already optional arguments")
-        }
-        arg.index = args.size
-        args.add(arg)
-        return arg
-    }
 
     fun getUsageString(): String {
         return args.joinToString(" ")

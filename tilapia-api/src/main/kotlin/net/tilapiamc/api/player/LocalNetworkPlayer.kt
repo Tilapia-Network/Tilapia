@@ -13,6 +13,8 @@ abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
     abstract val logger: Logger
     abstract val language: Locale
 
+    abstract val nameWithPrefix: String
+
 
     fun getLanguageBundle(): LanguageBundle {
         return tilapiaCore.languageManager.getLanguageBundle(language)
