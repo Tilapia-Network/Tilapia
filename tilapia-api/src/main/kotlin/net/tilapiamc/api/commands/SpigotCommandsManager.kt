@@ -1,9 +1,6 @@
 package net.tilapiamc.api.commands
 
-import com.comphenix.packetwrapper.WrapperPlayClientTabComplete
-import com.comphenix.packetwrapper.WrapperPlayServerTabComplete
 import com.comphenix.protocol.PacketType
-import com.mojang.brigadier.suggestion.Suggestion
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.commands.args.PlayerNotFoundException
 import net.tilapiamc.api.events.EventsManager
@@ -21,7 +18,6 @@ import org.apache.logging.log4j.LogManager
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerChatTabCompleteEvent
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.permissions.Permission
 import java.util.*
@@ -164,12 +160,12 @@ abstract class BukkitCommand(name: String, val descriptionKey: LanguageKey, requ
 
 typealias BukkitCommandExecution = CommandExecution<CommandSender>
 
-fun BukkitSubCommand.getLanguageKey(name: String, defaultValue: String): LanguageKey {
+fun BukkitSubCommand.getCommandLanguageKey(name: String, defaultValue: String): LanguageKey {
     val key = LanguageKey("COMMAND_${parent.name.replace("-", "_").uppercase()}_SUB_COMMAND_${name.replace("-", "_").uppercase()}_$name", defaultValue)
     TilapiaCore.instance.languageManager.registerLanguageKey(key)
     return key
 }
-fun BukkitCommand.getLanguageKey(name: String, defaultValue: String): LanguageKey {
+fun BukkitCommand.getCommandLanguageKey(name: String, defaultValue: String): LanguageKey {
     val key = LanguageKey("COMMAND_${name.replace("-", "_").uppercase()}_$name", defaultValue)
     TilapiaCore.instance.languageManager.registerLanguageKey(key)
     return key

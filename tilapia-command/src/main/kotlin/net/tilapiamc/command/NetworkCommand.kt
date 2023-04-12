@@ -38,20 +38,20 @@ abstract class NetworkCommand<T, S: NetworkSubCommand<T>>(
     override fun tabComplete(commandAlias: String, sender: T, args: Array<String>): Collection<String> {
         val parsed = parseArgs(args)
         val currentArgumentIndex = parsed.size - 1
-        if (currentArgumentIndex >= this.args.size) {
-            return listOf()
-        }
         if (subCommands.isNotEmpty()) {
             if (currentArgumentIndex <= 1) {
                 val commandsList = ArrayList<String>()
-                commandsList.addAll(subCommands.filter { it.canUseCommandAction(sender) }.map { it.name })
-                for (strings in subCommands.filter { it.canUseCommandAction(sender) }.map { it.aliases }) {
+                commandsList.addAll(subCommands.filter { it.matches(it.name, sender) }.map { it.name })
+                for (strings in subCommands.filter { it.matches(it.name, sender) }.map { it.aliases }) {
                     commandsList.addAll(strings.map { it })
                 }
-                return commandsList.filter { it.lowercase().startsWith(args.first().lowercase()) }
+                return commandsList.filter { it.lowercase().startsWith(parsed.first().lowercase()) }
             }
             val subCommand = subCommands.firstOrNull { it.matches(parsed[0], sender) }
             return subCommand?.tabComplete(commandAlias, sender, args)?: arrayListOf()
+        }
+        if (currentArgumentIndex >= this.args.size) {
+            return listOf()
         }
         val targetArgument = this.args[currentArgumentIndex]
         return targetArgument.tabComplete(sender, parsed[currentArgumentIndex])
