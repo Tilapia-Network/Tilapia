@@ -6,6 +6,10 @@ import org.bukkit.WorldCreator
 
 object TemporaryWorldProvider {
 
+    init {
+
+    }
+
     fun createTemporaryWorldFromWorld(world: World) {
 
     }

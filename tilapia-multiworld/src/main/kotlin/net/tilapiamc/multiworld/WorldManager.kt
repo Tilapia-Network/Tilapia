@@ -45,6 +45,15 @@ object WorldManager {
         }
     }
 
+    fun checkName(name: String): Boolean = !(name.startsWith("temp-"))
+
+    fun registerWorld(world: TilapiaWorld) {
+        if (!checkName(world.name)) {
+            throw IllegalArgumentException("Invalid world name: ${world.name}")
+        }
+        registeredWorlds.add(world)
+        save()
+    }
     fun createWorld(world: TilapiaWorld, seed: Int? = null): World {
         val worldCreator = WorldCreator.name(world.name)
         worldCreator.generator(world.generator)
