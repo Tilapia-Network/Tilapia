@@ -14,6 +14,7 @@ class MultiWorld: JavaPlugin() {
 
     override fun onEnable() {
         SpigotCommandsManager.registerCommand(MultiWorldCommand())
+        WorldManager.load()
     }
 
     override fun onDisable() {
