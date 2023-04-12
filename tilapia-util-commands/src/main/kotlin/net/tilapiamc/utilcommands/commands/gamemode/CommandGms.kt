@@ -10,7 +10,8 @@ import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 
-class CommandGms: BukkitCommand("gms", "將你的遊戲模式調整為生存") {
+
+class CommandGms: BukkitCommand("gms", "將你的遊戲模式調整為生存", true) {
 
 
 
@@ -25,7 +26,7 @@ class CommandGms: BukkitCommand("gms", "將你的遊戲模式調整為生存") {
         }
 
         canUseCommand {
-            isOp && this is Player
+            this is Player
         }
     }
 

@@ -1,7 +1,7 @@
 package net.tilapiamc.command
 
 
-abstract class AbstractCommand<T>(val name: String, val description: String, ) {
+abstract class AbstractCommand<T>(val name: String) {
     abstract val aliases: ArrayList<String>
 
     abstract fun matches(commandName: String, sender: T): Boolean

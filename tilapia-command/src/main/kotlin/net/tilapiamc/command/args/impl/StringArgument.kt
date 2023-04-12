@@ -15,6 +15,6 @@ class StringArgument<T>(name: String, isRequired: Boolean = true): CommandArgume
 
 }
 
-fun <T> NetworkCommand<T>.stringArg(name: String, isRequired: Boolean = true): StringArgument<T> {
+fun <T> NetworkCommand<T, *>.stringArg(name: String, isRequired: Boolean = true): StringArgument<T> {
     return addArgument(StringArgument(name, isRequired))
 }

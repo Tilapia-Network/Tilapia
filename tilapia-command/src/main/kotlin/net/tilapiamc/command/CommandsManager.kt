@@ -9,7 +9,7 @@ open class CommandsManager<T>(val logger: Logger) {
 
 
 
-    fun registerCommand(command: AbstractCommand<T>) {
+    open fun registerCommand(command: AbstractCommand<T>) {
         logger.debug("Registered command: ${command.name}")
         commands.add(command)
     }

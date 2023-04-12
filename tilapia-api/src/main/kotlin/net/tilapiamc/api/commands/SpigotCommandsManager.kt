@@ -4,12 +4,16 @@ import com.comphenix.packetwrapper.WrapperPlayClientTabComplete
 import com.comphenix.packetwrapper.WrapperPlayServerTabComplete
 import com.comphenix.protocol.PacketType
 import com.mojang.brigadier.suggestion.Suggestion
+import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.commands.args.PlayerNotFoundException
 import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.api.events.packet.PacketReceiveEvent
 import net.tilapiamc.api.events.packet.PacketSendEvent
+import net.tilapiamc.api.language.LanguageBundle
+import net.tilapiamc.api.language.LanguageKey
+import net.tilapiamc.api.permission.PermissionManager
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import net.tilapiamc.command.*
 import net.tilapiamc.command.args.impl.EnumNotFoundException
@@ -19,6 +23,9 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerChatTabCompleteEvent
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
+import org.bukkit.permissions.Permission
+import java.util.*
+import kotlin.collections.HashMap
 
 object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogger("CommandsManager")) {
 
@@ -94,6 +101,12 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
 
 
 
+fun BukkitCommandExecution.getLanguageBundle(): LanguageBundle {
+    if (sender is Player) {
+        return (sender as Player).getLocalPlayer().getLanguageBundle()
+    }
+    return TilapiaCore.instance.languageManager.getLanguageBundle(Locale.TRADITIONAL_CHINESE)
+}
 fun BukkitCommandExecution.requiresPlayer(): Player {
     if (sender is Player) {
         return sender as Player
@@ -110,5 +123,54 @@ fun BukkitCommandExecution.requiresPermission(permission: String): Player {
     throw CommandException("You must be a player to use this command")
 }
 
-typealias BukkitCommand = NetworkCommand<CommandSender>
+open class BukkitSubCommand(parent: BukkitCommand, depth: Int, name: String, val descriptionKey: LanguageKey)
+    : NetworkSubCommand<CommandSender>(parent, depth, name, descriptionKey.defaultValue) {
+
+
+    init {
+        TilapiaCore.instance.languageManager.registerLanguageKey(descriptionKey)
+    }
+    fun getDescription(languageBundle: LanguageBundle): String {
+        return languageBundle[descriptionKey]
+    }
+}
+
+abstract class BukkitCommand(name: String, val descriptionKey: LanguageKey, requiresOp: Boolean = false, val requiresPermission: Boolean = true): NetworkCommand<CommandSender, BukkitSubCommand>({parent, depth, name, description ->
+    BukkitSubCommand(parent as BukkitCommand, depth, name, LanguageKey("COMMAND_${parent.name.replace("-", "_").uppercase()}_SUB_COMMAND_${name.replace("-", "_").uppercase()}_DESCRIPTION", description))
+}, name) {
+    val permission: Permission?
+
+    constructor(name: String, description: String, requiresOp: Boolean = false, requiresPermission: Boolean = true):
+            this(name, LanguageKey("COMMAND_${name.replace("-", "_").uppercase()}_DESCRIPTION", description), requiresOp, requiresPermission)
+    init {
+        if (requiresOp && !requiresPermission) {
+            throw IllegalArgumentException("Require Permission must be enabled if requires OP is true")
+        }
+        if (requiresPermission) {
+            permission = PermissionManager.registerCommandUsePermission(name, requiresOp)
+        } else {
+            permission = null
+        }
+        TilapiaCore.instance.languageManager.registerLanguageKey(descriptionKey)
+    }
+    fun getDescription(languageBundle: LanguageBundle): String {
+        return languageBundle[descriptionKey]
+    }
+
+    override fun matches(commandName: String, sender: CommandSender): Boolean {
+        return super.matches(commandName, sender) && (if (requiresPermission) sender.hasPermission(permission) else true)
+    }
+}
+
 typealias BukkitCommandExecution = CommandExecution<CommandSender>
+
+fun BukkitSubCommand.getLanguageKey(name: String, defaultValue: String): LanguageKey {
+    val key = LanguageKey("COMMAND_${parent.name.replace("-", "_").uppercase()}_SUB_COMMAND_${name.replace("-", "_").uppercase()}_$name", defaultValue)
+    TilapiaCore.instance.languageManager.registerLanguageKey(key)
+    return key
+}
+fun BukkitCommand.getLanguageKey(name: String, defaultValue: String): LanguageKey {
+    val key = LanguageKey("COMMAND_${name.replace("-", "_").uppercase()}_$name", defaultValue)
+    TilapiaCore.instance.languageManager.registerLanguageKey(key)
+    return key
+}

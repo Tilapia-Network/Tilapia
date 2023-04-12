@@ -34,6 +34,6 @@ class StringEnumArgument<T>(name: String, val enumValues: (sender: T) -> Collect
 }
 
 
-fun <T> NetworkCommand<T>.stringEnumArg(name: String, enumValues: (sender: T) -> Collection<String>, ignoreCase: Boolean = true, exposeValues: (T) -> Boolean = { true }, isRequired: Boolean = true): StringEnumArgument<T> {
+fun <T> NetworkCommand<T, *>.stringEnumArg(name: String, enumValues: (sender: T) -> Collection<String>, ignoreCase: Boolean = true, exposeValues: (T) -> Boolean = { true }, isRequired: Boolean = true): StringEnumArgument<T> {
     return addArgument(StringEnumArgument(name, enumValues, ignoreCase, exposeValues, isRequired))
 }

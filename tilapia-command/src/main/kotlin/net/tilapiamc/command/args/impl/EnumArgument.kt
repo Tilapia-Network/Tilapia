@@ -30,6 +30,6 @@ class EnumArgument<T, E: Enum<*>>(val enumClass: Class<E>, name: String, val all
 class EnumNotFoundException(val value: String, val enumValues: Collection<String>, val exposeValues: Boolean)
     :CommandException("Unknown enum value: $value")
 
-inline fun <T, reified E: Enum<*>> NetworkCommand<T>.enumArg(name: String, noinline allowIndex: (T) -> Boolean = { false }, noinline exposeValues: (T) -> Boolean = { true }, isRequired: Boolean = true): EnumArgument<T, E> {
+inline fun <T, reified E: Enum<*>> NetworkCommand<T, *>.enumArg(name: String, noinline allowIndex: (T) -> Boolean = { false }, noinline exposeValues: (T) -> Boolean = { true }, isRequired: Boolean = true): EnumArgument<T, E> {
     return addArgument(EnumArgument(E::class.java, name, allowIndex, exposeValues, isRequired))
 }

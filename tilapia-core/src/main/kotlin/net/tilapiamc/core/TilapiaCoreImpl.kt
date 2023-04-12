@@ -3,6 +3,7 @@ package net.tilapiamc.core
 import me.fan87.plugindevkit.events.EntityTickEvent
 import me.fan87.plugindevkit.events.ServerTickEvent
 import net.tilapiamc.api.TilapiaCore
+import net.tilapiamc.api.commands.LanguageCommand
 import net.tilapiamc.api.commands.SpigotCommandsManager
 import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
@@ -17,11 +18,11 @@ import net.tilapiamc.api.player.PlayersManager
 import net.tilapiamc.api.server.TilapiaServer
 import net.tilapiamc.core.commands.CommandJoinLocal
 import net.tilapiamc.core.commands.CommandLobbyLocal
-import net.tilapiamc.core.commands.CommandTest
 import net.tilapiamc.core.language.LanguageManagerImpl
 import net.tilapiamc.core.main.Main
 import net.tilapiamc.core.server.LocalServerImpl
 import net.tilapiamc.language.LanguageCore
+import net.tilapiamc.language.LanguageGame
 import org.bukkit.ChatColor
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
@@ -34,19 +35,28 @@ class TilapiaCoreImpl: TilapiaCore {
         // Initialize managers
         PlayersManager
         SpigotCommandsManager
+
+
+
         EventsManager.registerAnnotationBasedListener(this)
         EventsManager.listenForEvent(ServerTickEvent::class.java)
         EventsManager.listenForEvent(EntityTickEvent::class.java)
 
-        SpigotCommandsManager.registerCommand(CommandTest())
-        SpigotCommandsManager.registerCommand(CommandJoinLocal())
-        SpigotCommandsManager.registerCommand(CommandLobbyLocal())
     }
     private val localServer = LocalServerImpl()
     val games = ArrayList<Game>()
-    override val languageManager: LanguageManager = LanguageManagerImpl()
+    override val languageManager: LanguageManager = LanguageManagerImpl
     override val gamesManager: GamesManager = GamesManager()
 
+    fun registerCommands() {
+
+        LanguageCore
+        LanguageCommand
+        LanguageGame
+
+        SpigotCommandsManager.registerCommand(CommandJoinLocal())
+        SpigotCommandsManager.registerCommand(CommandLobbyLocal())
+    }
 
     override fun provideGameId(gameType: GameType): UUID {
         return UUID.randomUUID()

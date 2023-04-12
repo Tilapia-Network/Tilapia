@@ -5,5 +5,6 @@ import java.util.Locale
 interface LanguageManager {
 
     fun getLanguageBundle(locale: Locale): LanguageBundle
+    fun registerLanguageKey(languageKey: LanguageKey)
 
 }

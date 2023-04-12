@@ -1,6 +1,7 @@
 package net.tilapiamc.language
 
 import net.md_5.bungee.api.ChatColor
+import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.language.LanguageKeyDelegation
 
 object LanguageGame {
@@ -12,5 +13,14 @@ object LanguageGame {
     val WAITING_COUNTDOWN_MSG by LanguageKeyDelegation("${ChatColor.YELLOW}遊戲將在%1\$d秒後開始")
     val WAITING_WAITING by LanguageKeyDelegation("${ChatColor.YELLOW}遊戲將在%1\$d秒後開始")
     val WAITING_COUNTDOWN by LanguageKeyDelegation("${ChatColor.YELLOW}遊戲將在%1\$d秒後開始")
+
+    init {
+        TilapiaCore.instance.languageManager.registerLanguageKey(WAITING_PLAYER_JOIN)
+        TilapiaCore.instance.languageManager.registerLanguageKey(WAITING_PLAYER_QUIT)
+        TilapiaCore.instance.languageManager.registerLanguageKey(WAITING_WAITING_MSG)
+        TilapiaCore.instance.languageManager.registerLanguageKey(WAITING_COUNTDOWN_MSG)
+        TilapiaCore.instance.languageManager.registerLanguageKey(WAITING_WAITING)
+        TilapiaCore.instance.languageManager.registerLanguageKey(WAITING_COUNTDOWN)
+    }
 
 }

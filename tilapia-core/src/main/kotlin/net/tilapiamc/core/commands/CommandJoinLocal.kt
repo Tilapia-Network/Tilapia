@@ -1,7 +1,9 @@
 package net.tilapiamc.core.commands
 
 import net.tilapiamc.api.TilapiaCore
+import net.tilapiamc.api.commands.BukkitCommand
 import net.tilapiamc.api.commands.requiresPlayer
+import net.tilapiamc.api.language.LanguageKeyDelegation
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import net.tilapiamc.command.NetworkCommand
 import net.tilapiamc.command.args.impl.stringArg
@@ -9,7 +11,7 @@ import net.tilapiamc.language.LanguageCore
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandJoinLocal: NetworkCommand<CommandSender>("join-local", "[Dev] Join a local game") {
+class CommandJoinLocal: BukkitCommand("join-local", "[開發者] 加入一個伺服器的遊戲", true) {
 
     companion object {
         const val PERMISSION = "commands.join-local"

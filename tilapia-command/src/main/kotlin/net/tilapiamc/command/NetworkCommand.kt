@@ -3,7 +3,9 @@ package net.tilapiamc.command
 import net.tilapiamc.command.args.CommandArgument
 import java.lang.RuntimeException
 
-abstract class NetworkCommand<T>(name: String, description: String): AbstractCommand<T>(name, description) {
+abstract class NetworkCommand<T, S: NetworkSubCommand<T>>(
+    val subCommandFactory: (parent: NetworkCommand<T, S>, depth: Int, name: String, description: String) -> S,
+    name: String): AbstractCommand<T>(name) {
 
     companion object {
         fun parseArgs(input: Array<String>): Array<String> {
@@ -25,7 +27,7 @@ abstract class NetworkCommand<T>(name: String, description: String): AbstractCom
 
     override fun execute(commandAlias: String, sender: T, args: Array<String>) {
         val parsed = parseArgs(args)
-        val subCommand = subCommands.firstOrNull { it.matches(parsed[0], sender) }
+        val subCommand = if (parsed.isNotEmpty()) subCommands.firstOrNull { it.matches(parsed[0], sender) } else null
         if (subCommand != null) {
             subCommand.execute(commandAlias, sender, args)
         } else {
@@ -77,19 +79,19 @@ abstract class NetworkCommand<T>(name: String, description: String): AbstractCom
     }
 
     override fun getUsageString(): String {
-        return ""
+        return args.joinToString(" ")
     }
-    val subCommands: List<NetworkSubCommand<T>> = ArrayList()
+    val subCommands: List<S> = ArrayList()
 
-    fun subCommand(name: String, description: String, action: NetworkSubCommand<T>.() -> Unit) {
-        val subCommand = NetworkSubCommand<T>(this, 0, name, description)
+    fun subCommand(name: String, description: String, action: S.() -> Unit) {
+        val subCommand = subCommandFactory(this, 0, name, description)
         subCommand.action()
         (subCommands as MutableList).add(subCommand)
     }
 
 }
 
-class CommandExecution<T>(val command: NetworkCommand<T>, val sender: T, val commandAlias: String, val rawArgs: Array<String>, val parsedArgs: Array<String>) {
+class CommandExecution<T>(val command: NetworkCommand<T, *>, val sender: T, val commandAlias: String, val rawArgs: Array<String>, val parsedArgs: Array<String>) {
     fun commandError(message: String): Nothing {
         throw CommandException(message)
     }

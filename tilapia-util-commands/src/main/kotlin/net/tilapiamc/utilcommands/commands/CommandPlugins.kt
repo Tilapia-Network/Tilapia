@@ -1,6 +1,7 @@
 package net.tilapiamc.utilcommands.commands
 
 import net.md_5.bungee.api.ChatColor.*
+import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.commands.BukkitCommand
 import net.tilapiamc.api.commands.requiresPlayer
 import net.tilapiamc.api.language.LanguageKeyDelegation
@@ -9,7 +10,7 @@ import net.tilapiamc.command.NetworkCommand
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 
-class CommandPlugins: BukkitCommand("plugins", "列出所有的插件") {
+class CommandPlugins: BukkitCommand("plugins", "列出所有的插件", false) {
 
     companion object {
         val COMMAND_PLUGIN_HEADER by LanguageKeyDelegation(
@@ -17,9 +18,12 @@ class CommandPlugins: BukkitCommand("plugins", "列出所有的插件") {
             "$GRAY 我們刻意保持此指令公開，你可以看到我們所有使用的插件。\n" +
             "$GRAY (所有插件開頭為\"${GREEN}tilapia$GRAY\"皆為自製插件）"
         )
-        val COMMAND_PLUGIN_FOOTER by LanguageKeyDelegation(
-            ""
-        )
+        val COMMAND_PLUGIN_FOOTER by LanguageKeyDelegation("")
+
+        init {
+            TilapiaCore.instance.languageManager.registerLanguageKey(COMMAND_PLUGIN_HEADER)
+            TilapiaCore.instance.languageManager.registerLanguageKey(COMMAND_PLUGIN_FOOTER)
+        }
     }
 
     init {

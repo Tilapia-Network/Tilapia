@@ -47,6 +47,6 @@ class PlayerArgument<T>(name: String, isRequired: Boolean = true): CommandArgume
 
 class PlayerNotFoundException(val playerName: String): CommandException("Player not found: $playerName")
 
-fun <T> NetworkCommand<T>.playerArg(name: String, isRequired: Boolean = true): PlayerArgument<T> {
+fun <T> NetworkCommand<T, *>.playerArg(name: String, isRequired: Boolean = true): PlayerArgument<T> {
     return addArgument(PlayerArgument(name, isRequired))
 }

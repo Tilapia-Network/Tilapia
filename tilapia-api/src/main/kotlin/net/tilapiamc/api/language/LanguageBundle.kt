@@ -10,8 +10,12 @@ interface LanguageBundle {
 
 data class LanguageKey(val name: String, val defaultValue: String)
 
+fun languageKey(name: String, defaultValue: String): LanguageKey {
+    return LanguageKey(name, defaultValue)
+}
+
 class LanguageKeyDelegation(val defaultValue: String? = null) {
-    operator fun getValue(owner: Any, property: KProperty<*>): LanguageKey {
+    operator fun getValue(owner: Any?, property: KProperty<*>): LanguageKey {
         return LanguageKey(property.name, defaultValue?:property.name)
     }
 }

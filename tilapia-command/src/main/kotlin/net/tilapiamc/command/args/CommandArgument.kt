@@ -22,4 +22,9 @@ abstract class CommandArgument<T, S>(val name: String, val isRequired: Boolean =
         return if (parsedArgs.size > index) parsedArgs[index] else null
     }
 
+    override fun toString(): String {
+        val center = name
+        return if (!isRequired) "[$center]" else "<$center>"
+    }
+
 }

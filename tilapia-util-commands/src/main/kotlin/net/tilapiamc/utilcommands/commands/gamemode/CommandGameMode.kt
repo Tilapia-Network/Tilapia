@@ -12,7 +12,7 @@ import org.bukkit.GameMode
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class CommandGameMode: BukkitCommand("gamemode", "改變一個玩家的遊戲模式") {
+class CommandGameMode: BukkitCommand("gamemode", "改變一個玩家的遊戲模式", true) {
 
     val gamemodeAliases = hashMapOf(
         GameMode.CREATIVE to listOf("creative", "c", "1"),
@@ -40,7 +40,7 @@ class CommandGameMode: BukkitCommand("gamemode", "改變一個玩家的遊戲模
         }
 
         canUseCommand {
-            isOp && this is Player
+            this is Player
         }
     }
 

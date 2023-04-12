@@ -10,7 +10,7 @@ import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 
-class CommandGmspec: BukkitCommand("gmspec", "將你的遊戲模式調整為旁觀者") {
+class CommandGmspec: BukkitCommand("gmspec", "將你的遊戲模式調整為旁觀者", true) {
 
 
 
@@ -25,7 +25,7 @@ class CommandGmspec: BukkitCommand("gmspec", "將你的遊戲模式調整為旁�
         }
 
         canUseCommand {
-            isOp && this is Player
+            this is Player
         }
     }
 

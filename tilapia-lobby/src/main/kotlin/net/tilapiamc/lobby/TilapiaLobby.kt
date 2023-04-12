@@ -8,6 +8,7 @@ import net.tilapiamc.gameextension.plugins.PluginNoBoatCrash
 import net.tilapiamc.gameextension.plugins.PluginSpeedyBoat_1_8
 import net.tilapiamc.gameextension.rules.impl.RuleNoDestruction
 import net.tilapiamc.gameextension.rules.impl.RuleNoTimeChange
+import net.tilapiamc.gameextension.rules.impl.RuleNoWeatherChange
 import net.tilapiamc.spigotcommon.game.lobby.LocalLobby
 import org.bukkit.World
 
@@ -18,6 +19,7 @@ class TilapiaLobby(core: TilapiaCore, world: World, lobbyType: String): LocalLob
         applyPlugin(PluginSpeedyBoat_1_8(true, {6f}) {
             0.35*6
         })
+        addRule(RuleNoWeatherChange(this))
         addRule(RuleNoTimeChange(this))
         addRule(
             RuleNoDestruction(this,

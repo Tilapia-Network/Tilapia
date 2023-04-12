@@ -10,7 +10,7 @@ import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 
-class CommandGma: BukkitCommand("gma", "將你的遊戲模式調整為冒險") {
+class CommandGma: BukkitCommand("gma", "將你的遊戲模式調整為冒險", true) {
 
 
 
@@ -25,7 +25,7 @@ class CommandGma: BukkitCommand("gma", "將你的遊戲模式調整為冒險") {
         }
 
         canUseCommand {
-            isOp && this is Player
+            this is Player
         }
     }
 
