@@ -3,6 +3,7 @@ package net.tilapiamc.api
 import net.tilapiamc.api.game.Game
 import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.GamesManager
+import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.internal.TilapiaInternal
 import net.tilapiamc.api.language.LanguageManager
 import net.tilapiamc.api.networking.GameFinder
@@ -24,8 +25,8 @@ interface TilapiaCore {
 
     fun getLocalServer(): TilapiaServer
 
-    fun addGame(game: Game)
-    fun removeGame(game: Game)
+    fun addGame(game: ManagedGame)
+    fun removeGame(game: ManagedGame)
 
     fun getInternal(): TilapiaInternal
 

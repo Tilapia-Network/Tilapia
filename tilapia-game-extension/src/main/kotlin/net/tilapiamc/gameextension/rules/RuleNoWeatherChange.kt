@@ -1,4 +1,4 @@
-package net.tilapiamc.gameextension.rules.impl
+package net.tilapiamc.gameextension.rules
 
 import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.spigotcommon.game.AbstractRule

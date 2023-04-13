@@ -2,6 +2,7 @@ package net.tilapiamc.api.game.minigame
 
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.events.EventsManager
+import net.tilapiamc.api.events.game.PlayerJoinGameEvent
 import net.tilapiamc.api.events.game.PlayerJoinMiniGameEvent
 import net.tilapiamc.api.events.game.SpectatorJoinEvent
 import net.tilapiamc.api.game.GameType
@@ -46,7 +47,9 @@ abstract class ManagedMiniGame(
         if (networkPlayer !in this.spectatorPlayers) {
             this.inGamePlayers.remove(networkPlayer)
             this.spectatorPlayers.add(networkPlayer)
+            EventsManager.fireEvent(PlayerJoinGameEvent(this, networkPlayer))
             EventsManager.fireEvent(SpectatorJoinEvent(this, networkPlayer))
+
             if (networkPlayer !in this.players) {
                 super.add(networkPlayer)
             }

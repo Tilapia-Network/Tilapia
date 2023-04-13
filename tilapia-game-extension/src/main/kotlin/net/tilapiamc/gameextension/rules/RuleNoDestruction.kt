@@ -1,30 +1,25 @@
-package net.tilapiamc.gameextension.rules.impl
+package net.tilapiamc.gameextension.rules
 
 import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.spigotcommon.game.AbstractRule
 import net.tilapiamc.spigotcommon.game.LocalGame
 import org.bukkit.GameMode
-import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockExplodeEvent
 import org.bukkit.event.block.BlockPlaceEvent
-import org.bukkit.event.entity.EntityChangeBlockEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityExplodeEvent
 import org.bukkit.event.entity.EntityInteractEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
-import org.bukkit.event.entity.ItemSpawnEvent
-import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.inventory.InventoryInteractEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerPickupItemEvent
 import org.bukkit.event.vehicle.VehicleDamageEvent
-import org.bukkit.event.vehicle.VehicleDestroyEvent
 
 class RuleNoDestruction(
     game: LocalGame,
@@ -43,8 +38,32 @@ class RuleNoDestruction(
     val protectItemDrop: Boolean = true,
     val protectPlayerPhysical: Boolean = true,
     val protectPlayerInventoryChange: Boolean = true,
-    val ignoreCreative: Boolean = true
+    val ignorePlayer: Player.() -> Boolean = { gameMode == GameMode.CREATIVE }
 ): AbstractRule("NoDestruction", game) {
+
+    companion object {
+        fun spectatorRule(game: LocalGame, ignorePlayer: Player.() -> Boolean): RuleNoDestruction {
+            return RuleNoDestruction(
+                game,
+                protectEntityDestruction = false,
+                protectPlayers = true,
+                protectEntities = true,
+                protectVehicles = true,
+                protectPlayersHunger = true,
+                protectUsePlayers = true,
+                protectUseEntities = true,
+                protectBlockBreak = true,
+                protectBlockPlacement = true,
+                protectItemUse = true,
+                protectPlayerPhysical = true,
+                protectBlockUse = true,
+                protectItemDrop = true,
+                protectItemPickUp = true,
+                protectPlayerInventoryChange = true,
+                ignorePlayer = ignorePlayer
+            )
+        }
+    }
 
     @Subscribe("NoDestruction-onEntityDestruction")
     fun onEntityDestruction(event: EntityInteractEvent) {
@@ -69,12 +88,12 @@ class RuleNoDestruction(
     @Subscribe("NoDestruction-onEntityDamage")
     fun onEntityDamage(event: EntityDamageEvent) {
         if (event is EntityDamageByEntityEvent) {
-            if (ignoreCreative && event.damager is Player && (event.damager as Player).gameMode == GameMode.CREATIVE) {
+            if (event.damager is Player && ignorePlayer(event.damager as Player)) {
                 return
             }
         }
         if (event.entity is Player) {
-            if (ignoreCreative && (event.entity as Player).gameMode == GameMode.CREATIVE) {
+            if (ignorePlayer(event.entity as Player)) {
                 return
             }
             if (protectPlayers) {
@@ -89,7 +108,7 @@ class RuleNoDestruction(
     }
     @Subscribe("NoDestruction-onVehicleDamage")
     fun onVehicleDamage(event: VehicleDamageEvent) {
-        if (ignoreCreative && event.attacker is Player && (event.attacker as Player).gameMode == GameMode.CREATIVE) {
+        if (event.attacker is Player && ignorePlayer(event.attacker as Player)) {
             return
         }
         if (protectVehicles) {
@@ -101,7 +120,7 @@ class RuleNoDestruction(
     @Subscribe("NoDestruction-onHungerChange")
     fun onHungerChange(event: FoodLevelChangeEvent) {
         if (protectPlayersHunger) {
-            if (ignoreCreative && event.entity.gameMode == GameMode.CREATIVE) {
+            if (ignorePlayer(event.entity as Player)) {
                 return
             }
             event.isCancelled = true
@@ -115,7 +134,7 @@ class RuleNoDestruction(
 
     @Subscribe("NoDestruction-onEntityUse")
     fun onEntityUse(event: PlayerInteractEntityEvent) {
-        if (ignoreCreative && event.player.gameMode == GameMode.CREATIVE) {
+        if (ignorePlayer(event.player)) {
             return
         }
         if (event.rightClicked is Player) {
@@ -131,7 +150,7 @@ class RuleNoDestruction(
     }
     @Subscribe("NoDestruction-onBlockDestroy")
     fun onBlockDestroy(event: BlockBreakEvent) {
-        if (ignoreCreative && event.player.gameMode == GameMode.CREATIVE) {
+        if (ignorePlayer(event.player)) {
             return
         }
         if (protectBlockBreak) {
@@ -141,7 +160,7 @@ class RuleNoDestruction(
     }
     @Subscribe("NoDestruction-onBlockPlace")
     fun onBlockPlace(event: BlockPlaceEvent) {
-        if (ignoreCreative && event.player.gameMode == GameMode.CREATIVE) {
+        if (ignorePlayer(event.player)) {
             return
         }
         if (protectBlockPlacement) {
@@ -151,7 +170,7 @@ class RuleNoDestruction(
     }
     @Subscribe("NoDestruction-onItemUse")
     fun onItemUse(event: PlayerInteractEvent) {
-        if (ignoreCreative && event.player.gameMode == GameMode.CREATIVE) {
+        if (ignorePlayer(event.player)) {
             return
         }
         if (event.hasItem()) {
@@ -163,7 +182,7 @@ class RuleNoDestruction(
     }
     @Subscribe("NoDestruction-onPlayerPhysical")
     fun onPlayerPhysical(event: PlayerInteractEvent) {
-        if (ignoreCreative && event.player.gameMode == GameMode.CREATIVE) {
+        if (ignorePlayer(event.player)) {
             return
         }
         if (event.action == Action.PHYSICAL) {
@@ -175,7 +194,7 @@ class RuleNoDestruction(
     }
     @Subscribe("NoDestruction-onBlockUse")
     fun onBlockUse(event: PlayerInteractEvent) {
-        if (ignoreCreative && event.player.gameMode == GameMode.CREATIVE) {
+        if (ignorePlayer(event.player)) {
             return
         }
         if (event.hasBlock()) {
@@ -187,7 +206,7 @@ class RuleNoDestruction(
     }
     @Subscribe("NoDestruction-onItemDrop")
     fun onItemDrop(event: PlayerDropItemEvent) {
-        if (ignoreCreative && event.player.gameMode == GameMode.CREATIVE) {
+        if (ignorePlayer(event.player)) {
             return
         }
         if (protectItemDrop) {
@@ -197,7 +216,7 @@ class RuleNoDestruction(
     }
     @Subscribe("NoDestruction-onItemPickup")
     fun onItemPickup(event: PlayerPickupItemEvent) {
-        if (ignoreCreative && event.player.gameMode == GameMode.CREATIVE) {
+        if (ignorePlayer(event.player)) {
             return
         }
         if (protectItemPickUp) {
@@ -207,7 +226,7 @@ class RuleNoDestruction(
     }
     @Subscribe("NoDestruction-onPlayerInventoryChange")
     fun onPlayerInventoryChange(event: InventoryInteractEvent) {
-        if (ignoreCreative && event.whoClicked.gameMode == GameMode.CREATIVE) {
+        if (ignorePlayer(event.whoClicked as Player)) {
             return
         }
         if (event.whoClicked == null) {

@@ -8,30 +8,33 @@ import net.tilapiamc.api.game.lobby.Lobby
 import net.tilapiamc.api.game.minigame.MiniGame
 import net.tilapiamc.api.language.LanguageKey
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
+import org.bukkit.event.player.PlayerAchievementAwardedEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerRespawnEvent
 import java.util.UUID
 
 class GamesManager {
 
-    private val games = HashMap<UUID, Game>()
+    private val games = HashMap<UUID, ManagedGame>()
 
     init {
         EventsManager.registerAnnotationBasedListener(this)
     }
 
-    fun registerManagedGame(game: Game) {
+    fun registerManagedGame(game: ManagedGame) {
         games[game.gameId] = game
     }
     fun unregisterManagedGame(uuid: UUID) {
         games.remove(uuid)
     }
 
-    fun getAllLocalGames(): Set<Game> = games.values.toSet()
-    fun getLocalGameById(uuid: UUID): Game? = games[uuid]
+    fun getAllLocalGames(): Set<ManagedGame> = games.values.toSet()
+    fun getLocalGameById(uuid: UUID): ManagedGame? = games[uuid]
 
     @Subscribe("GamesManager-onPlayerQuit", mustRunBefore = ["playerLeaveInit"])
     fun onPlayerQuit(event: PlayerQuitEvent) {
+        event.quitMessage = null
         for (game in games.values.filter { event.player.uniqueId in it.players.map { it.uuid } }) {
             if (game is ManagedGame) {
                 game.remove(event.player.getLocalPlayer())
@@ -41,6 +44,14 @@ class GamesManager {
     @Subscribe("GamesManager-onPlayerRespawn")
     fun onPlayerRespawn(event: PlayerRespawnEvent) {
         event.respawnLocation = event.player.world.spawnLocation
+    }
+    @Subscribe("GamesManager-onPlayerJoin")
+    fun onPlayerJoin(event: PlayerJoinEvent) {
+        event.joinMessage = null
+    }
+    @Subscribe("GamesManager-onAchievement")
+    fun onAchievement(event: PlayerAchievementAwardedEvent) {
+        event.isCancelled = true
     }
 
 

@@ -12,5 +12,6 @@ interface IGame {
     val managed: Boolean
     val players: ArrayList<NetworkPlayer>
 
-
+    val shortGameId: String
+        get() = gameId.toString().split("-")[0]
 }

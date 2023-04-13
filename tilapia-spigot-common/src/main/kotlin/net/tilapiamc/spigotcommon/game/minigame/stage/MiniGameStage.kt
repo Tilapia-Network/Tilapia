@@ -3,6 +3,7 @@ package net.tilapiamc.spigotcommon.game.minigame.stage
 import net.tilapiamc.spigotcommon.game.AbstractRule
 import net.tilapiamc.spigotcommon.game.minigame.LocalMiniGame
 import net.tilapiamc.spigotcommon.game.plugin.GamePlugin
+import org.bukkit.entity.Player
 
 abstract class MiniGameStage(
     open val miniGame: LocalMiniGame,
@@ -53,5 +54,6 @@ abstract class MiniGameStage(
         onEnd()
     }
     abstract fun onEnd()
-
+    fun Player.isInGame(): Boolean = player.uniqueId in miniGame.inGamePlayers.map { it.uniqueId }
+    fun Player.isSpectator(): Boolean = player.uniqueId in miniGame.spectatorPlayers.map { it.uniqueId }
 }

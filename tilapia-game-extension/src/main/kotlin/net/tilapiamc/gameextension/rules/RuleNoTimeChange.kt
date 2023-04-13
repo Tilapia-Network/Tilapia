@@ -1,4 +1,4 @@
-package net.tilapiamc.gameextension.rules.impl
+package net.tilapiamc.gameextension.rules
 
 import net.tilapiamc.spigotcommon.game.AbstractRule
 import net.tilapiamc.spigotcommon.game.LocalGame

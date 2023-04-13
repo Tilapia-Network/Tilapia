@@ -2,6 +2,7 @@ package net.tilapiamc.api.commands
 
 import com.comphenix.protocol.PacketType
 import net.tilapiamc.api.TilapiaCore
+import net.tilapiamc.api.commands.args.GameNotFoundException
 import net.tilapiamc.api.commands.args.PlayerNotFoundException
 import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.Subscribe
@@ -54,6 +55,8 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
             } else {
                 event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.COMMAND_ENUM_NOT_FOUND].format(e.value))
             }
+        } catch (e: GameNotFoundException) {
+            event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.COMMAND_GAME_NOT_FOUND].format(e.gameId, e.gameId))
         } catch (e: JoinDeniedException) {
             event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.JOIN_DENIED].format(e.gameId, e.reason))
         } catch (e: PlayerNotFoundException) {

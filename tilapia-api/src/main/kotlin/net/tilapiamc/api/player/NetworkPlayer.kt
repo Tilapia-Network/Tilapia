@@ -19,7 +19,7 @@ abstract class NetworkPlayer(
     lateinit var currentServer: TilapiaServer
     var currentGameId: UUID? = null
     val currentGame: Game?
-        get() = if (currentGameId == null) null else tilapiaCore.localGameManager.getLocalGameById(currentGameId!!)
+        get() = if (currentGameId == null) null else tilapiaCore.localGameManager.getLocalGameById(currentGameId!!) as Game
     abstract val language: Locale
     fun getLanguageBundle(): LanguageBundle {
         return tilapiaCore.languageManager.getLanguageBundle(language)
@@ -33,8 +33,8 @@ abstract class NetworkPlayer(
         return tilapiaCore.gameFinder.findLobbyToJoin(this, lobbyType, forceJoin)
     }
 
-    fun sendToGame(game: Game?, forceJoin: Boolean = false) {
-        tilapiaCore.getInternal().sendToGame(this, game, forceJoin)
+    fun sendToGame(game: Game?, forceJoin: Boolean = false, spectate: Boolean = false) {
+        tilapiaCore.getInternal().sendToGame(this, game, forceJoin, spectate)
     }
 
 }

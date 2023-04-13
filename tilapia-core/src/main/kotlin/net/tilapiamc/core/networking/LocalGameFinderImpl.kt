@@ -54,11 +54,11 @@ class LocalGameFinderImpl(val core: TilapiaCoreImpl): GameFinder {
     }
 
     override fun getGameFromID(gameId: UUID): Game? {
-        return core.localGameManager.getLocalGameById(gameId)
+        return core.localGameManager.getLocalGameById(gameId) as Game?
     }
 
     override fun getGameFromShortID(shortGameId: String): Game? {
-        return core.localGameManager.getAllLocalGames().firstOrNull { it.shortGameId.lowercase() == shortGameId.lowercase() }
+        return core.localGameManager.getAllLocalGames().firstOrNull { it.shortGameId.lowercase() == shortGameId.lowercase() } as Game?
     }
 
 }

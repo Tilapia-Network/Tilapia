@@ -1,12 +1,9 @@
 package net.tilapiamc.api.player
 
 import net.tilapiamc.api.TilapiaCore
-import net.tilapiamc.api.language.LanguageBundle
 import org.apache.logging.log4j.Logger
-import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
-import java.util.Locale
 
 abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
     NetworkPlayer(core, bukkitPlayer.name, bukkitPlayer.uniqueId), Player by bukkitPlayer {
@@ -18,23 +15,30 @@ abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
     abstract val prefixColor: String
 
 
-
+    companion object {
+        fun Player.resetBukkitPlayer() {
+            closeInventory()
+            inventory.heldItemSlot = 0
+            inventory.clear()
+            allowFlight = false
+            isFlying = false
+            compassTarget = world.spawnLocation
+            gameMode = GameMode.SURVIVAL
+            health = 20.0
+            saturation = 1f
+            foodLevel = 20
+            exp = 0f
+            level = 0
+            bedSpawnLocation = null
+            activePotionEffects.forEach { removePotionEffect(it.type) }
+            leaveVehicle()
+        }
+    }
 
     fun resetPlayerState() {
         // TODO: Temp solution. Gonna kick the player and re-connect
         // Gotta find a way to disable player data save
-        closeInventory()
-        inventory.heldItemSlot = 0
-        inventory.clear()
-        gameMode = GameMode.SURVIVAL
-        health = 20.0
-        saturation = 1f
-        foodLevel = 20
-        bedSpawnLocation = null
-        leaveVehicle()
-        for (onlinePlayer in Bukkit.getOnlinePlayers()) {
-            showPlayer(onlinePlayer)
-        }
+        resetBukkitPlayer()
     }
 
 

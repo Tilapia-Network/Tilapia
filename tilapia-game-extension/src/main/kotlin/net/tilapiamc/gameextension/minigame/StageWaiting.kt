@@ -3,14 +3,17 @@ package net.tilapiamc.gameextension.minigame
 import me.fan87.plugindevkit.events.ServerTickEvent
 import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.game.PlayerJoinGameEvent
+import net.tilapiamc.api.events.game.PlayerJoinMiniGameEvent
 import net.tilapiamc.api.events.game.PlayerQuitGameEvent
+import net.tilapiamc.api.events.game.PlayerQuitMiniGameEvent
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.gameextension.plugins.PluginNameTagDisplay
-import net.tilapiamc.gameextension.rules.impl.RuleNoDestruction
-import net.tilapiamc.gameextension.rules.impl.RuleNoTimeChange
+import net.tilapiamc.gameextension.rules.RuleNoDestruction
+import net.tilapiamc.gameextension.rules.RuleNoTimeChange
 import net.tilapiamc.language.LanguageGame
 import net.tilapiamc.spigotcommon.game.minigame.LocalMiniGame
 import net.tilapiamc.spigotcommon.game.minigame.stage.MiniGameStage
+import org.bukkit.event.player.PlayerJoinEvent
 
 class StageWaiting(miniGame: LocalMiniGame,
                    val countDownTime: (Int) -> Int,
@@ -37,7 +40,7 @@ class StageWaiting(miniGame: LocalMiniGame,
     }
 
     @Subscribe("waiting-onPlayerJoin")
-    fun onPlayerJoin(event: PlayerJoinGameEvent) {
+    fun onPlayerJoin(event: PlayerJoinMiniGameEvent) {
         updatePlayers(event.player, true)
         for (player in miniGame.players) {
             val localNetworkPlayer = player as LocalNetworkPlayer
@@ -47,13 +50,23 @@ class StageWaiting(miniGame: LocalMiniGame,
         }
     }
     @Subscribe("waiting-onPlayerQuit")
-    fun onPlayerQuit(event: PlayerQuitGameEvent) {
+    fun onPlayerQuit(event: PlayerQuitMiniGameEvent) {
         updatePlayers(event.player, false)
         for (player in miniGame.players) {
             val localNetworkPlayer = player as LocalNetworkPlayer
             localNetworkPlayer.sendMessage(localNetworkPlayer.getLanguageBundle()[LanguageGame.WAITING_PLAYER_QUIT].format(
                 event.player.name, miniGame.inGamePlayers.size, maxPlayers
             ))
+        }
+    }
+
+    @Subscribe("waiting-sendJoinMsg")
+    fun sendJoinMsg(event: PlayerJoinGameEvent) {
+        val player = event.player
+        if (time == -1) {
+            player.sendMessage(player.getLanguageBundle()[LanguageGame.WAITING_WAITING_MSG])
+        } else {
+            player.sendMessage(player.getLanguageBundle()[LanguageGame.WAITING_COUNTDOWN_MSG].format(time / 20))
         }
     }
 

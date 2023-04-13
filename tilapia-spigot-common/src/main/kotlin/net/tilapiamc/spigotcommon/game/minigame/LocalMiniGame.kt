@@ -13,6 +13,8 @@ import net.tilapiamc.spigotcommon.game.minigame.stage.MiniGameStage
 import net.tilapiamc.spigotcommon.game.plugin.GamePlugin
 import org.bukkit.World
 import org.bukkit.entity.Player
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import java.lang.NullPointerException
 
 abstract class LocalMiniGame(core: TilapiaCore, gameWorld: World, lobbyType: String, miniGameType: String): ManagedMiniGame(core, gameWorld, lobbyType, miniGameType),
@@ -56,6 +58,9 @@ abstract class LocalMiniGame(core: TilapiaCore, gameWorld: World, lobbyType: Str
         for (inGamePlayer in inGamePlayers) {
             inGamePlayer.hidePlayer(event.player)
         }
+        event.player.allowFlight = true
+        event.player.isFlying = true
+        event.player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE - 2, 1, true, false))
     }
     @Subscribe("localMiniGame-onSpectatorQuit")
     fun onSpectatorQuit(event: SpectatorQuitEvent) {

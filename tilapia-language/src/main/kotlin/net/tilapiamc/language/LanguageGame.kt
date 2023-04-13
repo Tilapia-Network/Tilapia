@@ -11,8 +11,10 @@ object LanguageGame {
 
     val WAITING_WAITING_MSG by LanguageKeyDelegation("${ChatColor.RED}正在等待更多玩家...")
     val WAITING_COUNTDOWN_MSG by LanguageKeyDelegation("${ChatColor.YELLOW}遊戲將在%1\$d秒後開始")
-    val WAITING_WAITING by LanguageKeyDelegation("${ChatColor.YELLOW}遊戲將在%1\$d秒後開始")
+    val WAITING_WAITING by LanguageKeyDelegation("${ChatColor.RED}正在等待更多玩家...")
     val WAITING_COUNTDOWN by LanguageKeyDelegation("${ChatColor.YELLOW}遊戲將在%1\$d秒後開始")
+
+    val SPECTATOR_PREFIX by LanguageKeyDelegation("${ChatColor.GRAY}[觀眾] ")
 
     init {
         TilapiaCore.instance.languageManager.registerLanguageKey(WAITING_PLAYER_JOIN)
@@ -21,6 +23,7 @@ object LanguageGame {
         TilapiaCore.instance.languageManager.registerLanguageKey(WAITING_COUNTDOWN_MSG)
         TilapiaCore.instance.languageManager.registerLanguageKey(WAITING_WAITING)
         TilapiaCore.instance.languageManager.registerLanguageKey(WAITING_COUNTDOWN)
+        TilapiaCore.instance.languageManager.registerLanguageKey(SPECTATOR_PREFIX)
     }
 
 }

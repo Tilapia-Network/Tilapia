@@ -6,9 +6,9 @@ import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.gameextension.plugins.PluginNoBoatCrash
 import net.tilapiamc.gameextension.plugins.PluginSpeedyBoat_1_8
-import net.tilapiamc.gameextension.rules.impl.RuleNoDestruction
-import net.tilapiamc.gameextension.rules.impl.RuleNoTimeChange
-import net.tilapiamc.gameextension.rules.impl.RuleNoWeatherChange
+import net.tilapiamc.gameextension.rules.RuleNoDestruction
+import net.tilapiamc.gameextension.rules.RuleNoTimeChange
+import net.tilapiamc.gameextension.rules.RuleNoWeatherChange
 import net.tilapiamc.spigotcommon.game.lobby.LocalLobby
 import net.tilapiamc.spigotcommon.utils.TemporaryWorldProvider
 import org.bukkit.World
@@ -39,7 +39,6 @@ class TilapiaLobby(core: TilapiaCore, world: World, lobbyType: String): LocalLob
                 protectItemDrop = true,
                 protectPlayerPhysical = true,
                 protectPlayerInventoryChange = true,
-                ignoreCreative = true
             )
         )
     }

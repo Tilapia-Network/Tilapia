@@ -1,7 +1,9 @@
 package net.tilapiamc.core
 
 import net.tilapiamc.api.game.Game
+import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.ManagedGame
+import net.tilapiamc.api.game.minigame.ManagedMiniGame
 import net.tilapiamc.api.internal.JoinDeniedException
 import net.tilapiamc.api.internal.TilapiaInternal
 import net.tilapiamc.api.player.LocalNetworkPlayer
@@ -10,7 +12,7 @@ import net.tilapiamc.language.LanguageCore
 import org.bukkit.entity.Player
 
 class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
-    override fun sendToGame(player: NetworkPlayer, game: Game?, forceJoin: Boolean) {
+    override fun sendToGame(player: NetworkPlayer, game: Game?, forceJoin: Boolean, spectate: Boolean) {
         // TODO: Communication
         if (player is LocalNetworkPlayer) {
             player.logger.debug("Sending player to ${game?.gameId}")
@@ -25,15 +27,23 @@ class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
             }
         }
         if (game != null) {
+            if (spectate && game.gameType != GameType.MINIGAME) {
+                throw JoinDeniedException(game.shortGameId, "The game doesn't accept spectators")
+            }
             if (game.managed && game is ManagedGame && player.isLocal && player is LocalNetworkPlayer) {
                 player.resetPlayerState()
                 player.teleport(game.gameWorld.spawnLocation)
-                val result = game.couldAdd(player, forceJoin)
-                if (result.type.success) {
-                    game.add(player)
+                if (spectate) {
+                    (game as ManagedMiniGame).addSpectator(player)
                 } else {
-                    throw JoinDeniedException(game.shortGameId, result.message)
+                    val result = game.couldAdd(player, forceJoin)
+                    if (result.type.success) {
+                        game.add(player)
+                    } else {
+                        throw JoinDeniedException(game.shortGameId, result.message)
+                    }
                 }
+
             }
             player.currentGameId = game.gameId
         } else {
