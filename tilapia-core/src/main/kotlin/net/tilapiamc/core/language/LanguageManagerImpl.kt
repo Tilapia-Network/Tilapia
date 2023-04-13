@@ -30,7 +30,7 @@ object LanguageManagerImpl: LanguageManager {
     }
 
     override fun registerLanguageKey(languageKey: LanguageKey) {
-        logger.info("Registered language key: ${languageKey.name}")
+        logger.debug("Registered language key: ${languageKey.name}")
         registered.add(languageKey)
     }
 }

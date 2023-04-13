@@ -13,7 +13,6 @@ import java.io.FileReader
 
 object WorldManager {
 
-    val worlds = HashMap<TilapiaWorld, World>()
     val registeredWorlds = ArrayList<TilapiaWorld>()
 
     private val gson = GsonBuilder()
@@ -58,6 +57,10 @@ object WorldManager {
         registeredWorlds.add(world)
         save()
     }
+    fun unregisterWorld(worldName: String) {
+        registeredWorlds.removeIf { it.name == worldName }
+        save()
+    }
     fun createWorld(world: TilapiaWorld, seed: String? = null): World {
         val worldCreator = WorldCreator.name(world.name)
         if (world.generator?.isNotEmpty() == true) {
@@ -68,7 +71,6 @@ object WorldManager {
         }
         worldCreator.type(world.worldType)
         val theWorld = Bukkit.getServer().createWorld(worldCreator)
-        worlds[world] = theWorld;
         return theWorld
     }
 

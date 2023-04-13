@@ -22,7 +22,7 @@ class GeneratorVoid(parameter: String?): AbstractGenerator("Void", parameter) {
     }
 
     override fun getFixedSpawnLocation(world: World?, random: Random?): Location {
-        return Location(world, 0.0, 0.0, 0.0)
+        return Location(world, 8.0, 1.0, 8.0)
     }
 
     override fun generateChunkData(world: World?, random: Random?, x: Int, z: Int, biome: BiomeGrid): ChunkData {

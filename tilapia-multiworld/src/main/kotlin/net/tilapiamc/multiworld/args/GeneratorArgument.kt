@@ -7,6 +7,7 @@ import net.tilapiamc.command.CommandException
 import net.tilapiamc.command.CommandExecution
 import net.tilapiamc.command.NetworkCommand
 import net.tilapiamc.command.args.CommandArgument
+import net.tilapiamc.multiworld.GeneratorNotFoundException
 import net.tilapiamc.multiworld.WorldManager
 import org.bukkit.Bukkit
 import kotlin.reflect.KProperty
@@ -29,7 +30,6 @@ class GeneratorArgument<S>(name: String, isRequired: Boolean = false): CommandAr
     }
 }
 
-class GeneratorNotFoundException(val generatorName: String): CommandException(generatorName)
 
 fun <T> ArgumentsContainer<T>.generatorArg(name: String, isRequired: Boolean = true): GeneratorArgument<T> {
     return addArgument(GeneratorArgument(name, isRequired))

@@ -25,8 +25,9 @@ fun commandTp(): BukkitSubCommand.() -> Unit {
         val confirm by stringArg("Confirm", isRequired = false)
         onCommand {
             val player = requiresPlayer()
-            val registered = worldName()!!.lowercase() in WorldManager.registeredWorlds.map { it.name.lowercase() }
-            val world = Bukkit.getWorlds().first { it.name == worldName() }
+            val worldName = worldName()!!
+            val registered = worldName.lowercase() in WorldManager.registeredWorlds.map { it.name.lowercase() }
+            val world = Bukkit.getWorlds().first { it.name == worldName }
             if (player.world == world) {
                 sender.sendMessage("")
                 sender.sendMessage(getLanguageBundle()[errorAlreadyInTheWorld])
@@ -47,7 +48,7 @@ fun commandTp(): BukkitSubCommand.() -> Unit {
             }
 
             sender.sendMessage("")
-            if (WorldManager.checkName(worldName()!!) && !registered) {
+            if (WorldManager.checkName(worldName) && !registered) {
                 sender.sendMessage(getLanguageBundle()[warningWorldNotRegistered])
                 sender.sendMessage("")
             }

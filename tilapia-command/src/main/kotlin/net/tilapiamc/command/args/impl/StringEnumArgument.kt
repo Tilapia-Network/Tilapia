@@ -26,11 +26,15 @@ class StringEnumArgument<T>(name: String, val enumValues: (sender: T) -> Collect
     }
 
     override fun tabComplete(sender: T, token: String): Collection<String> {
-        if (ignoreCase) {
-            return enumValues(sender).filter { it.lowercase().startsWith(token.lowercase()) }
-        } else {
-            return enumValues(sender).filter { it.startsWith(token) }
+        if (exposeValues(sender)) {
+            if (ignoreCase) {
+                return enumValues(sender).filter { it.lowercase().startsWith(token.lowercase()) }
+            } else {
+                return enumValues(sender).filter { it.startsWith(token) }
+            }
         }
+        return emptyList()
+
     }
 }
 

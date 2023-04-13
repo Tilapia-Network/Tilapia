@@ -24,7 +24,11 @@ class EnumArgument<T, E: Enum<*>>(val enumClass: Class<E>, name: String, val all
     }
 
     override fun tabComplete(sender: T, token: String): Collection<String> {
-        return enumClass.enumConstants.map { it.name }.filter { it.lowercase().startsWith(token.lowercase()) }
+        if (exposeValues(sender)) {
+            return enumClass.enumConstants.map { it.name }.filter { it.lowercase().startsWith(token.lowercase()) }
+        } else {
+            return emptyList()
+        }
     }
 }
 

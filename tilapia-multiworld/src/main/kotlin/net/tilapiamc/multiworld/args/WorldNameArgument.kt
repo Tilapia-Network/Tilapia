@@ -5,7 +5,9 @@ import net.tilapiamc.command.CommandException
 import net.tilapiamc.command.CommandExecution
 import net.tilapiamc.command.NetworkCommand
 import net.tilapiamc.command.args.CommandArgument
+import net.tilapiamc.multiworld.IllegalWorldNameException
 import net.tilapiamc.multiworld.WorldManager
+import net.tilapiamc.multiworld.WorldNotFoundException
 import org.bukkit.Bukkit
 import kotlin.reflect.KProperty
 
@@ -15,7 +17,8 @@ class WorldNameArgument<S>(name: String, val requireRegistered: Boolean, val req
         return lambda@{
             val worldName = getArgString()?:return@lambda null
             if (requireRegistered) {
-                if (!WorldManager.registeredWorlds.any { it.name == worldName }) {
+                println(WorldManager.registeredWorlds)
+                if (!WorldManager.registeredWorlds.any { println(it.name); it.name == worldName }) {
                     throw WorldNotFoundException(worldName, true, false)
                 }
             }
@@ -49,6 +52,3 @@ class WorldNameArgument<S>(name: String, val requireRegistered: Boolean, val req
 fun <T> ArgumentsContainer<T>.worldNameArg(name: String, requireRegistered: Boolean, requireLoaded: Boolean, checkIllegal: Boolean = true, isRequired: Boolean = true): WorldNameArgument<T> {
     return addArgument(WorldNameArgument(name, requireRegistered, requireLoaded, checkIllegal, isRequired))
 }
-
-class IllegalWorldNameException(val worldName: String): CommandException(worldName)
-class WorldNotFoundException(val worldName: String, val requireRegistered: Boolean, val requireLoaded: Boolean): CommandException(worldName)
