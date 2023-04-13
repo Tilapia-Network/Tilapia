@@ -14,12 +14,14 @@ import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.internal.TilapiaInternal
 import net.tilapiamc.api.language.LanguageManager
+import net.tilapiamc.api.networking.GameFinder
 import net.tilapiamc.api.player.PlayersManager
 import net.tilapiamc.api.server.TilapiaServer
 import net.tilapiamc.core.commands.CommandJoinLocal
 import net.tilapiamc.core.commands.CommandLobbyLocal
 import net.tilapiamc.core.language.LanguageManagerImpl
 import net.tilapiamc.core.main.Main
+import net.tilapiamc.core.networking.LocalGameFinderImpl
 import net.tilapiamc.core.server.LocalServerImpl
 import net.tilapiamc.language.LanguageCore
 import net.tilapiamc.language.LanguageGame
@@ -45,7 +47,8 @@ class TilapiaCoreImpl: TilapiaCore {
     private val localServer = LocalServerImpl()
     val games = ArrayList<Game>()
     override val languageManager: LanguageManager = LanguageManagerImpl
-    override val gamesManager: GamesManager = GamesManager()
+    override val localGameManager: GamesManager = GamesManager()
+    override val gameFinder: GameFinder = LocalGameFinderImpl(this)   // TODO: Communication
 
     fun registerCommands() {
 
@@ -73,10 +76,13 @@ class TilapiaCoreImpl: TilapiaCore {
             throw IllegalArgumentException("Game has already been registered!")
         }
         if (game is ManagedGame) {
+            if (localGameManager.getAllLocalGames().any { it is ManagedGame && it.gameWorld.name == game.gameWorld.name }) {
+                throw IllegalArgumentException("The world is already assigned to another game")
+            }
             game.start()
         }
         games.add(game)
-        gamesManager.registerManagedGame(game)
+        localGameManager.registerManagedGame(game)
         EventsManager.registerAnnotationBasedListener(game)
     }
     override fun removeGame(game: Game) {
@@ -92,7 +98,7 @@ class TilapiaCoreImpl: TilapiaCore {
 //            TODO("Add to fall back server logic")
         }
         games.remove(game)
-        gamesManager.unregisterManagedGame(game.gameId)
+        localGameManager.unregisterManagedGame(game.gameId)
         EventsManager.unregisterAnnotationBasedListener(game)
     }
 
@@ -106,7 +112,7 @@ class TilapiaCoreImpl: TilapiaCore {
     }
 
     fun onDisable() {
-        for (allGame in gamesManager.getAllLocalGames()) {
+        for (allGame in localGameManager.getAllLocalGames()) {
             if (allGame.managed && allGame is ManagedGame) {
                 allGame.end()
             }

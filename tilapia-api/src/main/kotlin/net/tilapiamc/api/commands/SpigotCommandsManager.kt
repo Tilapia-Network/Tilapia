@@ -8,6 +8,7 @@ import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.api.events.packet.PacketReceiveEvent
 import net.tilapiamc.api.events.packet.PacketSendEvent
+import net.tilapiamc.api.internal.JoinDeniedException
 import net.tilapiamc.api.language.LanguageBundle
 import net.tilapiamc.api.language.LanguageKey
 import net.tilapiamc.api.permission.PermissionManager
@@ -53,6 +54,8 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
             } else {
                 event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.COMMAND_ENUM_NOT_FOUND].format(e.value))
             }
+        } catch (e: JoinDeniedException) {
+            event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.JOIN_DENIED].format(e.reason))
         } catch (e: PlayerNotFoundException) {
             event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.COMMAND_PLAYER_NOT_FOUND].format(e.playerName))
         } catch (e: UsageException) {

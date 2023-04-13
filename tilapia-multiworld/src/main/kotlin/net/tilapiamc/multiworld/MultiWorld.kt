@@ -4,6 +4,7 @@ import net.tilapiamc.api.commands.*
 import net.tilapiamc.api.generators.Generators
 import net.tilapiamc.command.CommandException
 import net.tilapiamc.multiworld.subcommands.*
+import net.tilapiamc.spigotcommon.utils.TemporaryWorldProvider
 import org.apache.logging.log4j.LogManager
 import org.bukkit.ChatColor
 import org.bukkit.plugin.java.JavaPlugin
@@ -15,6 +16,7 @@ class MultiWorld: JavaPlugin() {
     val logger = LogManager.getLogger("MultiWorld")
 
     override fun onEnable() {
+        TemporaryWorldProvider // Delete useless worlds
         Generators
         SpigotCommandsManager.registerCommand(MultiWorldCommand())
         WorldManager.load()

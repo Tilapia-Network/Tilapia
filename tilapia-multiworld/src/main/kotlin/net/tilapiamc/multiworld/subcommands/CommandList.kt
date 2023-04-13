@@ -20,16 +20,16 @@ fun commandList(): BukkitSubCommand.() -> Unit {
             for (world in Bukkit.getWorlds()) {
                 if (WorldManager.registeredWorlds.any { it.name == world.name }) continue
                 if (world.name.startsWith("temp-")) {
-                    sender.sendMessage(" ${ChatColor.GRAY}- ${ChatColor.GREEN}${world.name}    ${ChatColor.LIGHT_PURPLE}(${getLanguageBundle()[(parent as MultiWorldCommand).tempWorld]})")
+                    sender.sendMessage(" ${ChatColor.GRAY}- ${ChatColor.GREEN}${world.name}    ${ChatColor.LIGHT_PURPLE}[${getLanguageBundle()[(parent as MultiWorldCommand).tempWorld]}]")
                 } else {
-                    sender.sendMessage(" ${ChatColor.GRAY}- ${ChatColor.GREEN}${world.name}    ${ChatColor.RED}(${getLanguageBundle()[(parent as MultiWorldCommand).loadedNotRegistered]})")
+                    sender.sendMessage(" ${ChatColor.GRAY}- ${ChatColor.GREEN}${world.name}    ${ChatColor.RED}[${getLanguageBundle()[(parent as MultiWorldCommand).loadedNotRegistered]}]")
                 }
             }
             for (world in WorldManager.registeredWorlds) {
                 if (Bukkit.getWorld(world.name) != null) {
-                    sender.sendMessage(" ${ChatColor.GRAY}- ${ChatColor.GREEN}${world.name}    ${ChatColor.GREEN}(${getLanguageBundle()[(parent as MultiWorldCommand).loadedRegistered]})")
+                    sender.sendMessage(" ${ChatColor.GRAY}- ${ChatColor.GREEN}${world.name}    ${ChatColor.GREEN}[${getLanguageBundle()[(parent as MultiWorldCommand).loadedRegistered]}]")
                 } else {
-                    sender.sendMessage(" ${ChatColor.GRAY}- ${ChatColor.GREEN}${world.name}    ${ChatColor.YELLOW}(${getLanguageBundle()[(parent as MultiWorldCommand).registeredNotLoaded]})")
+                    sender.sendMessage(" ${ChatColor.GRAY}- ${ChatColor.GREEN}${world.name}    ${ChatColor.YELLOW}[${getLanguageBundle()[(parent as MultiWorldCommand).registeredNotLoaded]}]")
                 }
             }
             sender.sendMessage(getLanguageBundle()[footer])

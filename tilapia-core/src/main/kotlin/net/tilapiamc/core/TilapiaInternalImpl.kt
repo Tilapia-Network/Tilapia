@@ -2,8 +2,7 @@ package net.tilapiamc.core
 
 import net.tilapiamc.api.game.Game
 import net.tilapiamc.api.game.ManagedGame
-import net.tilapiamc.api.game.lobby.Lobby
-import net.tilapiamc.api.game.minigame.MiniGame
+import net.tilapiamc.api.internal.JoinDeniedException
 import net.tilapiamc.api.internal.TilapiaInternal
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
@@ -11,7 +10,8 @@ import net.tilapiamc.language.LanguageCore
 import org.bukkit.entity.Player
 
 class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
-    override fun sendToGame(player: NetworkPlayer, game: Game?) {
+    override fun sendToGame(player: NetworkPlayer, game: Game?, forceJoin: Boolean) {
+        // TODO: Communication
         if (player is LocalNetworkPlayer) {
             player.logger.debug("Sending player to ${game?.gameId}")
             if (game != null) {
@@ -28,11 +28,11 @@ class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
             if (game.managed && game is ManagedGame && player.isLocal && player is LocalNetworkPlayer) {
                 player.resetPlayerState()
                 player.teleport(game.gameWorld.spawnLocation)
-                val result = game.preAdd(player)
+                val result = game.couldAdd(player, false)
                 if (result.type.success) {
                     game.add(player)
                 } else {
-                    error("Could not add player: ${result.message}")
+                    throw JoinDeniedException(result.message)
                 }
             }
             player.currentGameId = game.gameId
@@ -42,13 +42,6 @@ class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
 
     }
 
-    override fun findMiniGameToJoin(player: NetworkPlayer, miniGameType: String): MiniGame? {
-        return core.gamesManager.getAllLocalGames().filterIsInstance<MiniGame>().firstOrNull { it.miniGameType == miniGameType }
-    }
-
-    override fun findLobbyToJoin(player: NetworkPlayer, lobbyType: String): Lobby? {
-        return core.gamesManager.getAllLocalGames().filterIsInstance<Lobby>().firstOrNull { it.lobbyType == lobbyType }
-    }
 
 
     override fun createLocalPlayer(bukkitPlayer: Player): LocalNetworkPlayer {

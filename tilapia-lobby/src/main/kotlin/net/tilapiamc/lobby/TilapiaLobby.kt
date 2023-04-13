@@ -10,9 +10,11 @@ import net.tilapiamc.gameextension.rules.impl.RuleNoDestruction
 import net.tilapiamc.gameextension.rules.impl.RuleNoTimeChange
 import net.tilapiamc.gameextension.rules.impl.RuleNoWeatherChange
 import net.tilapiamc.spigotcommon.game.lobby.LocalLobby
+import net.tilapiamc.spigotcommon.utils.TemporaryWorldProvider
 import org.bukkit.World
+import java.util.UUID
 
-class TilapiaLobby(core: TilapiaCore, world: World, lobbyType: String): LocalLobby(core, world, lobbyType) {
+class TilapiaLobby(core: TilapiaCore, world: World, lobbyType: String): LocalLobby(core, TemporaryWorldProvider.createTemporaryWorldFromWorld(world), lobbyType) {
 
     init {
         applyPlugin(PluginNoBoatCrash())
@@ -50,13 +52,8 @@ class TilapiaLobby(core: TilapiaCore, world: World, lobbyType: String): LocalLob
 
     }
 
-
-    override fun couldAddPlayer(networkPlayer: NetworkPlayer): Double {
-        return 1.0
-    }
-
-    override fun preAddPlayer(networkPlayer: NetworkPlayer): ManagedGame.PlayerJoinResult {
-        return ManagedGame.PlayerJoinResult(ManagedGame.PlayerJoinResultType.ACCEPTED)
+    override fun couldAddPlayer(networkPlayer: NetworkPlayer, forceJoin: Boolean): ManagedGame.PlayerJoinResult {
+        return ManagedGame.PlayerJoinResult(ManagedGame.PlayerJoinResultType.ACCEPTED, 1.0)
     }
 
     override fun addPlayer(networkPlayer: LocalNetworkPlayer) {

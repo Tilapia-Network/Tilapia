@@ -11,13 +11,20 @@ import java.util.*
 
 abstract class ManagedMiniGame(
     val core: TilapiaCore,
-    override val gameWorld: World,
+    final override val gameWorld: World,
     lobbyType: String,
     miniGameType: String
 ): MiniGame(core.getLocalServer(), core.provideGameId(GameType.MINIGAME), true, lobbyType, miniGameType), ManagedGame {
-    override val logger: Logger = LogManager.getLogger("Game $gameId")
+
+
+    final override val logger: Logger = LogManager.getLogger("MiniGame $gameId")
     val inGamePlayers = ArrayList<LocalNetworkPlayer>()
     val spectatorPlayers = ArrayList<LocalNetworkPlayer>()
+
+    init {
+        logger.info("Assigned world: ${gameWorld.name} to mini game $shortGameId")
+    }
+
     override fun getManagedGameId(): UUID {
         return gameId
     }

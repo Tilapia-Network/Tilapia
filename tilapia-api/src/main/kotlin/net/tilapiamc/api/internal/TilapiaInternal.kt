@@ -9,10 +9,10 @@ import org.bukkit.entity.Player
 
 interface TilapiaInternal {
 
-    fun sendToGame(player: NetworkPlayer, game: Game?)
-    fun findMiniGameToJoin(player: NetworkPlayer, miniGameType: String): MiniGame?
-    fun findLobbyToJoin(player: NetworkPlayer, lobbyType: String): Lobby?
+    fun sendToGame(player: NetworkPlayer, game: Game?, forceJoin: Boolean)
 
     fun createLocalPlayer(bukkitPlayer: Player): LocalNetworkPlayer
 
 }
+
+class JoinDeniedException(val reason: String): RuntimeException()

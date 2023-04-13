@@ -11,14 +11,11 @@ abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
     NetworkPlayer(core, bukkitPlayer.name, bukkitPlayer.uniqueId), Player by bukkitPlayer {
     override val isLocal: Boolean = true
     abstract val logger: Logger
-    abstract val language: Locale
 
     abstract val nameWithPrefix: String
 
 
-    fun getLanguageBundle(): LanguageBundle {
-        return tilapiaCore.languageManager.getLanguageBundle(language)
-    }
+
 
     fun resetPlayerState() {
         // TODO: Temp solution. Gonna kick the player and re-connect
