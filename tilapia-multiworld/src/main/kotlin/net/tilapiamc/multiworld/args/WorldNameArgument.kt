@@ -17,8 +17,7 @@ class WorldNameArgument<S>(name: String, val requireRegistered: Boolean, val req
         return lambda@{
             val worldName = getArgString()?:return@lambda null
             if (requireRegistered) {
-                println(WorldManager.registeredWorlds)
-                if (!WorldManager.registeredWorlds.any { println(it.name); it.name == worldName }) {
+                if (!WorldManager.registeredWorlds.any { it.name == worldName }) {
                     throw WorldNotFoundException(worldName, true, false)
                 }
             }

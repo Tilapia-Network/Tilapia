@@ -36,6 +36,11 @@ class MultiWorld: JavaPlugin() {
 
 
 class MultiWorldCommand: BukkitCommand("multiworld", "多世界插件的主要指令", true) {
+    val loadedRegistered = getCommandLanguageKey("LOADED_REGISTERED", "已載入")
+    val registeredNotLoaded = getCommandLanguageKey("REGISTERED_NOT_LOADED", "尚未載入")
+    val loadedNotRegistered = getCommandLanguageKey("LOADED_NOT_REGISTERED", "尚未註冊")
+    val tempWorld = getCommandLanguageKey("TEMP_WORLD", "暫時世界")
+
     init {
         val worldNotLoaded = getCommandLanguageKey("ERROR_WORLD_NOT_LOADED", "${ChatColor.RED}世界 %1\$s 並未被載入！")
         val worldNotRegistered = getCommandLanguageKey("ERROR_WORLD_NOT_REGISTERED", "${ChatColor.RED}世界 %1\$s 並未被註冊！")
@@ -68,7 +73,7 @@ class MultiWorldCommand: BukkitCommand("multiworld", "多世界插件的主要�
         }
 
         subCommand("help", "顯示多世界插件的所有指令", commandHelp())
-        subCommand("list", "顯示所有已註冊的世界", commandList())
+        subCommand("list", "顯示所有已註冊/載入的世界", commandList())
         subCommand("info", "顯示一個世界的詳細資料", commandInfo())
         subCommand("create", "創建, 註冊並載入一個世界", commandCreate())
         subCommand("import", "註冊並載入一個世界", commandImport())

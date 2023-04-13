@@ -48,6 +48,9 @@ object WorldManager {
         }
     }
 
+    fun getWorld(name: String): TilapiaWorld? {
+        return registeredWorlds.firstOrNull { it.name == name }
+    }
     fun checkName(name: String): Boolean = !(name.startsWith("temp-"))
 
     fun registerWorld(world: TilapiaWorld) {
