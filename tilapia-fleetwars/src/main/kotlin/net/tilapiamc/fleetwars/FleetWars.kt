@@ -10,11 +10,12 @@ import net.tilapiamc.gameextension.minigame.StageWaiting
 import net.tilapiamc.gameextension.rules.RuleNoDestruction
 import net.tilapiamc.spigotcommon.game.minigame.LocalMiniGame
 import net.tilapiamc.spigotcommon.game.minigame.stage.MiniGameStage
+import net.tilapiamc.spigotcommon.utils.TemporaryWorldProvider
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.World
 
-class FleetWars(core: TilapiaCore, gameWorld: World): LocalMiniGame(core, gameWorld, "fleetwars", "fleetwars") {
+class FleetWars(core: TilapiaCore, gameWorld: World): LocalMiniGame(core, TemporaryWorldProvider.createTemporaryWorldFromWorld(gameWorld), "fleetwars", "fleetwars") {
     override val defaultStage: MiniGameStage = StageWaiting(this, { if (it > 0) 20 * 10 else -1}, 8) {
         currentStage = StageInGame(this)
     }
