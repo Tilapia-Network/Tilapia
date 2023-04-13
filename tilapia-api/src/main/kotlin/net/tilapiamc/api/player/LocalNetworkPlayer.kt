@@ -3,6 +3,7 @@ package net.tilapiamc.api.player
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.language.LanguageBundle
 import org.apache.logging.log4j.Logger
+import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import java.util.Locale
@@ -13,6 +14,8 @@ abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
     abstract val logger: Logger
 
     abstract val nameWithPrefix: String
+    abstract val prefix: String
+    abstract val prefixColor: String
 
 
 
@@ -29,6 +32,9 @@ abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
         foodLevel = 20
         bedSpawnLocation = null
         leaveVehicle()
+        for (onlinePlayer in Bukkit.getOnlinePlayers()) {
+            showPlayer(onlinePlayer)
+        }
     }
 
 

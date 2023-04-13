@@ -26,7 +26,7 @@ class CommandSandbox: BukkitCommand("sandbox", "沙盒模式主要指令", true)
         val hoverText = getCommandLanguageKey("CLICK_TO_TELEPORT_HOVER_TEXT", "${ChatColor.GRAY}執行 %1\$s")
 
         subCommand("help", "查看沙盒模式的指令列表") {
-            val header = getCommandLanguageKey("HEADER", "\n${ChatColor.GREEN}========== 沙河模式 (/sandbox) ==========")
+            val header = getCommandLanguageKey("HEADER", "\n${ChatColor.GREEN}========== 沙盒模式 (/sandbox) ==========")
             onCommand {
                 sender.sendMessage(getLanguageBundle()[header])
 

@@ -41,18 +41,20 @@ class PluginBossBar1_8_8(val getBossBarText: (LocalNetworkPlayer) -> String?): G
     fun onPlayerTick(event: EntityTickEvent) {
         val player = event.entity
         if (player !is Player) return
-        val text = getBossBarText(player.getLocalPlayer())
-        if (text != null) {
-            if (bossBarForPlayer[player] != null) {
-                bossBarForPlayer[player]!!.name = text
-                (bossBarForPlayer[player]!!.entity as CraftEntity).handle.isInvisible = true
-                bossBarForPlayer[player]!!.teleport(getNPCLocation(player), PlayerTeleportEvent.TeleportCause.PLUGIN)
-            } else {
-                val npc = createNPC(player)
-                bossBarForPlayer[player] = npc
-                npc.name = text
+        try {
+            val text = getBossBarText(player.getLocalPlayer())
+            if (text != null) {
+                if (bossBarForPlayer[player] != null) {
+                    bossBarForPlayer[player]!!.name = text
+                    (bossBarForPlayer[player]!!.entity as CraftEntity).handle.isInvisible = true
+                    bossBarForPlayer[player]!!.teleport(getNPCLocation(player), PlayerTeleportEvent.TeleportCause.PLUGIN)
+                } else {
+                    val npc = createNPC(player)
+                    bossBarForPlayer[player] = npc
+                    npc.name = text
+                }
             }
-        }
+        } catch (e: NullPointerException) {}
     }
 
     @Subscribe("bossBar-onPlayerQuit")

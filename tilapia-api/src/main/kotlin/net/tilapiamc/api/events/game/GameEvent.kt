@@ -6,6 +6,6 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerQuitEvent
 
-abstract class GameEvent(val game: ManagedGame): Event() {
+abstract class GameEvent(open val game: ManagedGame): Event() {
 
 }

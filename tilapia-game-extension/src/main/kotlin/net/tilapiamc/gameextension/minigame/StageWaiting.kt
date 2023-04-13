@@ -5,6 +5,7 @@ import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.game.PlayerJoinGameEvent
 import net.tilapiamc.api.events.game.PlayerQuitGameEvent
 import net.tilapiamc.api.player.LocalNetworkPlayer
+import net.tilapiamc.gameextension.plugins.PluginNameTagDisplay
 import net.tilapiamc.gameextension.rules.impl.RuleNoDestruction
 import net.tilapiamc.gameextension.rules.impl.RuleNoTimeChange
 import net.tilapiamc.language.LanguageGame
@@ -22,6 +23,7 @@ class StageWaiting(miniGame: LocalMiniGame,
     override fun onStart() {
         addRule(RuleNoTimeChange(miniGame))
         addRule(RuleNoDestruction(miniGame))
+        applyPlugin(PluginNameTagDisplay(getPrefix = { it.prefixColor }, getSuffix = { "" }))
     }
 
     override fun onEnd() {

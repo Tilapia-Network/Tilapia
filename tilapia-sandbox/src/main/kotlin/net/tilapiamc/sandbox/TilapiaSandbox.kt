@@ -16,7 +16,7 @@ import org.bukkit.World
 import org.bukkit.entity.Player
 
 
-class TilapiaSandbox(core: TilapiaCore, world: World): LocalLobby(core, world, "main") {
+class TilapiaSandbox(core: TilapiaCore, world: World): LocalLobby(core, world, "sandbox") {
 
     companion object {
         val SANDBOX_BOSS_BAR by LanguageKeyDelegation("您正在沙盒地圖")

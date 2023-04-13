@@ -1,6 +1,9 @@
 package net.tilapiamc.api.game.minigame
 
 import net.tilapiamc.api.TilapiaCore
+import net.tilapiamc.api.events.EventsManager
+import net.tilapiamc.api.events.game.PlayerJoinMiniGameEvent
+import net.tilapiamc.api.events.game.SpectatorJoinEvent
 import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.player.LocalNetworkPlayer
@@ -40,12 +43,26 @@ abstract class ManagedMiniGame(
     }
 
     fun addSpectator(networkPlayer: LocalNetworkPlayer) {
-        this.spectatorPlayers.add(networkPlayer)
-        super.add(networkPlayer)
+        if (networkPlayer !in this.spectatorPlayers) {
+            this.inGamePlayers.remove(networkPlayer)
+            this.spectatorPlayers.add(networkPlayer)
+            EventsManager.fireEvent(SpectatorJoinEvent(this, networkPlayer))
+            if (networkPlayer !in this.players) {
+                super.add(networkPlayer)
+            }
+        }
+
+
     }
     override fun add(networkPlayer: LocalNetworkPlayer) {
-        this.inGamePlayers.add(networkPlayer)
-        super.add(networkPlayer)
+        if (networkPlayer !in this.inGamePlayers) {
+            this.inGamePlayers.add(networkPlayer)
+            this.spectatorPlayers.remove(networkPlayer)
+            EventsManager.fireEvent(PlayerJoinMiniGameEvent(this, networkPlayer))
+            if (networkPlayer !in this.players) {
+                super.add(networkPlayer)
+            }
+        }
     }
 
     override fun remove(networkPlayer: LocalNetworkPlayer) {
@@ -53,4 +70,5 @@ abstract class ManagedMiniGame(
         this.spectatorPlayers.remove(networkPlayer)
         super.remove(networkPlayer)
     }
+
 }

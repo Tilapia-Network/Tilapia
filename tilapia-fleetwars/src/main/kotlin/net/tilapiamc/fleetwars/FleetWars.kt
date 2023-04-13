@@ -2,6 +2,7 @@ package net.tilapiamc.fleetwars
 
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.game.ManagedGame
+import net.tilapiamc.api.game.getGameLanguageKey
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.fleetwars.stages.StageInGame
@@ -26,9 +27,13 @@ class FleetWars(core: TilapiaCore, gameWorld: World): LocalMiniGame(core, gameWo
 
     }
 
+    val gameAlreadyStarted = getGameLanguageKey("GAME_ALREADY_STARTED", "遊戲已經開始")
 
     override fun couldAddPlayer(networkPlayer: NetworkPlayer, forceJoin: Boolean): ManagedGame.PlayerJoinResult {
-        return ManagedGame.PlayerJoinResult(ManagedGame.PlayerJoinResultType.ACCEPTED, 1.0)
+        if (defaultStage is StageWaiting) {
+            return ManagedGame.PlayerJoinResult(ManagedGame.PlayerJoinResultType.ACCEPTED, 1.0)
+        }
+        return ManagedGame.PlayerJoinResult(ManagedGame.PlayerJoinResultType.DENIED, 0.0, networkPlayer.getLanguageBundle()[gameAlreadyStarted])
     }
 
     override fun addPlayer(networkPlayer: LocalNetworkPlayer) {

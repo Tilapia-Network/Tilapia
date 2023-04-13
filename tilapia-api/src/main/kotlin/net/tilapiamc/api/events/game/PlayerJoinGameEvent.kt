@@ -6,7 +6,7 @@ import net.tilapiamc.api.player.LocalNetworkPlayer
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 
-class PlayerJoinGameEvent(game: ManagedGame, val player: LocalNetworkPlayer): GameEvent(game) {
+open class PlayerJoinGameEvent(game: ManagedGame, val player: LocalNetworkPlayer): GameEvent(game) {
 
 
 

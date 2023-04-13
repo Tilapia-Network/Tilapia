@@ -1,21 +1,18 @@
 package net.tilapiamc.spigotcommon.game.minigame
 
 import net.tilapiamc.api.TilapiaCore
-import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.Subscribe
-import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
-import net.tilapiamc.api.events.annotation.unregisterAnnotationBasedListener
-import net.tilapiamc.api.events.game.GameEvent
-import net.tilapiamc.api.game.lobby.ManagedLobby
+import net.tilapiamc.api.events.game.SpectatorJoinEvent
+import net.tilapiamc.api.events.game.SpectatorQuitEvent
 import net.tilapiamc.api.game.minigame.ManagedMiniGame
 import net.tilapiamc.api.player.LocalNetworkPlayer
-import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.spigotcommon.game.AbstractRule
 import net.tilapiamc.spigotcommon.game.LocalGame
 import net.tilapiamc.spigotcommon.game.event.GameEventManager
 import net.tilapiamc.spigotcommon.game.minigame.stage.MiniGameStage
 import net.tilapiamc.spigotcommon.game.plugin.GamePlugin
 import org.bukkit.World
+import org.bukkit.entity.Player
 import java.lang.NullPointerException
 
 abstract class LocalMiniGame(core: TilapiaCore, gameWorld: World, lobbyType: String, miniGameType: String): ManagedMiniGame(core, gameWorld, lobbyType, miniGameType),
@@ -53,4 +50,20 @@ abstract class LocalMiniGame(core: TilapiaCore, gameWorld: World, lobbyType: Str
         currentStage = defaultStage
         super.start()
     }
+
+    @Subscribe("localMiniGame-onSpectatorJoin")
+    fun onSpectatorJoin(event: SpectatorJoinEvent) {
+        for (inGamePlayer in inGamePlayers) {
+            inGamePlayer.hidePlayer(event.player)
+        }
+    }
+    @Subscribe("localMiniGame-onSpectatorQuit")
+    fun onSpectatorQuit(event: SpectatorQuitEvent) {
+        for (inGamePlayer in inGamePlayers) {
+            inGamePlayer.showPlayer(event.player)
+        }
+    }
+
+    fun Player.isInGame(): Boolean = player.uniqueId in inGamePlayers.map { it.uniqueId }
+    fun Player.isSpectator(): Boolean = player.uniqueId in spectatorPlayers.map { it.uniqueId }
 }

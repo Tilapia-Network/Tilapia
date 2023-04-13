@@ -5,7 +5,7 @@ import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import org.bukkit.event.HandlerList
 
-class PlayerQuitGameEvent(game: ManagedGame, val player: LocalNetworkPlayer): GameEvent(game) {
+open class PlayerQuitGameEvent(game: ManagedGame, val player: LocalNetworkPlayer): GameEvent(game) {
 
     companion object {
         val handlerList = HandlerList()

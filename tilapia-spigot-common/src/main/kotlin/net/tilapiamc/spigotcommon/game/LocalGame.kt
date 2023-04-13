@@ -21,17 +21,24 @@ interface LocalGame: ManagedGame {
     val gameEventManager: GameEventManager
 
     fun applyPlugin(plugin: GamePlugin) {
-        // TODO: Check if the plugin is in list
+        if (plugin in plugins) {
+            logger.warn("Plugin is already in the applied! Ignoring", Exception())
+            return
+        }
         plugins.add(plugin)
         plugin.game = this
-        plugin.eventManager = gameEventManager
+        plugin.eventManager = GameEventManager(this)
         plugin.onEnable()
     }
 
 
     fun removePlugin(plugin: GamePlugin) {
-        // TODO: Check if the plugin is in list
+        if (plugin !in plugins) {
+            logger.warn("Plugin is already disabled! Ignoring", Exception())
+            return
+        }
         plugin.onDisable()
+        plugin.eventManager.unregisterAll()
         plugins.remove(plugin)
     }
 

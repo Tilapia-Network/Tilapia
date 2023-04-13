@@ -8,13 +8,17 @@ import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import java.util.*
 
-class LocalPlayerImpl(core: TilapiaCoreImpl, bukkitPlayer: Player): LocalNetworkPlayer(core, bukkitPlayer) {
+class LocalPlayerImpl(core: TilapiaCoreImpl, bukkitPlayer: Player,
+): LocalNetworkPlayer(core, bukkitPlayer) {
 
     override val logger: Logger = LogManager.getLogger("PlayerLogger ${bukkitPlayer.name}")
     override val language: Locale = Locale.TRADITIONAL_CHINESE
     override val nameWithPrefix: String
-        get() = "${ChatColor.BLUE}[開發者] $name"
-
+        get() = "$prefix $name"
+    override val prefix: String
+        get() = "$prefixColor[開發者] "
+    override val prefixColor: String
+        get() = "${ChatColor.BLUE}"
     init {
         onJoin()
     }
