@@ -82,8 +82,8 @@ class MultiWorldCommand: BukkitCommand("multiworld", "多世界插件的主要�
         subCommand("unload", "卸載一個世界", commandUnload())
         subCommand("load", "載入一個世界", commandLoad())
         subCommand("remove", "卸載並且取消註冊一個世界", commandRemove())
-        subCommand("clone", "複製並載入一個世界", commandClone())
-        subCommand("clone-temporary", "複製並載入一個暫時世界", commandCloneTemporary())
+//        subCommand("clone", "複製並載入一個世界", commandClone())
+//        subCommand("clone-temporary", "複製並載入一個暫時世界", commandCloneTemporary())
         subCommand("delete", "無用的指令，請手動刪除資料夾以刪除世界") {
             val hint = getCommandLanguageKey("hint", "${ChatColor.RED}此插件因為安全原因並不支援此指令！請手動刪除世界資料夾以刪除世界")
             onCommand {
