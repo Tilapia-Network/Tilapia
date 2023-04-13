@@ -13,7 +13,7 @@ object LanguageCommand {
     val COMMAND_ENUM_NOT_FOUND_VALUE_EXPOSED by LanguageKeyDelegation("${ChatColor.RED}錯誤的參數：${ChatColor.YELLOW}%1\$s${ChatColor.RED}！可用的參數: %2\$s")
     val COMMAND_ENUM_NOT_FOUND by LanguageKeyDelegation("${ChatColor.RED}錯誤的參數: ${ChatColor.YELLOW}%1\$s${ChatColor.RED}！請查看指令用法以取得參數列表")
 
-    val JOIN_DENIED by LanguageKeyDelegation("${ChatColor.RED}無法將你傳送到 %1\$s ，原因: %1\$s")
+    val JOIN_DENIED by LanguageKeyDelegation("${ChatColor.RED}無法將你傳送到 %1\$s ，原因: %2\$s")
 
     init {
         TilapiaCore.instance.languageManager.registerLanguageKey(COMMAND_NOT_FOUND)

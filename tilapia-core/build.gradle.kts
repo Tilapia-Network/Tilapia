@@ -31,6 +31,7 @@ spigot {
         named(project.name)
         version(project.version.toString())
         main("net.tilapiamc.core.main.Main")
+        depend("Citizens")
     }
 }
 

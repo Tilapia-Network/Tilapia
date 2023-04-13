@@ -11,6 +11,7 @@ object TilapiaSandboxPlugin {
     lateinit var plugin: Main
 
     fun onEnable() {
+        TilapiaSandbox.SANDBOX_BOSS_BAR
         SpigotCommandsManager.registerCommand(CommandSandbox())
     }
 

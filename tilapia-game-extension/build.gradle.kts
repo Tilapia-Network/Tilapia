@@ -17,6 +17,9 @@ repositories {
 }
 
 dependencies {
+    compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT") {
+        exclude("*", "*")
+    }
     compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
     compileOnly(MinecraftDependencyHelper.spigot("1.8.8"))
     implementation(project(":fan87-plugin-dev-kit"))

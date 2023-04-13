@@ -32,6 +32,7 @@ spigot {
         version(project.version.toString())
         main("net.tilapiamc.sandbox.main.Main")
         depend("tilapia-core")
+        depend("Citizens")
     }
 }
 

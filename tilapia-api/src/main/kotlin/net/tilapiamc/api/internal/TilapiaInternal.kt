@@ -15,4 +15,4 @@ interface TilapiaInternal {
 
 }
 
-class JoinDeniedException(val reason: String): RuntimeException()
+class JoinDeniedException(val gameId: String, val reason: String): RuntimeException()

@@ -28,11 +28,11 @@ class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
             if (game.managed && game is ManagedGame && player.isLocal && player is LocalNetworkPlayer) {
                 player.resetPlayerState()
                 player.teleport(game.gameWorld.spawnLocation)
-                val result = game.couldAdd(player, false)
+                val result = game.couldAdd(player, forceJoin)
                 if (result.type.success) {
                     game.add(player)
                 } else {
-                    throw JoinDeniedException(result.message)
+                    throw JoinDeniedException(game.shortGameId, result.message)
                 }
             }
             player.currentGameId = game.gameId

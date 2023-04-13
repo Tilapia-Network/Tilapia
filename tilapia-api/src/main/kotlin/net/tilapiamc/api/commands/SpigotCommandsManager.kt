@@ -55,7 +55,7 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
                 event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.COMMAND_ENUM_NOT_FOUND].format(e.value))
             }
         } catch (e: JoinDeniedException) {
-            event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.JOIN_DENIED].format(e.reason))
+            event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.JOIN_DENIED].format(e.gameId, e.reason))
         } catch (e: PlayerNotFoundException) {
             event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.COMMAND_PLAYER_NOT_FOUND].format(e.playerName))
         } catch (e: UsageException) {
@@ -63,7 +63,7 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
         } catch (e: CommandException) {
             event.player.sendMessage("${ChatColor.RED}${e.message}")
         } catch (e: Throwable) {
-            event.player.getLocalPlayer().logger.error("Error while handling command (\"${event.message}\")", e)
+            logger.error("Error while handling command (\"${event.message}\"  /  ${event.player.name})", e)
             event.player.sendMessage(event.player.getLocalPlayer().getLanguageBundle()[LanguageCommand.COMMAND_ERROR])
             return
         }
@@ -102,7 +102,7 @@ object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogge
 
 fun CommandSender.getSenderLanguageBundle(): LanguageBundle {
     if (this is Player) {
-        return (this as Player).getLocalPlayer().getLanguageBundle()
+        return this.getLocalPlayer().getLanguageBundle()
     }
     return TilapiaCore.instance.languageManager.getLanguageBundle(Locale.TRADITIONAL_CHINESE)
 }

@@ -92,7 +92,7 @@ class TilapiaCoreImpl: TilapiaCore {
         if (game !in games) {
             throw IllegalArgumentException("Game is not registered!")
         }
-        for (player in game.players) {
+        for (player in ArrayList(game.players)) {
             val localPlayer = PlayersManager.localPlayers[player.uuid]
             localPlayer!!.kickPlayer(localPlayer.getLanguageBundle()[LanguageCore.TEMP_GAME_STOPPED])
 //            TODO("Add to fall back server logic")

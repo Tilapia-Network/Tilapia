@@ -1,19 +1,34 @@
 package net.tilapiamc.sandbox
 
 import net.tilapiamc.api.TilapiaCore
+import net.tilapiamc.api.commands.getSenderLanguageBundle
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.game.getGameLanguageKey
+import net.tilapiamc.api.language.LanguageKeyDelegation
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
+import net.tilapiamc.api.utils.HashMapPlayerProvider
+import net.tilapiamc.api.utils.PlayerBasedProvider
+import net.tilapiamc.gameextension.plugins.PluginBossBar1_8_8
 import net.tilapiamc.spigotcommon.game.lobby.LocalLobby
-import net.tilapiamc.spigotcommon.utils.TemporaryWorldProvider
 import org.bukkit.ChatColor
 import org.bukkit.World
+import org.bukkit.entity.Player
 
-class TilapiaSandbox(core: TilapiaCore, world: World): LocalLobby(core, TemporaryWorldProvider.createTemporaryWorldFromWorld(world), "main") {
+
+class TilapiaSandbox(core: TilapiaCore, world: World): LocalLobby(core, world, "main") {
+
+    companion object {
+        val SANDBOX_BOSS_BAR by LanguageKeyDelegation("您正在沙盒地圖")
+        init {
+            TilapiaCore.instance.languageManager.registerLanguageKey(SANDBOX_BOSS_BAR)
+        }
+    }
+
+    val rainbowTextProvider = BossBarTextProvider()
 
     init {
-
+        applyPlugin(PluginBossBar1_8_8 { rainbowTextProvider(it) + "  ${ChatColor.RESET}${ChatColor.YELLOW}${world.name}" })
     }
 
     override fun onStart() {
@@ -23,6 +38,7 @@ class TilapiaSandbox(core: TilapiaCore, world: World): LocalLobby(core, Temporar
     override fun onEnd() {
 
     }
+
 
 
 
@@ -47,6 +63,53 @@ class TilapiaSandbox(core: TilapiaCore, world: World): LocalLobby(core, Temporar
             it.sendMessage(it.getLanguageBundle()[quitMessage].format(it.nameWithPrefix))
         }
     }
+    inner class BossBarTextProvider: PlayerBasedProvider<String>() {
 
+        val frame = HashMapPlayerProvider(0)
+
+        fun Player.getBossBarText(): String {
+            return getSenderLanguageBundle()[SANDBOX_BOSS_BAR]
+        }
+
+        // 0 ~ length * 3  - Color iteration
+        // length * 3 ~ +120  ~  Stable Color
+        // length * 3 ~ +30  ~  Color Blinking
+        fun getTotalFrame(player: Player): Int {
+            return player.getBossBarText().length * 3 + 120 + 30
+        }
+
+        override fun invoke(player: Player): String {
+            frame[player] = (frame[player] + 1) % getTotalFrame(player)
+            val currentFrameNumber = frame[player]
+            val text = player.getBossBarText()
+            val stageOne = player.getBossBarText().length * 3
+            val stageTwo = stageOne + 120
+            val stageThree = stageTwo + 30
+            if (currentFrameNumber in 0 until stageOne) {
+                val index = ((currentFrameNumber + 1) / 3)
+                return "${ChatColor.GOLD}${ChatColor.BOLD}${text.substring(0, index)}${ChatColor.YELLOW}${ChatColor.BOLD}${text.substring(index)}"
+            } else if (currentFrameNumber in stageOne until stageTwo) {
+                return "${ChatColor.GOLD}${ChatColor.BOLD}${text}"
+            } else if (currentFrameNumber in stageTwo until stageThree) {
+                val index = currentFrameNumber - stageTwo
+                if ((index / 10) % 2 == 0) {
+                    return "${ChatColor.YELLOW}${ChatColor.BOLD}${text}"
+                } else {
+                    return "${ChatColor.GOLD}${ChatColor.BOLD}${text}"
+                }
+            }
+            return text
+        }
+
+        override fun onJoin(player: Player) {
+
+        }
+
+        override fun onQuit(player: Player) {
+
+        }
+
+    }
 
 }
+

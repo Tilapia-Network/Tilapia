@@ -43,13 +43,13 @@ class CommandSandbox: BukkitCommand("sandbox", "沙盒模式主要指令", true)
             val worldName by worldNameArg("World", true)
             onCommand {
                 val worldName = worldName()!!
-                if (TilapiaCore.instance.localGameManager.getAllLocalGames().filterIsInstance<ManagedGame>().any { it.gameWorld.name == worldName }) {
+                if (core.localGameManager.getAllLocalGames().filterIsInstance<ManagedGame>().any { it.gameWorld.name == worldName }) {
                     sender.sendMessage("")
                     sender.sendMessage(getLanguageBundle()[errorWorldAlreadyAssigned])
                     sender.sendMessage("")
                     return@onCommand true
                 }
-                TilapiaCore.instance.addGame(TilapiaSandbox(TilapiaCore.instance, Bukkit.getWorld(worldName)))
+                core.addGame(TilapiaSandbox(core, Bukkit.getWorld(worldName)))
                 if (sender !is Player) {
                     sender.sendMessage(getLanguageBundle()[success])
                 } else {
@@ -69,11 +69,12 @@ class CommandSandbox: BukkitCommand("sandbox", "沙盒模式主要指令", true)
             val sandBox by sandBoxArg("SandBox", true)
             onCommand {
                 val sandBox = sandBox()!!
-                sandBox.end()
                 sender.sendMessage(getLanguageBundle()[success])
+                sandBox.end()
                 true
             }
         }
+        val noSandboxRunning = getCommandLanguageKey("NO_SANDBOX_RUNNING", "${ChatColor.RED}目前並沒有任何沙盒地圖")
         subCommand("list", "列出所有正在運行的沙盒地圖") {
             onCommand {
                 sender.sendMessage("TODO: Not yet implemented")
@@ -81,20 +82,28 @@ class CommandSandbox: BukkitCommand("sandbox", "沙盒模式主要指令", true)
             }
         }
         subCommand("list-local", "列出此伺服器正在運行的沙盒地圖") {
-            val header = getCommandLanguageKey("HEADER", "${ChatColor.GRAY}- 沙盒地圖列表")
+            val header = getCommandLanguageKey("HEADER", "${ChatColor.GRAY}沙盒地圖列表: ")
             val footer = getCommandLanguageKey("FOOTER", "")
             onCommand {
+                val sandboxes = core.localGameManager.getAllLocalGames()
+                    .filterIsInstance<TilapiaSandbox>()
+                if (sandboxes.isEmpty()) {
+                    sender.sendMessage("")
+                    sender.sendMessage(getLanguageBundle()[noSandboxRunning])
+                    sender.sendMessage("")
+                    return@onCommand true
+                }
                 sender.sendMessage(getLanguageBundle()[header])
-                for (tilapiaSandbox in TilapiaCore.instance.localGameManager.getAllLocalGames()
-                    .filterIsInstance<TilapiaSandbox>()) {
+                sender.sendMessage("")
+                for (tilapiaSandbox in sandboxes) {
                     val text = "${ChatColor.GRAY}- ${ChatColor.GREEN}${tilapiaSandbox.gameWorld.name}"
                     val command = "/sandbox tp-local ${tilapiaSandbox.gameWorld.name}"
                     if (sender is Player) {
-                        requiresPlayer().spigot().sendMessage(TextComponent(text).also {
-                            TextComponent(getLanguageBundle()[clickToTeleport]).also { button ->
+                        requiresPlayer().spigot().sendMessage(TextComponent(text + "    ").also {
+                            it.addExtra(TextComponent(getLanguageBundle()[clickToTeleport]).also { button ->
                                 button.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, command)
                                 button.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, arrayOf(TextComponent(getLanguageBundle()[hoverText].format(command))))
-                            }
+                            })
                         })
                     } else {
                         sender.sendMessage(text)
