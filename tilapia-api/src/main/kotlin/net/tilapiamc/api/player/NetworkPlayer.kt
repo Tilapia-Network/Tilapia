@@ -37,4 +37,6 @@ abstract class NetworkPlayer(
         tilapiaCore.getInternal().sendToGame(this, game, forceJoin, spectate)
     }
 
+    abstract fun where(): Game
+
 }

@@ -1,4 +1,9 @@
 package net.tiapiamc.obj
 
-class Server {
+import java.util.UUID
+
+class Server(val proxy: Proxy, val serverId: UUID) {
+
+
+
 }

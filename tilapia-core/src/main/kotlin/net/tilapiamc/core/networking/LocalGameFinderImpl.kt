@@ -13,6 +13,8 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class LocalGameFinderImpl(val core: TilapiaCoreImpl): GameFinder {
+
+
     override fun findLobbies(lobbyType: String): List<Lobby> {
         return core.localGameManager.getAllLocalGames().filterIsInstance<Lobby>()
     }
@@ -45,13 +47,7 @@ class LocalGameFinderImpl(val core: TilapiaCoreImpl): GameFinder {
         }
     }
 
-    override fun findLobbyToJoin(player: NetworkPlayer, lobbyType: String, forceJoin: Boolean): Lobby? {
-        return findAvailableLobbiesForPlayer(player, lobbyType, forceJoin).entries.sortedBy { it.value.chance }.map { it.key }.firstOrNull()
-    }
 
-    override fun findMiniGameToJoin(player: NetworkPlayer, miniGameType: String, forceJoin: Boolean): MiniGame? {
-        return findAvailableMiniGamesForPlayer(player, miniGameType, forceJoin).entries.sortedBy { it.value.chance }.map { it.key }.firstOrNull()
-    }
 
     override fun getGameFromID(gameId: UUID): Game? {
         return core.localGameManager.getLocalGameById(gameId) as Game?

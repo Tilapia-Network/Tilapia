@@ -3,6 +3,7 @@ package net.tilapiamc.communication
 import java.util.UUID
 
 open class GameInfo(
+    val serverId: UUID,
     val gameId: UUID,
     val lobbyType: String,
 ) {
@@ -11,12 +12,14 @@ open class GameInfo(
 
 }
 
-class MiniGameInfo(gameId: UUID,
+class MiniGameInfo(serverId: UUID,
+                   gameId: UUID,
                    lobbyType: String,
-                   val gameType: String
-) : GameInfo(gameId, lobbyType) {
+                   val miniGameType: String
+) : GameInfo(serverId, gameId, lobbyType) {
 }
 
-class LobbyInfo(gameId: UUID,
+class LobbyInfo(serverId: UUID,
+                gameId: UUID,
                 lobbyType: String,
-) : GameInfo(gameId, lobbyType)
+) : GameInfo(serverId, gameId, lobbyType)

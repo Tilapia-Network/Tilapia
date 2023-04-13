@@ -17,12 +17,15 @@ import net.tilapiamc.api.language.LanguageManager
 import net.tilapiamc.api.networking.GameFinder
 import net.tilapiamc.api.player.PlayersManager
 import net.tilapiamc.api.server.TilapiaServer
+import net.tilapiamc.communication.api.ServerCommunication
+import net.tilapiamc.communication.api.ServerCommunicationSession
 import net.tilapiamc.core.commands.CommandJoinLocal
 import net.tilapiamc.core.commands.CommandLobbyLocal
 import net.tilapiamc.core.commands.CommandSpectateLocal
 import net.tilapiamc.core.language.LanguageManagerImpl
 import net.tilapiamc.core.main.Main
 import net.tilapiamc.core.networking.LocalGameFinderImpl
+import net.tilapiamc.core.networking.NetworkServerImpl
 import net.tilapiamc.core.server.LocalServerImpl
 import net.tilapiamc.language.LanguageCore
 import net.tilapiamc.language.LanguageGame
@@ -32,6 +35,10 @@ import kotlin.collections.ArrayList
 
 // TODO: Test implementation
 class TilapiaCoreImpl: TilapiaCore {
+
+    val communication = ServerCommunication("testKey")
+    val session: ServerCommunicationSession
+    private val localServer: LocalServerImpl
 
     init {
         // Initialize managers
@@ -44,8 +51,13 @@ class TilapiaCoreImpl: TilapiaCore {
         EventsManager.listenForEvent(ServerTickEvent::class.java)
         EventsManager.listenForEvent(EntityTickEvent::class.java)
 
+        session = communication.start()
+        localServer = LocalServerImpl(session.proxyId, session.serverId)
+
     }
-    private val localServer = LocalServerImpl()
+    init {
+        NetworkServerImpl.cache[localServer.serverId] = localServer
+    }
     val games = ArrayList<ManagedGame>()
     override val languageManager: LanguageManager = LanguageManagerImpl
     override val localGameManager: GamesManager = GamesManager()

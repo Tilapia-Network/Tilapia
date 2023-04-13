@@ -1,6 +1,6 @@
 package net.tilapiamc.communication
 
-data class Game(
+data class GameData(
     val miniGame: MiniGameInfo?,
     val lobby: LobbyInfo?
 )

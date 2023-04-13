@@ -22,8 +22,13 @@ interface GameFinder {
         return findMiniGamesForPlayer(player, miniGameType, forceJoin).filter { it.value.type.success }
     }
 
-    fun findLobbyToJoin(player: NetworkPlayer, lobbyType: String, forceJoin: Boolean): Lobby?
-    fun findMiniGameToJoin(player: NetworkPlayer, miniGameType: String, forceJoin: Boolean): MiniGame?
+    fun findLobbyToJoin(player: NetworkPlayer, lobbyType: String, forceJoin: Boolean): Lobby? {
+        return findAvailableLobbiesForPlayer(player, lobbyType, forceJoin).entries.sortedBy { it.value.chance }.map { it.key }.firstOrNull()
+    }
+
+    fun findMiniGameToJoin(player: NetworkPlayer, miniGameType: String, forceJoin: Boolean): MiniGame? {
+        return findAvailableMiniGamesForPlayer(player, miniGameType, forceJoin).entries.sortedBy { it.value.chance }.map { it.key }.firstOrNull()
+    }
 
     fun getGameFromID(gameId: UUID): Game?
     fun getGameFromShortID(shortGameId: String): Game?
