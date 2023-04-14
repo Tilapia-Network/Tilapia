@@ -1,8 +1,5 @@
 package net.tiapiamc
 
-import ch.vorburger.mariadb4j.DB
-import ch.vorburger.mariadb4j.DBConfiguration
-import ch.vorburger.mariadb4j.DBConfigurationBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCaseOrder
 import kotlinx.coroutines.runBlocking
@@ -10,14 +7,14 @@ import net.tiapiamc.config.Config
 import net.tiapiamc.data.DatabaseManager
 import net.tilapiamc.communication.DatabaseLogin
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.ThreadLocalTransactionManager
-import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
-import strikt.api.*
-import strikt.assertions.*
-import java.net.ServerSocket
+import strikt.api.expectThat
+import strikt.api.expectThrows
+import strikt.assertions.isA
+import strikt.assertions.isTrue
+import strikt.assertions.startsWith
 import java.sql.DriverManager
-import java.util.UUID
+import java.util.*
 
 class DatabaseSessionTest: StringSpec() {
     object TestTable: Table() {

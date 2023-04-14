@@ -1,7 +1,6 @@
 package net.tilapiamc.communication
 
-import java.util.Locale
-import java.util.UUID
+import java.util.*
 
 data class PlayerInfo(
     val playerName: String,

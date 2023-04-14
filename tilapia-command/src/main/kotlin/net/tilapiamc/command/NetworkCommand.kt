@@ -1,7 +1,6 @@
 package net.tilapiamc.command
 
 import net.tilapiamc.command.args.CommandArgument
-import java.lang.RuntimeException
 
 abstract class NetworkCommand<T, S: NetworkSubCommand<T>>(
     val subCommandFactory: (parent: NetworkCommand<T, S>, depth: Int, name: String, description: String) -> S,

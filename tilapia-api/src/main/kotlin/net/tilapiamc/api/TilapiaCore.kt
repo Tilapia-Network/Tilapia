@@ -8,7 +8,7 @@ import net.tilapiamc.api.language.LanguageManager
 import net.tilapiamc.api.networking.GameFinder
 import net.tilapiamc.api.server.TilapiaServer
 import org.bukkit.plugin.java.JavaPlugin
-import java.util.UUID
+import java.util.*
 
 interface TilapiaCore {
 

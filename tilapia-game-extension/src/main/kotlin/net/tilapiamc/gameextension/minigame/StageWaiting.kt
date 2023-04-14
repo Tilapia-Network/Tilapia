@@ -4,7 +4,6 @@ import me.fan87.plugindevkit.events.ServerTickEvent
 import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.game.PlayerJoinGameEvent
 import net.tilapiamc.api.events.game.PlayerJoinMiniGameEvent
-import net.tilapiamc.api.events.game.PlayerQuitGameEvent
 import net.tilapiamc.api.events.game.PlayerQuitMiniGameEvent
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.gameextension.plugins.PluginNameTagDisplay
@@ -13,7 +12,6 @@ import net.tilapiamc.gameextension.rules.RuleNoTimeChange
 import net.tilapiamc.language.LanguageGame
 import net.tilapiamc.spigotcommon.game.minigame.LocalMiniGame
 import net.tilapiamc.spigotcommon.game.minigame.stage.MiniGameStage
-import org.bukkit.event.player.PlayerJoinEvent
 
 class StageWaiting(miniGame: LocalMiniGame,
                    val countDownTime: (Int) -> Int,

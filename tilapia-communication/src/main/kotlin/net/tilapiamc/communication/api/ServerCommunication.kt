@@ -1,6 +1,6 @@
 package net.tilapiamc.communication.api
 
-import java.util.UUID
+import java.util.*
 
 class ServerCommunication(apiKey: String): TilapiaPrivateAPI(apiKey) {
 

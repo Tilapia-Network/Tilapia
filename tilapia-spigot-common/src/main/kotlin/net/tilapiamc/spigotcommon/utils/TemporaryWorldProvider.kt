@@ -5,7 +5,7 @@ import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.WorldCreator
 import java.io.File
-import java.util.UUID
+import java.util.*
 
 object TemporaryWorldProvider {
     private val logger = LogManager.getLogger("TemporaryWorldProvider")

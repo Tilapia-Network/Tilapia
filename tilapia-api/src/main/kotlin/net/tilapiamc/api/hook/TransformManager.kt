@@ -1,7 +1,6 @@
 package net.tilapiamc.api.hook
 
 import me.fan87.javainjector.NativeInstrumentation
-import org.bukkit.block.Biome
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
@@ -11,7 +10,6 @@ import org.objectweb.asm.tree.analysis.Analyzer
 import org.objectweb.asm.tree.analysis.AnalyzerException
 import org.objectweb.asm.tree.analysis.SimpleVerifier
 import org.objectweb.asm.util.CheckClassAdapter
-import java.io.File
 import java.io.PrintWriter
 import java.lang.instrument.ClassDefinition
 import java.lang.instrument.ClassFileTransformer

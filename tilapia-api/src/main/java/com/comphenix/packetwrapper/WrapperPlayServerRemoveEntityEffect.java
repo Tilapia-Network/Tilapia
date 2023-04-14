@@ -18,13 +18,12 @@
  */
 package com.comphenix.packetwrapper;
 
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.potion.PotionEffectType;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.potion.PotionEffectType;
 
 public class WrapperPlayServerRemoveEntityEffect extends AbstractPacket {
 	public static final PacketType TYPE =

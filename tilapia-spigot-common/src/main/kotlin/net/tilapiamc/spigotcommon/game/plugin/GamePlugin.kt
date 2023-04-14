@@ -1,8 +1,6 @@
 package net.tilapiamc.spigotcommon.game.plugin
 
 import net.tilapiamc.api.TilapiaCore
-import net.tilapiamc.api.game.Game
-import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.spigotcommon.game.LocalGame
 import net.tilapiamc.spigotcommon.game.event.GameEventManager
 

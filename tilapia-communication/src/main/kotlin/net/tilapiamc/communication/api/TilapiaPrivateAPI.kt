@@ -3,7 +3,6 @@ package net.tilapiamc.communication.api
 import com.google.gson.JsonPrimitive
 import net.tilapiamc.communication.*
 import java.util.*
-import kotlin.collections.HashMap
 
 open class TilapiaPrivateAPI(val apiKey: String) {
 

@@ -1,6 +1,6 @@
 package net.tilapiamc.communication
 
-import java.util.UUID
+import java.util.*
 
 data class ProxyInfo(val proxyId: UUID) {
 }

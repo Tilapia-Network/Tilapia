@@ -9,8 +9,8 @@ import net.tilapiamc.api.commands.SpigotCommandsManager
 import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.api.events.annotation.unregisterAnnotationBasedListener
-import net.tilapiamc.api.game.GamesManager
 import net.tilapiamc.api.game.GameType
+import net.tilapiamc.api.game.GamesManager
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.internal.TilapiaInternal
 import net.tilapiamc.api.language.LanguageManager
@@ -32,9 +32,7 @@ import net.tilapiamc.language.LanguageGame
 import org.apache.logging.log4j.LogManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
-import org.jetbrains.exposed.sql.exposedLogger
 import java.util.*
-import kotlin.collections.ArrayList
 
 class TilapiaCoreImpl: TilapiaCore {
 

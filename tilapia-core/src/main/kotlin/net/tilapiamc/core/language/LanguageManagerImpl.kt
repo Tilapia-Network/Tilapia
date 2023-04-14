@@ -5,8 +5,6 @@ import net.tilapiamc.api.language.LanguageKey
 import net.tilapiamc.api.language.LanguageManager
 import org.apache.logging.log4j.LogManager
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 object LanguageManagerImpl: LanguageManager {
     val logger = LogManager.getLogger("LanguageManager")

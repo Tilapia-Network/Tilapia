@@ -2,9 +2,10 @@ package net.tilapiamc.communication.session.server
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import net.tilapiamc.common.json.get
+import net.tilapiamc.common.json.jsonObjectOf
 import net.tilapiamc.communication.session.SessionPacket
-import net.tilapiamc.common.json.*
-import java.util.UUID
+import java.util.*
 
 class SPacketServerHandShake(
     var proxyId: UUID,

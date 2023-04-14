@@ -1,6 +1,9 @@
 package net.tilapiamc.common.json
 
-import com.google.gson.*
+import com.google.gson.Gson
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 
 operator fun JsonElement.set(key: String, value: Number) {
     this.asJsonObject.addProperty(key, value)

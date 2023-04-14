@@ -4,12 +4,9 @@ import net.tilapiamc.api.commands.BukkitCommand
 import net.tilapiamc.api.commands.args.playerArg
 import net.tilapiamc.api.commands.requiresPlayer
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
-import net.tilapiamc.command.args.impl.StringEnumArgument
-import net.tilapiamc.command.args.impl.enumArg
 import net.tilapiamc.command.args.impl.stringEnumArg
 import net.tilapiamc.language.LanguageCore
 import org.bukkit.GameMode
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandGameMode: BukkitCommand("gamemode", "改變一個玩家的遊戲模式", true) {

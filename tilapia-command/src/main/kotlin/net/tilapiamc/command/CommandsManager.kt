@@ -1,6 +1,5 @@
 package net.tilapiamc.command
 
-import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 open class CommandsManager<T>(val logger: Logger) {

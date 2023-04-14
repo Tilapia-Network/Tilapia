@@ -1,6 +1,6 @@
 package net.tilapiamc.api.language
 
-import java.util.Locale
+import java.util.*
 
 interface LanguageManager {
 

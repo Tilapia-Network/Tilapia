@@ -3,7 +3,7 @@ package net.tilapiamc.api.hook
 import net.tilapiamc.api.utils.ASMUtils
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.MethodNode
-import java.lang.reflect.*
+import java.lang.reflect.Method
 
 abstract class MethodTransformer(val targetMethod: Method): ClassTransformer(targetMethod.declaringClass) {
 

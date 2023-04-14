@@ -1,4 +1,3 @@
-import fr.il_totore.manadrop.MinecraftDependencyHelper
 import fr.il_totore.manadrop.MinecraftRepositoryHelper
 
 plugins {

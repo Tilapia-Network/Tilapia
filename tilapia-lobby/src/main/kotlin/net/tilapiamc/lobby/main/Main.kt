@@ -1,6 +1,5 @@
 package net.tilapiamc.lobby.main
 
-import net.tilapiamc.lobby.TilapiaLobby
 import net.tilapiamc.lobby.TilapiaLobbyPlugin
 import org.bukkit.plugin.java.JavaPlugin
 

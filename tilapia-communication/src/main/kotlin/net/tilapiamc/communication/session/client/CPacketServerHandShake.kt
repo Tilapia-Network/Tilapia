@@ -3,8 +3,9 @@ package net.tilapiamc.communication.session.client
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import net.tilapiamc.common.json.get
+import net.tilapiamc.common.json.jsonObjectOf
 import net.tilapiamc.communication.session.SessionPacket
-import net.tilapiamc.common.json.*
 
 class CPacketServerHandShake(
     var requiredSchemas: List<String>

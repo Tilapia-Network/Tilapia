@@ -8,11 +8,9 @@ import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import net.tilapiamc.api.utils.StringUtils
 import net.tilapiamc.spigotcommon.game.plugin.GamePlugin
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.scoreboard.Team
-import org.bukkit.util.StringUtil
-import java.util.UUID
+import java.util.*
 
 class PluginNameTagDisplay(val getPrefix: (LocalNetworkPlayer) -> String, val getSuffix: (LocalNetworkPlayer) -> String): GamePlugin() {
 

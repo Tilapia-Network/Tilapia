@@ -11,7 +11,6 @@ import net.tilapiamc.gameextension.rules.RuleNoDestruction
 import net.tilapiamc.spigotcommon.game.minigame.LocalMiniGame
 import net.tilapiamc.spigotcommon.game.minigame.stage.MiniGameStage
 import net.tilapiamc.spigotcommon.utils.TemporaryWorldProvider
-import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.World
 

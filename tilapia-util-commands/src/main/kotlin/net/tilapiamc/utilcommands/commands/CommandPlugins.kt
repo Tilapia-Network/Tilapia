@@ -6,9 +6,7 @@ import net.tilapiamc.api.commands.BukkitCommand
 import net.tilapiamc.api.commands.requiresPlayer
 import net.tilapiamc.api.language.LanguageKeyDelegation
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
-import net.tilapiamc.command.NetworkCommand
 import org.bukkit.Bukkit
-import org.bukkit.command.CommandSender
 
 class CommandPlugins: BukkitCommand("plugins", "列出所有的插件", false) {
 

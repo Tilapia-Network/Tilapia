@@ -2,19 +2,21 @@ package me.fan87.javainjector;
 
 
 import me.fan87.javainjector.utils.OSUtils;
-import me.fan87.plugindevkit.PluginInstanceGrabber;
 import net.tilapiamc.api.TilapiaCore;
 
 import java.io.*;
-import java.lang.reflect.Method;
-import java.lang.reflect.AccessibleObject;
-import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.ClassDefinition;
+import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.jar.JarFile;
 

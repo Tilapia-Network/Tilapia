@@ -2,12 +2,10 @@ package net.tiapiamc.config
 
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.io.FileReader
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
-import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
-import java.util.Properties
+import java.util.*
 import kotlin.reflect.KProperty
 
 

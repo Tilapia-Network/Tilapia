@@ -1,7 +1,7 @@
 package net.tilapiamc.api.utils
 
 import org.bukkit.entity.Player
-import java.util.UUID
+import java.util.*
 
 class HashMapPlayerProvider<T>(val defaultValue: T): PlayerBasedProvider<T>() {
     private val cache = HashMap<UUID, T>()

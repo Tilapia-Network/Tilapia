@@ -2,7 +2,6 @@ package net.tilapiamc.language
 
 import net.md_5.bungee.api.ChatColor
 import net.tilapiamc.api.TilapiaCore
-import net.tilapiamc.api.commands.LanguageCommand
 import net.tilapiamc.api.language.LanguageKeyDelegation
 
 object LanguageCore {

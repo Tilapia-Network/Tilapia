@@ -2,8 +2,7 @@ package net.tiapiamc.obj.game
 
 import net.tiapiamc.obj.Server
 import net.tilapiamc.communication.GameData
-import net.tilapiamc.communication.GameInfo
-import java.util.UUID
+import java.util.*
 
 abstract class Game(val server: Server, val gameId: UUID) {
 

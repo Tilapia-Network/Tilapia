@@ -3,13 +3,9 @@ package net.tilapiamc.multiworld.args
 import net.tilapiamc.api.generators.AbstractGenerator
 import net.tilapiamc.api.generators.Generators
 import net.tilapiamc.command.ArgumentsContainer
-import net.tilapiamc.command.CommandException
 import net.tilapiamc.command.CommandExecution
-import net.tilapiamc.command.NetworkCommand
 import net.tilapiamc.command.args.CommandArgument
 import net.tilapiamc.multiworld.GeneratorNotFoundException
-import net.tilapiamc.multiworld.WorldManager
-import org.bukkit.Bukkit
 import kotlin.reflect.KProperty
 
 class GeneratorArgument<S>(name: String, isRequired: Boolean = false): CommandArgument<AbstractGenerator, S>(name, isRequired) {

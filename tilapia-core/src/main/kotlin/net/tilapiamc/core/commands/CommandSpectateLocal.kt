@@ -7,9 +7,6 @@ import net.tilapiamc.api.commands.requiresPlayer
 import net.tilapiamc.api.game.Game
 import net.tilapiamc.api.game.minigame.ManagedMiniGame
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
-import net.tilapiamc.command.args.impl.stringArg
-import net.tilapiamc.command.args.impl.stringEnumArg
-import net.tilapiamc.language.LanguageCore
 import org.bukkit.entity.Player
 
 class CommandSpectateLocal: BukkitCommand("spectate-local", "[開發者] 旁觀一局小遊戲", true) {

@@ -1,6 +1,5 @@
 package me.fan87.javainjector;
 
-import java.lang.instrument.Instrumentation;
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
 

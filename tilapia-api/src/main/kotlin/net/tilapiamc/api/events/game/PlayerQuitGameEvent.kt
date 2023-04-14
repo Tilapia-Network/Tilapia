@@ -1,6 +1,5 @@
 package net.tilapiamc.api.events.game
 
-import net.tilapiamc.api.game.Game
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import org.bukkit.event.HandlerList

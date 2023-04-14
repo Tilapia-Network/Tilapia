@@ -1,7 +1,6 @@
 package net.tilapiamc.api.server
 
-import net.tilapiamc.api.game.GameType
-import java.util.UUID
+import java.util.*
 
 abstract class TilapiaServer(
     var proxyId: UUID,

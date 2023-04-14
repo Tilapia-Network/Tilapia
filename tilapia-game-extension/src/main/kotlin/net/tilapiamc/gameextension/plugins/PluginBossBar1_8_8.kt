@@ -3,6 +3,7 @@ package net.tilapiamc.gameextension.plugins
 import me.fan87.plugindevkit.events.EntityTickEvent
 import net.citizensnpcs.api.CitizensAPI
 import net.citizensnpcs.api.npc.MemoryNPCDataStore
+import net.citizensnpcs.api.npc.NPC
 import net.citizensnpcs.api.trait.trait.PlayerFilter
 import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.game.PlayerJoinGameEvent
@@ -10,11 +11,9 @@ import net.tilapiamc.api.events.game.PlayerQuitGameEvent
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import net.tilapiamc.spigotcommon.game.plugin.GamePlugin
-import org.bukkit.entity.EntityType
-import net.citizensnpcs.api.npc.NPC
-import net.citizensnpcs.trait.PacketNPC
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerTeleportEvent
 

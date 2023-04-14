@@ -4,7 +4,6 @@ import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
-import com.comphenix.protocol.injector.PacketFilterManager
 import com.comphenix.protocol.injector.packet.PacketRegistry
 import me.fan87.plugindevkit.PluginInstanceGrabber
 import net.tilapiamc.api.events.packet.PacketReceiveEvent

@@ -4,7 +4,6 @@ import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.game.Game
 import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.communication.PlayerInfo
-import net.tilapiamc.communication.api.ServerCommunication
 import net.tilapiamc.communication.api.ServerCommunicationSession
 import java.util.*
 

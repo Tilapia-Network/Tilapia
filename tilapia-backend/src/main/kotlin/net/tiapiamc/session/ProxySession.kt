@@ -1,7 +1,6 @@
 package net.tiapiamc.session
 
 import io.ktor.websocket.*
-import net.tiapiamc.getEventTarget
 import net.tiapiamc.getSuspendEventTarget
 import net.tilapiamc.communication.session.PacketRegistry
 import net.tilapiamc.communication.session.Session

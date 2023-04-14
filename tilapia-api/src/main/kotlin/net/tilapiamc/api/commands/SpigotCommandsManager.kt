@@ -23,7 +23,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.permissions.Permission
 import java.util.*
-import kotlin.collections.HashMap
 
 object SpigotCommandsManager: CommandsManager<CommandSender>(LogManager.getLogger("CommandsManager")) {
 

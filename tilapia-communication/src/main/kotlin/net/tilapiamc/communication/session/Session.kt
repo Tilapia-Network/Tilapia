@@ -8,9 +8,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import net.tilapiamc.common.SuspendEventTarget
 import net.tilapiamc.common.json.get
-import java.lang.RuntimeException
 import java.util.*
-import kotlin.collections.HashMap
 
 abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>, val eventTargetFactory: (ignoreException: Boolean) -> SuspendEventTarget<out SessionEvent>, val webSocket: WebSocketSession) {
 

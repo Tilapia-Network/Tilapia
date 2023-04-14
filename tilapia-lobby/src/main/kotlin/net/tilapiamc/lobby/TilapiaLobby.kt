@@ -12,7 +12,6 @@ import net.tilapiamc.gameextension.rules.RuleNoWeatherChange
 import net.tilapiamc.spigotcommon.game.lobby.LocalLobby
 import net.tilapiamc.spigotcommon.utils.TemporaryWorldProvider
 import org.bukkit.World
-import java.util.UUID
 
 class TilapiaLobby(core: TilapiaCore, world: World, lobbyType: String): LocalLobby(core, TemporaryWorldProvider.createTemporaryWorldFromWorld(world), lobbyType) {
 

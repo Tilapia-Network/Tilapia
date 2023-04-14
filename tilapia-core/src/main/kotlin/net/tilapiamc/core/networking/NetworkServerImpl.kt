@@ -4,7 +4,6 @@ import net.tilapiamc.api.server.TilapiaServer
 import net.tilapiamc.communication.ServerInfo
 import net.tilapiamc.communication.api.ServerCommunication
 import java.util.*
-import kotlin.collections.HashMap
 
 class NetworkServerImpl(val data: ServerInfo): TilapiaServer(data.proxy, data.serverId) {
 

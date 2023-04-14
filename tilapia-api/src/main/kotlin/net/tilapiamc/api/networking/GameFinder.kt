@@ -5,7 +5,7 @@ import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.game.lobby.Lobby
 import net.tilapiamc.api.game.minigame.MiniGame
 import net.tilapiamc.api.player.NetworkPlayer
-import java.util.UUID
+import java.util.*
 
 interface GameFinder {
 

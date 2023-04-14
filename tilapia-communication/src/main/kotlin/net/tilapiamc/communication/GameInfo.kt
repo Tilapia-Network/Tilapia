@@ -1,6 +1,6 @@
 package net.tilapiamc.communication
 
-import java.util.UUID
+import java.util.*
 
 open class GameInfo(
     val serverId: UUID,

@@ -4,10 +4,8 @@ import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.command.ArgumentsContainer
 import net.tilapiamc.command.CommandException
 import net.tilapiamc.command.CommandExecution
-import net.tilapiamc.command.NetworkCommand
 import net.tilapiamc.command.args.CommandArgument
 import net.tilapiamc.sandbox.TilapiaSandbox
-import org.bukkit.Bukkit
 import kotlin.reflect.KProperty
 
 class SandboxArgument<S>(name: String, isRequired: Boolean = false): CommandArgument<TilapiaSandbox, S>(name, isRequired) {
