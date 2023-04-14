@@ -9,10 +9,8 @@ object GameService {
     fun Application.applyGameService() {
         routing {
             post("/game/register") {
-
+                // Requires Session ID
             }
-
-
             get("/game/list") {
 
             }
@@ -26,6 +24,18 @@ object GameService {
 
             }
             get("/game/lobby/list") {
+
+            }
+            get("/game/minigame/types") {
+
+            }
+            get("/game/lobby/types") {
+
+            }
+            get("/game/minigame/list-from-type") {
+
+            }
+            get("/game/lobby/list-from-type") {
 
             }
             get("/game/minigame/for-player") {

@@ -4,17 +4,17 @@ import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 
-object ServerService {
+object DataService {
 
-    fun Application.applyServerService() {
+    fun Application.applyDataService() {
         routing {
-            get("/server/list") {
+            post("/data/getPlayerData") {
 
             }
-            get("/server/info") {
+            post("/data/setPlayerData") {
 
             }
-            webSocket("/server/gateway") {
+            post("/player/getLeaderBoard") {
 
             }
         }

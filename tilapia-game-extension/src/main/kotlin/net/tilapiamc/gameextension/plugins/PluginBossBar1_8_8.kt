@@ -66,10 +66,13 @@ class PluginBossBar1_8_8(val getBossBarText: (LocalNetworkPlayer) -> String?): G
     fun createNPC(player: Player): NPC {
         val npc = registry.createNPC(EntityType.WITHER, "Bossbar for ${player.name}")
         npc.isProtected = true
-        npc.spawn(getNPCLocation(player))
         npc.addTrait(PlayerFilter().also {
             it.only(player.uniqueId)
         })
+        npc.data().setPersistent(NPC.Metadata.SHOULD_SAVE, false)
+        npc.data().setPersistent(NPC.Metadata.SILENT, true)
+        npc.spawn(getNPCLocation(player))
+
         return npc
     }
 

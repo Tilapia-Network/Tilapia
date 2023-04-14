@@ -7,6 +7,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.autohead.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.forwardedheaders.*
 import net.tiapiamc.config.Config
 import net.tiapiamc.endpoints.private.GameService.applyGameService
 import net.tiapiamc.endpoints.private.PlayerService.applyPlayerService
@@ -19,6 +20,8 @@ fun main() {
 }
 
 fun Application.module() {
+    install(ForwardedHeaders)
+    install(XForwardedHeaders)
     install(AutoHeadResponse)
     authentication {
         bearer("private-api") {

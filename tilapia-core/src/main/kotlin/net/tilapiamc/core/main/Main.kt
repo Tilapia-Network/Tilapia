@@ -6,10 +6,14 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class Main: JavaPlugin() {
 
-    override fun onEnable() {
+    override fun onLoad() {
         val instance = TilapiaCoreImpl()
         TilapiaCore.instance = instance
-        instance.registerCommands()
+        logger.info("Tilapia Core has been loaded")
+    }
+
+    override fun onEnable() {
+        (TilapiaCore.instance as TilapiaCoreImpl).registerCommands()
         logger.info("Tilapia Core has been initialized")
     }
 

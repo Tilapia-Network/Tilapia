@@ -8,6 +8,7 @@ import net.tilapiamc.spigotcommon.game.minigame.stage.MiniGameStage
 import org.bukkit.ChatColor
 
 class StageInGame(override val miniGame: FleetWars): MiniGameStage(miniGame, "FleetWarsInGame") {
+
     override fun onStart() {
         applyPlugin(PluginNameTagDisplay(getPrefix = {
              if (it.isInGame()) {

@@ -6,6 +6,7 @@ import net.tilapiamc.api.events.annotation.Subscribe
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.api.player.LocalNetworkPlayer.Companion.resetBukkitPlayer
 import org.bukkit.entity.Player
+import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerLoginEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -26,6 +27,10 @@ object PlayersManager {
     @Subscribe("playerLeaveInit")
     fun onPlayerLeave(event: PlayerQuitEvent) {
         localPlayers.remove(event.player.uniqueId)
+    }
+    @Subscribe("playerDeathMessageRemoval")
+    fun onPlayerDeath(event: PlayerDeathEvent) {
+        event.deathMessage = null
     }
 
     fun getAsLocalPlayer(player: Player): LocalNetworkPlayer {

@@ -1,6 +1,5 @@
 package net.tilapiamc.api
 
-import net.tilapiamc.api.game.Game
 import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.GamesManager
 import net.tilapiamc.api.game.ManagedGame
@@ -31,6 +30,8 @@ interface TilapiaCore {
     fun getInternal(): TilapiaInternal
 
     fun getPlugin(): JavaPlugin
+
+    fun requireSchemaAccess(schema: String)
 
 
 }

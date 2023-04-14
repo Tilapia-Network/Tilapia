@@ -79,7 +79,7 @@ class PluginSpectator(
     @Subscribe("spectator-onSpectatorJoin")
     fun onSpectatorJoin(event: SpectatorJoinEvent) {
         for (inGamePlayer in miniGame.inGamePlayers) {
-            inGamePlayer.hidePlayer(event.player)
+            inGamePlayer.bukkitPlayer.hidePlayer(event.player)
         }
         event.player.allowFlight = true
         event.player.isFlying = true
@@ -88,7 +88,7 @@ class PluginSpectator(
     @Subscribe("spectator-onSpectatorQuit")
     fun onSpectatorQuit(event: SpectatorQuitEvent) {
         for (inGamePlayer in miniGame.inGamePlayers) {
-            inGamePlayer.showPlayer(event.player)
+            inGamePlayer.bukkitPlayer.showPlayer(event.player)
         }
     }
 

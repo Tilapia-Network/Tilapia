@@ -13,5 +13,7 @@ abstract class Game(
 
     override val players = ArrayList<NetworkPlayer>()
 
-
+    override fun hashCode(): Int {
+        return gameId.hashCode()
+    }
 }

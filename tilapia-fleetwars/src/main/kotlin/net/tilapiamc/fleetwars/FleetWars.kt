@@ -16,6 +16,7 @@ import org.bukkit.GameMode
 import org.bukkit.World
 
 class FleetWars(core: TilapiaCore, gameWorld: World): LocalMiniGame(core, TemporaryWorldProvider.createTemporaryWorldFromWorld(gameWorld), "fleetwars", "fleetwars") {
+
     override val defaultStage: MiniGameStage = StageWaiting(this, { if (it > 0) 20 * 10 else -1}, 8) {
         currentStage = StageInGame(this)
     }

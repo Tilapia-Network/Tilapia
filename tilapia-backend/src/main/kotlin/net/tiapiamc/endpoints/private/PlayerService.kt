@@ -9,9 +9,11 @@ object PlayerService {
     fun Application.applyPlayerService() {
         routing {
             post("/player/login") {
+                // Requires Proxy Session ID
 
             }
             delete("/player/logout") {
+                // Requires Proxy Session ID
 
             }
 

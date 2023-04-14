@@ -54,13 +54,13 @@ class TilapiaSandbox(core: TilapiaCore, world: World): LocalLobby(core, world, "
     val quitMessage = getGameLanguageKey("QUIT_MESSAGE", "${ChatColor.RED}[-] %1\$s")
     override fun addPlayer(networkPlayer: LocalNetworkPlayer) {
         localPlayers.forEach {
-            it.sendMessage(it.getLanguageBundle()[joinMessage].format(it.nameWithPrefix))
+            it.sendMessage(it.getLanguageBundle()[joinMessage].format(networkPlayer.nameWithPrefix))
         }
     }
 
     override fun removePlayer(networkPlayer: LocalNetworkPlayer) {
         localPlayers.forEach {
-            it.sendMessage(it.getLanguageBundle()[quitMessage].format(it.nameWithPrefix))
+            it.sendMessage(it.getLanguageBundle()[quitMessage].format(networkPlayer.nameWithPrefix))
         }
     }
     inner class BossBarTextProvider: PlayerBasedProvider<String>() {

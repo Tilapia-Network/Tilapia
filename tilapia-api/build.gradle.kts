@@ -1,6 +1,11 @@
 import fr.il_totore.manadrop.MinecraftDependencyHelper
 import fr.il_totore.manadrop.MinecraftRepositoryHelper
 
+val ktor_version: String by project
+val kotlin_version: String by project
+val exposed_version: String by project
+val h2_version: String by project
+
 plugins {
     kotlin("jvm") version "1.8.0"
     id("fr.il_totore.manadrop") version "0.4.3"
@@ -33,4 +38,9 @@ dependencies {
     implementation("org.ow2.asm:asm-util:9.4")
     implementation("com.github.fan87:Regular-Bytecode-Expression:2.1.1")
     implementation(kotlin("reflect"))
+
+    api("org.jetbrains.exposed:exposed-core:$exposed_version")
+    api("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    api("com.h2database:h2:$h2_version")
+    api("com.mysql:mysql-connector-j:8.0.32")
 }

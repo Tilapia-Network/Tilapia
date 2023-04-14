@@ -3,12 +3,12 @@ package net.tilapiamc.core
 import me.fan87.plugindevkit.events.EntityTickEvent
 import me.fan87.plugindevkit.events.ServerTickEvent
 import net.tilapiamc.api.TilapiaCore
+import net.tilapiamc.api.TilapiaPlugin
 import net.tilapiamc.api.commands.LanguageCommand
 import net.tilapiamc.api.commands.SpigotCommandsManager
 import net.tilapiamc.api.events.EventsManager
 import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.api.events.annotation.unregisterAnnotationBasedListener
-import net.tilapiamc.api.game.Game
 import net.tilapiamc.api.game.GamesManager
 import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.ManagedGame
@@ -29,18 +29,26 @@ import net.tilapiamc.core.networking.NetworkServerImpl
 import net.tilapiamc.core.server.LocalServerImpl
 import net.tilapiamc.language.LanguageCore
 import net.tilapiamc.language.LanguageGame
+import org.apache.logging.log4j.LogManager
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
+import org.jetbrains.exposed.sql.exposedLogger
 import java.util.*
 import kotlin.collections.ArrayList
 
-// TODO: Test implementation
 class TilapiaCoreImpl: TilapiaCore {
 
     val communication = ServerCommunication("testKey")
     val session: ServerCommunicationSession
     private val localServer: LocalServerImpl
+    val logger = LogManager.getLogger("TilapiaCore")
 
     init {
+        for (plugin in Bukkit.getPluginManager().plugins) {
+            if (plugin is TilapiaPlugin) {
+                plugin.schemaAccess
+            }
+        }
         // Initialize managers
         PlayersManager
         SpigotCommandsManager
@@ -121,6 +129,14 @@ class TilapiaCoreImpl: TilapiaCore {
 
     override fun getPlugin(): JavaPlugin {
         return JavaPlugin.getPlugin(Main::class.java)
+    }
+
+    val schemaAccess = ArrayList<String>()
+    override fun requireSchemaAccess(schema: String) {
+        if (schema !in schemaAccess) {
+            logger.info("Registered schema access: $schema")
+            schemaAccess.add(schema)
+        }
     }
 
     fun onDisable() {

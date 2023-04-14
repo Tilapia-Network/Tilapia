@@ -14,9 +14,6 @@ object ProxyService {
             get("/proxy/info") {
 
             }
-            post("/proxy/create") {
-
-            }
             webSocket("/proxy/gateway") {
 
             }
