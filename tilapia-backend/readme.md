@@ -8,7 +8,11 @@
 A connected session could request session Database access, once the request has been received,
 the server will create a temporary Database user with permission to access specific tables.
 
-### 
+The username and password will be randomly generated, with IP strict to the forwarded IP
+from the reverse proxy.
+
+Once a connection to the session is closed, related database users will be deleted
+
 
 ## Client API
 

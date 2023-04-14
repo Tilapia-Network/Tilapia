@@ -3,3 +3,5 @@ build/
 .gradle/
 run/
 out/
+tilapia-backend.properties
+logs/

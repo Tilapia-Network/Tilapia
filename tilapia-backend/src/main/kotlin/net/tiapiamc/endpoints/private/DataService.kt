@@ -8,13 +8,7 @@ object DataService {
 
     fun Application.applyDataService() {
         routing {
-            post("/data/getPlayerData") {
-
-            }
-            post("/data/setPlayerData") {
-
-            }
-            post("/player/getLeaderBoard") {
+            get("/data/getDatabase") {
 
             }
         }

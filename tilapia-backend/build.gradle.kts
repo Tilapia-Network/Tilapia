@@ -23,6 +23,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-websockets-jvm:$ktor_version")
@@ -40,10 +41,20 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jwt-jvm:2.2.4")
     implementation("io.ktor:ktor-server-forwarded-header-jvm:2.2.4")
-    testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     implementation("org.apache.logging.log4j:log4j-core:2.20.0")
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
 
     implementation(project(":tilapia-communication"))
+    api(project(":tilapia-common"))
+
+
+    // Test
+    testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
+    testImplementation("io.strikt:strikt-core:0.34.0")
+    testImplementation("ch.vorburger.mariaDB4j:mariaDB4j:2.6.0")
+    testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }

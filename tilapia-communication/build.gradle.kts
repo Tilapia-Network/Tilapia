@@ -27,4 +27,5 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("com.h2database:h2:$h2_version")
     implementation("com.mysql:mysql-connector-j:8.0.32")
+    implementation(project(":tilapia-common"))
 }
