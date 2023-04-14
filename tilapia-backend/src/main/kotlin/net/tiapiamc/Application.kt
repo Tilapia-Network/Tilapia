@@ -11,7 +11,6 @@ import io.ktor.server.plugins.forwardedheaders.*
 import io.ktor.server.websocket.*
 import net.tiapiamc.config.Config
 import net.tiapiamc.data.DatabaseManager
-import net.tiapiamc.endpoints.private.DataService.applyDataService
 import net.tiapiamc.endpoints.private.GameService.applyGameService
 import net.tiapiamc.endpoints.private.PlayerService.applyPlayerService
 import net.tiapiamc.endpoints.private.ProxyService.applyProxyService
@@ -62,7 +61,6 @@ fun Application.module() {
     applyPlayerService()
     applyServerService()
     applyGameService()
-    applyDataService()
 }
 
 

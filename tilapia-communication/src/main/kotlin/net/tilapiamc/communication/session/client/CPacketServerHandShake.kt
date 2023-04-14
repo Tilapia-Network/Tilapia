@@ -8,14 +8,14 @@ import net.tilapiamc.common.json.jsonObjectOf
 import net.tilapiamc.communication.session.SessionPacket
 
 class CPacketServerHandShake(
-    var requiredSchemas: List<String>
+    var requiredSchemas: List<String>,
 ): SessionPacket.CPacket() {
 
     constructor(): this(arrayListOf())
 
     override fun toJson(gson: Gson): JsonObject {
         return gson.jsonObjectOf(
-            "requiredSchemas" to requiredSchemas
+            "requiredSchemas" to requiredSchemas,
         )
     }
 

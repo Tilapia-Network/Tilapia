@@ -1,27 +1,22 @@
 package net.tiapiamc.endpoints.private
 
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.routing.*
 
 object PlayerService {
 
     fun Application.applyPlayerService() {
         routing {
-            post("/player/login") {
-                // Requires Proxy Session ID
+            authenticate("private-api") {
+                get("/player/where") {
 
+                }
+                post("/player/send") {
+
+                }
             }
-            delete("/player/logout") {
-                // Requires Proxy Session ID
 
-            }
-
-            get("/player/where") {
-
-            }
-            post("/player/send") {
-
-            }
         }
     }
 

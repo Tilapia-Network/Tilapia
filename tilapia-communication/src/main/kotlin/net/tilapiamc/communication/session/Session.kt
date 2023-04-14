@@ -3,11 +3,14 @@ package net.tilapiamc.communication.session
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import io.ktor.client.plugins.websocket.*
+import io.ktor.utils.io.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.runBlocking
 import net.tilapiamc.common.SuspendEventTarget
 import net.tilapiamc.common.json.get
+import net.tilapiamc.common.json.set
 import java.util.*
 
 abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>, val eventTargetFactory: (ignoreException: Boolean) -> SuspendEventTarget<out SessionEvent>, val webSocket: WebSocketSession) {
@@ -30,7 +33,9 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
             if (filter(it.packet)) {
                 packet = it.packet
                 onPacket.remove(listener)
-                lock.notifyAll()
+                synchronized(lock) {
+                    lock.notifyAll()
+                }
             }
         }
         onPacket.add(listener)
@@ -40,7 +45,7 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
         return packet
     }
     suspend inline fun <reified T: SessionPacket> waitForPacketWithType(crossinline filter: (packet: T) -> Boolean = { true }, timeOut: Long = 5000): T? {
-        return waitForPacket({ it is T && filter(it) }, timeOut) as T
+        return waitForPacket({ it is T && filter(it) }, timeOut) as T?
     }
 
 
@@ -50,35 +55,52 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
         } catch (e: Exception) {
             closeSession(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error while handling packet"))
         }
+        val out = JsonObject()
+        out["type"] = PacketRegistry.getPacketName(packet)
+        out["data"] = packet.toJson(gson)
+        webSocket.send(gson.toJson(out))
+        webSocket.flush()
     }
 
     suspend fun startSession() {
-        onSessionStarted(SessionStartEvent(this))
-        try {
-            for (frame in webSocket.incoming) {
-                val packet = readPacket(frame)
-                try {
-                    onPacket(SessionPacketEvent(this, packet))
-                } catch (e: Exception) {
-                    closeSession(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error while handling packet"))
-                }
+        Thread {
+            runBlocking {
+                onSessionStarted(SessionStartEvent(this@Session))
             }
-        } catch (e: ClosedReceiveChannelException) {
-            closeSession()
-        } catch (e: WebSocketClientError) {
-            closeSession(CloseReason(CloseReason.Codes.PROTOCOL_ERROR, e.message!!))
-        } catch (e: Throwable) {
-            closeSession(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error while reading frames"))
+        }.start()
+        runBlocking {
+            try {
+                for (frame in webSocket.incoming) {
+                    val packet = readPacket(frame)
+                    try {
+                        onPacket(SessionPacketEvent(this@Session, packet))
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        closeSession(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error while handling packet"))
+                    }
+                }
+            } catch (e: ClosedReceiveChannelException) {
+                e.printStackTrace()
+                closeSession()
+            } catch (e: WebSocketClientError) {
+                e.printStackTrace()
+                closeSession(CloseReason(CloseReason.Codes.PROTOCOL_ERROR, e.message!!))
+            } catch (e: Throwable) {
+                e.printStackTrace()
+                closeSession(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error while reading frames"))
+            }
         }
+
+
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun closeSession(reason: CloseReason? = null) {
-        if (webSocket.incoming.isClosedForReceive) {
+        if (!webSocket.incoming.isClosedForReceive) {
             if (reason == null) {
                 webSocket.close()
             } else {
-                webSocket.close()
+                webSocket.close(reason)
             }
         }
         onSessionClosed(SessionCloseEvent(this))
@@ -102,7 +124,7 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
 }
 
 
-open class SessionEvent(val session: Session)
+open class SessionEvent(open val session: Session)
 class SessionPacketEvent(session: Session, val packet: SessionPacket): SessionEvent(session)
 class SessionStartEvent(session: Session): SessionEvent(session)
 class SessionCloseEvent(session: Session): SessionEvent(session)

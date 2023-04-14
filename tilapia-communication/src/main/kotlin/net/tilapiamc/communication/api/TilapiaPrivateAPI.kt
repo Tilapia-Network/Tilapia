@@ -1,10 +1,11 @@
 package net.tilapiamc.communication.api
 
 import com.google.gson.JsonPrimitive
+import io.ktor.client.*
 import net.tilapiamc.communication.*
 import java.util.*
 
-open class TilapiaPrivateAPI(val apiKey: String) {
+open class TilapiaPrivateAPI(val client: HttpClient) {
 
     // ServerService
     fun listServers(): List<ServerInfo> {

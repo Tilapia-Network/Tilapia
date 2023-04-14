@@ -4,26 +4,24 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import net.tilapiamc.common.json.get
 import net.tilapiamc.common.json.jsonObjectOf
+import net.tilapiamc.communication.DatabaseLogin
 import net.tilapiamc.communication.session.SessionPacket
 import java.util.*
 
-class SPacketServerHandShake(
-    var proxyId: UUID,
-    var serverId: UUID,
+class SPacketDatabaseLogin(
+    var databaseLogin: DatabaseLogin,
 ): SessionPacket.SPacket() {
 
-    constructor(): this(UUID.randomUUID(), UUID.randomUUID())
+    constructor(): this(DatabaseLogin(UUID.randomUUID(), "", "", ""))
 
     override fun toJson(gson: Gson): JsonObject {
         return gson.jsonObjectOf(
-            "proxyId" to proxyId,
-            "serverId" to serverId,
+            "databaseLogin" to databaseLogin,
         )
     }
 
     override fun fromJson(gson: Gson, jsonObject: JsonObject) {
-        this.proxyId = jsonObject[gson, "proxyId"]!!
-        this.serverId = jsonObject[gson, "serverId"]!!
+        this.databaseLogin = jsonObject[gson, "databaseLogin"]!!
     }
 
 }

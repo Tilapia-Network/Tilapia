@@ -46,6 +46,9 @@ dependencies {
 
     implementation(project(":tilapia-communication"))
     api(project(":tilapia-common"))
+    implementation("io.ktor:ktor-client-content-negotiation:2.2.4")
+    implementation("io.ktor:ktor-serialization-gson:2.2.4")
+    implementation("io.ktor:ktor-client-auth:2.2.4")
 
 
     // Test
@@ -53,6 +56,10 @@ dependencies {
     testImplementation("io.strikt:strikt-core:0.34.0")
     testImplementation("ch.vorburger.mariaDB4j:mariaDB4j:2.6.0")
     testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
+    testImplementation("io.ktor:ktor-client-websockets-jvm:$ktor_version")
+    testImplementation("io.ktor:ktor-client-okhttp:$ktor_version")
+    testImplementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    testImplementation("io.ktor:ktor-serialization-gson:$ktor_version")
 }
 
 tasks.withType<Test>().configureEach {
