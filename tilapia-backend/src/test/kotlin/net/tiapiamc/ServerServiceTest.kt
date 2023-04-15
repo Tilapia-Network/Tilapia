@@ -1,6 +1,7 @@
 package net.tiapiamc
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.test.TestCaseOrder
 import io.ktor.client.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
@@ -14,10 +15,7 @@ import net.tilapiamc.common.SuspendEventTarget
 import net.tilapiamc.communication.api.ProxyCommunication
 import net.tilapiamc.communication.api.ServerCommunication
 import strikt.api.expectThat
-import strikt.assertions.isEmpty
-import strikt.assertions.isNotEmpty
-import strikt.assertions.isNotNull
-import strikt.assertions.isNull
+import strikt.assertions.*
 
 class ServerServiceTest: StringSpec() {
     val serverManager = ServerManager()
@@ -60,6 +58,7 @@ class ServerServiceTest: StringSpec() {
                 })
                 val closeReason = proxyCommunication.start(listOf(), { SuspendEventTarget(it) }) {
                     onProxyConnected.add {
+                        Thread.sleep(100)
                         val closeReason = communication.start(listOf("test_database_1"), { ignoreException ->
                             SuspendEventTarget(ignoreException)
                         }) {
@@ -80,8 +79,48 @@ class ServerServiceTest: StringSpec() {
                         closeSession()
                     }
                 }
+                expectThat(closeReason)
+                    .isNull()
 
+            }
+        }
 
+        "Check Create Server Packet" {
+            testApplication {
+                application {
+                    module(serverManager)
+                }
+
+                val proxyCommunication = ProxyCommunication(createClient {
+                    clientConfig(Config.API_KEY)
+                })
+
+                val communication = ServerCommunication(createClient {
+                    clientConfig(Config.API_KEY)
+                })
+                val closeReason = proxyCommunication.start(listOf(), { SuspendEventTarget(it) }) {
+                    onProxyConnected.add {
+                        Thread.sleep(100)
+                        var receivedConnect = false
+                        var receivedDisconnect = false
+                        onServerAdded.add {
+                            receivedConnect = true
+                        }
+                        onServerRemoved.add {
+                            receivedDisconnect = true
+                        }
+                        val closeReason = communication.start(listOf("test_database_1"), { ignoreException ->
+                            SuspendEventTarget(ignoreException)
+                        }) {
+                            onServerConnected.add {
+                                closeSession()
+                            }
+                        }
+                        closeSession()
+                        expectThat(receivedConnect).isTrue()
+                        expectThat(receivedDisconnect).isTrue()
+                    }
+                }
                 expectThat(closeReason)
                     .isNull()
 
@@ -108,4 +147,7 @@ class ServerServiceTest: StringSpec() {
         }
     }
 
+    override fun testCaseOrder(): TestCaseOrder? {
+        return TestCaseOrder.Sequential
+    }
 }

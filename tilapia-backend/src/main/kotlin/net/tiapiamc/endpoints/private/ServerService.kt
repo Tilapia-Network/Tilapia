@@ -44,7 +44,7 @@ object ServerService {
                     val serverId = serverManager.generateServerId()
                     val proxyId = serverManager.getProxyAssignment()
                     val session = ServerSession(call.request.origin.remoteHost, this, proxyId, serverId)
-                    session.onSessionStarted.add {
+                    session.onHandshakeFinished.add {
                         serverManager.createServer(session)
                     }
                     session.onSessionClosed.add {

@@ -5,9 +5,11 @@ import net.tiapiamc.data.DatabaseManager
 import net.tiapiamc.getSuspendEventTarget
 import net.tiapiamc.obj.Player
 import net.tiapiamc.obj.game.Game
+import net.tilapiamc.common.SuspendEventTarget
 import net.tilapiamc.communication.ServerInfo
 import net.tilapiamc.communication.session.PacketRegistry
 import net.tilapiamc.communication.session.Session
+import net.tilapiamc.communication.session.SessionEvent
 import net.tilapiamc.communication.session.client.server.CPacketServerHandShake
 import net.tilapiamc.communication.session.server.SPacketDatabaseLogin
 import net.tilapiamc.communication.session.server.server.SPacketServerHandShake
@@ -21,6 +23,7 @@ class ServerSession(val remoteIp: String,
 
     val games = ArrayList<Game>()
     val players = HashMap<UUID, Player>()
+    val onHandshakeFinished = eventTargetFactory(false) as SuspendEventTarget<HandshakeFinishedEvent>
 
     init {
         onSessionStarted.add {
@@ -35,5 +38,7 @@ class ServerSession(val remoteIp: String,
     }
 
     fun toServerInfo(): ServerInfo = ServerInfo(proxy.proxyId, serverId, games.map { it.gameId })
+
+    class HandshakeFinishedEvent(override val session: ServerSession): SessionEvent(session)
 
 }

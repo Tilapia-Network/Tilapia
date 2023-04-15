@@ -31,7 +31,7 @@ object ProxyService {
                 webSocket("/proxy/gateway") {
                     val proxyId = serverManager.generateProxyId()
                     val session = ProxySession(call.request.origin.remoteHost, this, proxyId)
-                    session.onSessionStarted.add {
+                    session.onHandshakeFinished.add {
                         serverManager.createProxy(session)
                     }
                     session.onSessionClosed.add {

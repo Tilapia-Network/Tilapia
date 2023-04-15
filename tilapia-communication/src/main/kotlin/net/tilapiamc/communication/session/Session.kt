@@ -62,16 +62,30 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
         webSocket.flush()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun startSession() {
-        Thread {
-            runBlocking {
-                onSessionStarted(SessionStartEvent(this@Session))
-            }
-        }.start()
+        for (handler in onSessionStarted) {
+            Thread {
+                runBlocking {
+                    try {
+                        handler(SessionStartEvent(this@Session))
+                    } catch (e: WebSocketClientError) {
+                        e.printStackTrace()
+                        closeSession(CloseReason(CloseReason.Codes.PROTOCOL_ERROR, e.message!!))
+                    } catch (e: Throwable) {
+                        e.printStackTrace()
+                        closeSession(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error while reading frames"))
+                    }
+                }
+            }.start()
+        }
+
+        Thread.sleep(50) // Wait until everything is initialized
+
+        // TODO: Workaround - Race condition
+        //
         runBlocking {
             try {
-                while (!webSocket.incoming.isClosedForReceive) {
+                while (true) {
                     val frame = webSocket.incoming.receive()
                     val packet = readPacket(frame)
                     try {
