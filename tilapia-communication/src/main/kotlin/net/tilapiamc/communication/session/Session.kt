@@ -16,6 +16,7 @@ import java.util.*
 abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>, val eventTargetFactory: (ignoreException: Boolean) -> SuspendEventTarget<out SessionEvent>, val webSocket: DefaultWebSocketSession) {
 
     val gson = GsonBuilder().create()
+    @Deprecated("Possible race condition, please refer to internal #1")
     val onSessionStarted = eventTargetFactory(false) as SuspendEventTarget<SessionStartEvent>
     val onSessionClosed = eventTargetFactory(true) as SuspendEventTarget<SessionCloseEvent>
     val onPacket = eventTargetFactory(false) as SuspendEventTarget<SessionPacketEvent>
@@ -82,7 +83,7 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
         Thread.sleep(50) // Wait until everything is initialized
 
         // TODO: Workaround - Race condition
-        //
+        // Please refer to internal #1
         runBlocking {
             try {
                 while (true) {
