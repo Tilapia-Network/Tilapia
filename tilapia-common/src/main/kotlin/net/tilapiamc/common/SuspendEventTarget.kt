@@ -5,6 +5,7 @@ class SuspendEventTarget<T>(val exceptionHandler: (suspend (Throwable) -> Boolea
 
     constructor(ignoreExceptions: Boolean): this({ ignoreExceptions })
 
+
     suspend operator fun invoke(event: T) {
         for (allHandler in ArrayList(this)) {
             try {

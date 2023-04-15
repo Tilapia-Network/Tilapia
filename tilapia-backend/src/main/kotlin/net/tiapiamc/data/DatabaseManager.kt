@@ -3,6 +3,7 @@ package net.tiapiamc.data
 import io.ktor.server.sessions.*
 import kotlinx.coroutines.Dispatchers
 import net.tilapiamc.communication.DatabaseLogin
+import org.apache.logging.log4j.LogManager
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
@@ -16,6 +17,14 @@ object DatabaseManager {
 
     lateinit var database: Database
     val databaseSessions = HashMap<UUID, DatabaseLogin>()
+    val logger = LogManager.getLogger("DatabaseManager")
+
+    suspend fun deleteOld() {
+        dbQuery {
+            TransactionManager.current().connection.prepareStatement("delete from mysql.user where `user` like 'TEMP-%'", false).executeUpdate()
+            TransactionManager.current().connection.prepareStatement("FLUSH PRIVILEGES", false).executeUpdate()
+        }
+    }
 
     suspend fun createSession(remoteIp: String, schemas: List<String>): DatabaseLogin {
         val sessionId = UUID.randomUUID()
@@ -37,6 +46,7 @@ object DatabaseManager {
             }
             databaseSessions[sessionId] = DatabaseLogin(sessionId, remoteIp, username, password)
         }
+        logger.info("Created session $sessionId")
         return DatabaseLogin(sessionId, remoteIp, username, password)
     }
     suspend fun closeSession(sessionId: UUID) {
@@ -51,6 +61,7 @@ object DatabaseManager {
             }@'${login.remoteIp}'", false)
             prepareStatement.executeUpdate()
         }
+        logger.info("Closed session $sessionId")
     }
 
 

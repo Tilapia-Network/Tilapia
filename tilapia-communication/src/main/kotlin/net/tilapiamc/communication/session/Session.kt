@@ -62,6 +62,7 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
         webSocket.flush()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun startSession() {
         Thread {
             runBlocking {
@@ -70,7 +71,8 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
         }.start()
         runBlocking {
             try {
-                for (frame in webSocket.incoming) {
+                while (!webSocket.incoming.isClosedForReceive) {
+                    val frame = webSocket.incoming.receive()
                     val packet = readPacket(frame)
                     try {
                         onPacket(SessionPacketEvent(this@Session, packet))
@@ -80,7 +82,6 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
                     }
                 }
             } catch (e: ClosedReceiveChannelException) {
-                e.printStackTrace()
                 closeSession()
             } catch (e: WebSocketClientError) {
                 e.printStackTrace()

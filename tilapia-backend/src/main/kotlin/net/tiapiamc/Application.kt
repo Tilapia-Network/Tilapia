@@ -9,6 +9,7 @@ import io.ktor.server.plugins.autohead.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.forwardedheaders.*
 import io.ktor.server.websocket.*
+import kotlinx.coroutines.runBlocking
 import net.tiapiamc.config.Config
 import net.tiapiamc.data.DatabaseManager
 import net.tiapiamc.endpoints.private.GameService.applyGameService
@@ -28,7 +29,9 @@ fun main() {
 
 fun Application.module() {
     DatabaseManager.database = Database.connect(Config.DATABASE_URL, user = Config.DATABASE_USER, password = Config.DATABASE_PASSWORD)
-
+    runBlocking {
+        DatabaseManager.deleteOld()
+    }
     install(ForwardedHeaders)
     install(XForwardedHeaders)
     install(AutoHeadResponse)

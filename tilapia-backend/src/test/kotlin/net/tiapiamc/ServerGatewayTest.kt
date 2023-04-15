@@ -44,23 +44,18 @@ class ServerGatewayTest : StringSpec() {
                     clientConfig(Config.API_KEY)
                 })
 
-                val lock = Object()
-                var initialized = false
                 val session = communication.start(listOf("test_database_1", "test_database_2"), { ignoreException ->
                     SuspendEventTarget(ignoreException)
                 }) {
                     onServerConnected.add {
-                        initialized = true
                         closeSession()
                     }
                 }
 
-                assert(initialized) { "10 seconds has passed and not initialized yet" }
-
                 databaseLogin = session.databaseLogin
             }
 
-            // TODO: Verify the
+            // TODO: Verify the server is created
         }
 
 

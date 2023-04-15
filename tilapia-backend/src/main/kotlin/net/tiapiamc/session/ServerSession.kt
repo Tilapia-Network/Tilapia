@@ -21,6 +21,9 @@ class ServerSession(val remoteIp: String,
             sendPacket(SPacketServerHandShake(proxyId, serverId))
             val handShake = waitForPacketWithType<CPacketServerHandShake>()?:clientError("Not receiving handshake packet")
             val login = DatabaseManager.createSession(remoteIp, handShake.requiredSchemas)
+            onSessionClosed.add {
+                DatabaseManager.closeSession(login.sessionId)
+            }
             sendPacket(SPacketDatabaseLogin(login))
         }
     }
