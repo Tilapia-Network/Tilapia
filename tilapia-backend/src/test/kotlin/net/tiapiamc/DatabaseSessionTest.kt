@@ -81,9 +81,19 @@ class DatabaseSessionTest: StringSpec() {
             }
         }
 
-        "Clsoe Session" {
+        "Close Session" {
             runBlocking {
                 DatabaseManager.closeSession(loginData.sessionId)
+            }
+        }
+        "Delete Old" {
+            runBlocking {
+                loginData = DatabaseManager.createSession("127.0.0.1", listOf("test_database_1"))
+                DriverManager.getConnection(Config.DATABASE_URL + "/test_database_1", loginData.username, loginData.password)
+                DatabaseManager.deleteOld()
+                expectThrows<Throwable> {
+                    DriverManager.getConnection(Config.DATABASE_URL + "/test_database_1", loginData.username, loginData.password)
+                }
             }
         }
 

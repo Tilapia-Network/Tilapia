@@ -13,7 +13,11 @@ import net.tiapiamc.config.Config
 import net.tilapiamc.common.SuspendEventTarget
 import net.tilapiamc.communication.DatabaseLogin
 import net.tilapiamc.communication.api.ServerCommunication
+import strikt.api.expect
+import strikt.api.expectThat
 import strikt.api.expectThrows
+import strikt.assertions.isNotNull
+import java.sql.DriverManager
 
 class ServerGatewayTest : StringSpec() {
 
@@ -56,6 +60,44 @@ class ServerGatewayTest : StringSpec() {
             }
 
             // TODO: Verify the server is created
+        }
+
+        "Verify Login is Valid" {
+            testApplication {
+                application {
+                    module()
+                }
+
+                val communication = ServerCommunication(createClient {
+                    clientConfig(Config.API_KEY)
+                })
+
+                val session = communication.start(listOf("test_database_1", "test_database_2"), { ignoreException ->
+                    SuspendEventTarget(ignoreException)
+                }) {
+                    onServerConnected.add {
+                        try {
+                            expect {
+                                DriverManager.getConnection(Config.DATABASE_URL, it.session.databaseLogin.username, it.session.databaseLogin.password)
+                            }
+                        } finally {
+                            closeSession()
+                        }
+                    }
+                }
+
+                databaseLogin = session.databaseLogin
+            }
+
+            // TODO: Verify the server is created
+        }
+
+        "Verify Login Is Invalid" {
+            expectThat(databaseLogin)
+                .isNotNull()
+            expectThrows<Throwable> {
+                DriverManager.getConnection(Config.DATABASE_URL, databaseLogin!!.username, databaseLogin!!.password)
+            }
         }
 
 
