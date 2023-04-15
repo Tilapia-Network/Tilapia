@@ -84,6 +84,7 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
 
         // TODO: Workaround - Race condition
         // Please refer to internal #1
+
         runBlocking {
             try {
                 while (true) {
