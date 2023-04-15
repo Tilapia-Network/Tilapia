@@ -8,9 +8,9 @@ import net.tilapiamc.communication.DatabaseLogin
 import net.tilapiamc.communication.session.PacketRegistry
 import net.tilapiamc.communication.session.Session
 import net.tilapiamc.communication.session.SessionEvent
-import net.tilapiamc.communication.session.client.CPacketServerHandShake
+import net.tilapiamc.communication.session.client.server.CPacketServerHandShake
 import net.tilapiamc.communication.session.server.SPacketDatabaseLogin
-import net.tilapiamc.communication.session.server.SPacketServerHandShake
+import net.tilapiamc.communication.session.server.server.SPacketServerHandShake
 import java.util.*
 
 class ServerCommunication(client: HttpClient): TilapiaPrivateAPI(client) {
@@ -18,15 +18,19 @@ class ServerCommunication(client: HttpClient): TilapiaPrivateAPI(client) {
     suspend fun start(requiredSchemas: List<String>,
               eventTargetFactory: (ignoreException: Boolean) -> SuspendEventTarget<out SessionEvent>,
               block: suspend ServerCommunicationSession.() -> Unit = {}
-    ): ServerCommunicationSession {
-        var session: ServerCommunicationSession? = null
+    ): CloseReason? {
+        var reason: CloseReason? = null
         client.webSocket("/server/gateway") {
-            session = ServerCommunicationSession(requiredSchemas, this@ServerCommunication, eventTargetFactory, this).also {
+            ServerCommunicationSession(requiredSchemas, this@ServerCommunication, eventTargetFactory, this).also {
                 it.block()
-            }
-            session!!.startSession()
+                it.onSessionClosed.add {
+                    if (!it.closedBySelf) {
+                        reason = it.closeReason
+                    }
+                }
+            }.startSession()
         }
-        return session!!
+        return reason
     }
 
 }
@@ -34,7 +38,7 @@ class ServerCommunication(client: HttpClient): TilapiaPrivateAPI(client) {
 class ServerCommunicationSession(requiredSchemas: List<String>,
                                 val communication: ServerCommunication,
                                 eventTargetFactory: (ignoreException: Boolean) -> SuspendEventTarget<out SessionEvent>,
-                                websocketSession: WebSocketSession
+                                websocketSession: DefaultWebSocketSession
 ): Session(PacketRegistry.serverPackets, eventTargetFactory, websocketSession) {
 
     val onServerConnected = eventTargetFactory(false) as SuspendEventTarget<ServerConnectedEvent>

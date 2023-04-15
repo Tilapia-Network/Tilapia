@@ -13,7 +13,7 @@ import net.tilapiamc.common.json.get
 import net.tilapiamc.common.json.set
 import java.util.*
 
-abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>, val eventTargetFactory: (ignoreException: Boolean) -> SuspendEventTarget<out SessionEvent>, val webSocket: WebSocketSession) {
+abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>, val eventTargetFactory: (ignoreException: Boolean) -> SuspendEventTarget<out SessionEvent>, val webSocket: DefaultWebSocketSession) {
 
     val gson = GsonBuilder().create()
     val onSessionStarted = eventTargetFactory(false) as SuspendEventTarget<SessionStartEvent>
@@ -95,6 +95,8 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
 
     }
 
+    var hasEmiitedSessionClose = false
+
     @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun closeSession(reason: CloseReason? = null) {
         if (!webSocket.incoming.isClosedForReceive) {
@@ -103,8 +105,16 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
             } else {
                 webSocket.close(reason)
             }
+            if (!hasEmiitedSessionClose) {
+                hasEmiitedSessionClose = true
+                onSessionClosed(SessionCloseEvent(this, true, reason))
+            }
+        } else {
+            if (!hasEmiitedSessionClose) {
+                hasEmiitedSessionClose = true
+                onSessionClosed(SessionCloseEvent(this, false, webSocket.closeReason.await()))
+            }
         }
-        onSessionClosed(SessionCloseEvent(this))
     }
 
 
@@ -128,4 +138,4 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
 open class SessionEvent(open val session: Session)
 class SessionPacketEvent(session: Session, val packet: SessionPacket): SessionEvent(session)
 class SessionStartEvent(session: Session): SessionEvent(session)
-class SessionCloseEvent(session: Session): SessionEvent(session)
+class SessionCloseEvent(session: Session, val closedBySelf: Boolean, val closeReason: CloseReason?): SessionEvent(session)

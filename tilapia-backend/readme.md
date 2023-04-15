@@ -13,6 +13,12 @@ from the reverse proxy.
 
 Once a connection to the session is closed, related database users will be deleted
 
+### Player Join Behavior
+1. Send SPacketServerAcceptPlayer to target server
+2. Wait for ack
+3. Send SPacketProxyAcceptPlayer to target proxy
+4. [TODO] Wait for ack
+5. [TODO] Notify root server that the player is accepted
 
 ## Client API
 

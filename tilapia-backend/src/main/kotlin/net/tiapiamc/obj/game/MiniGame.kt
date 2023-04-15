@@ -1,17 +1,19 @@
 package net.tiapiamc.obj.game
 
-import net.tiapiamc.obj.Server
+import net.tiapiamc.obj.Player
+import net.tiapiamc.session.ServerSession
 import net.tilapiamc.communication.MiniGameInfo
 import java.util.*
 
-class MiniGame(server: Server, gameId: UUID, val lobbyType: String, val miniGameType: String) : Game(server, gameId) {
+class MiniGame(server: ServerSession, gameId: UUID, val lobbyType: String, val miniGameType: String, players: MutableList<Player> = ArrayList<Player>()) : Game(server, gameId, players) {
 
     fun toMiniGameInfo(): MiniGameInfo {
         return MiniGameInfo(
             server.serverId,
             gameId,
             lobbyType,
-            miniGameType
+            players.map { it.toPlayerInfo() },
+            miniGameType,
         )
     }
 

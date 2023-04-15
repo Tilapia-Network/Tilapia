@@ -6,6 +6,7 @@ open class GameInfo(
     val serverId: UUID,
     val gameId: UUID,
     val lobbyType: String,
+    val players: List<PlayerInfo>,
 ) {
 
 
@@ -15,11 +16,13 @@ open class GameInfo(
 class MiniGameInfo(serverId: UUID,
                    gameId: UUID,
                    lobbyType: String,
+                   players: List<PlayerInfo>,
                    val miniGameType: String
-) : GameInfo(serverId, gameId, lobbyType) {
+) : GameInfo(serverId, gameId, lobbyType, players) {
 }
 
 class LobbyInfo(serverId: UUID,
                 gameId: UUID,
                 lobbyType: String,
-) : GameInfo(serverId, gameId, lobbyType)
+                players: List<PlayerInfo>,
+) : GameInfo(serverId, gameId, lobbyType, players)

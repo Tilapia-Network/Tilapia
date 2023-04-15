@@ -1,13 +1,14 @@
 package net.tiapiamc.obj.game
 
-import net.tiapiamc.obj.Server
+import net.tiapiamc.obj.Player
+import net.tiapiamc.session.ServerSession
 import net.tilapiamc.communication.LobbyInfo
 import java.util.*
 
-class Lobby(server: Server, gameId: UUID, val lobbyType: String) : Game(server, gameId) {
+class Lobby(server: ServerSession, gameId: UUID, val lobbyType: String, players: MutableList<Player> = ArrayList<Player>()) : Game(server, gameId, players) {
 
     fun toLobbyInfo(): LobbyInfo {
-        return LobbyInfo(server.serverId, gameId, lobbyType)
+        return LobbyInfo(server.serverId, gameId, lobbyType, players.map { it.toPlayerInfo() })
     }
 
 }

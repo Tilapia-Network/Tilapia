@@ -5,22 +5,27 @@ import com.google.gson.JsonObject
 import net.tilapiamc.common.json.get
 import net.tilapiamc.common.json.jsonObjectOf
 import net.tilapiamc.communication.session.SessionPacket
-import java.util.*
 
-class SPacketProxyHandShake(
-    var proxyId: UUID,
+class SPacketStatus(
+    var statusCode: Int,
+    var transmissionId: Long,
+    var message: String
 ): SessionPacket.SPacket() {
 
-    constructor(): this(UUID.randomUUID())
+    constructor(): this(0, 0L, "")
 
     override fun toJson(gson: Gson): JsonObject {
         return gson.jsonObjectOf(
-            "proxyId" to proxyId,
+            "statusCode" to statusCode,
+            "transmissionId" to transmissionId,
+            "message" to message,
         )
     }
 
     override fun fromJson(gson: Gson, jsonObject: JsonObject) {
-        this.proxyId = jsonObject[gson, "proxyId"]!!
+        this.statusCode = jsonObject[gson, "statusCode"]!!
+        this.transmissionId = jsonObject[gson, "transmissionId"]!!
+        this.message = jsonObject[gson, "message"]!!
     }
 
 }

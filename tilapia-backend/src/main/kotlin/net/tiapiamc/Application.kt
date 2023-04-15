@@ -1,5 +1,6 @@
 package net.tiapiamc
 
+import com.google.gson.GsonBuilder
 import io.ktor.serialization.gson.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -16,6 +17,7 @@ import net.tiapiamc.endpoints.private.GameService.applyGameService
 import net.tiapiamc.endpoints.private.PlayerService.applyPlayerService
 import net.tiapiamc.endpoints.private.ProxyService.applyProxyService
 import net.tiapiamc.endpoints.private.ServerService.applyServerService
+import net.tiapiamc.managers.ServerManager
 import net.tilapiamc.common.EventTarget
 import net.tilapiamc.common.SuspendEventTarget
 import org.jetbrains.exposed.sql.Database
@@ -23,12 +25,14 @@ import org.slf4j.LoggerFactory
 import java.time.Duration
 
 fun main() {
-    embeddedServer(Netty, port = Config.PORT, host = Config.HOST, module = Application::module)
+    embeddedServer(Netty, port = Config.PORT, host = Config.HOST, module = { module(ServerManager()) })
         .start(wait = true)
 }
 
-fun Application.module() {
-    DatabaseManager.database = Database.connect(Config.DATABASE_URL, user = Config.DATABASE_USER, password = Config.DATABASE_PASSWORD)
+fun Application.module(serverManager: ServerManager, database: Database = Database.connect(Config.DATABASE_URL, user = Config.DATABASE_USER, password = Config.DATABASE_PASSWORD)) {
+
+
+    DatabaseManager.database = database
     runBlocking {
         DatabaseManager.deleteOld()
     }
@@ -59,11 +63,12 @@ fun Application.module() {
         }
     }
 
+    val gson = GsonBuilder().create()
 
-    applyProxyService()
-    applyPlayerService()
-    applyServerService()
-    applyGameService()
+    applyProxyService(serverManager, gson)
+    applyPlayerService(serverManager, gson)
+    applyServerService(serverManager, gson)
+    applyGameService(serverManager, gson)
 }
 
 

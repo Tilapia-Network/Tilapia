@@ -1,32 +1,43 @@
 package net.tilapiamc.communication.api
 
-import com.google.gson.JsonPrimitive
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
 import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import net.tilapiamc.communication.*
 import java.util.*
 
 open class TilapiaPrivateAPI(val client: HttpClient) {
 
+    val gson = GsonBuilder().create()
+
     // ServerService
-    fun listServers(): List<ServerInfo> {
-        TODO()
-
-    }
-    fun getServerInfo(serverId: UUID): ServerInfo? {
-        TODO()
-
+    suspend fun listServers(serverIdPrefix: String? = null, proxyIdPrefix: String? = null): List<ServerInfo> {
+        val response = client.get("/server/list") {
+            if (serverIdPrefix != null) {
+                parameter("serverIdPrefix", serverIdPrefix)
+            }
+            if (proxyIdPrefix != null) {
+                parameter("proxyIdPrefix", proxyIdPrefix)
+            }
+        }
+        val array = gson.fromJson(ensureResponse(response), JsonArray::class.java)
+        return array.map { gson.fromJson(it, ServerInfo::class.java) }
     }
 
     // Proxy Service
-    fun getProxyInfo(proxyId: UUID): ProxyInfo? {
-        TODO()
-
+    suspend fun listProxies(proxyIdPrefix: String? = null): List<ProxyInfo> {
+        val response = client.get("/proxy/list") {
+            if (proxyIdPrefix != null) {
+                parameter("proxyIdPrefix", proxyIdPrefix)
+            }
+        }
+        val array = gson.fromJson(ensureResponse(response), JsonArray::class.java)
+        return array.map { gson.fromJson(it, ProxyInfo::class.java) }
     }
 
-    fun listProxies(): List<ProxyInfo> {
-        TODO()
-
-    }
 
 
     // Game Service
@@ -46,19 +57,11 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
         TODO()
 
     }
-    fun getLobbies(): List<LobbyInfo> {
+    fun getLobbies(lobbyType: String? = null, gameIdPrefix: String? = null): List<LobbyInfo> {
         TODO()
 
     }
-    fun getMiniGames(): List<MiniGameInfo> {
-        TODO()
-
-    }
-    fun findLobbies(lobbyType: String): List<LobbyInfo> {
-        TODO()
-
-    }
-    fun findMiniGames(miniGameType: String): List<MiniGameInfo> {
+    fun getMiniGames(miniGameType: String? = null, gameIdPrefix: String? = null): List<MiniGameInfo> {
         TODO()
 
     }
@@ -82,13 +85,10 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
     }
 
 
-    // Data Service
-    fun getPlayerData(offlinePlayer: UUID, tableName: String): Map<String, JsonPrimitive> {
-        TODO()
-
-    }
-    fun setPlayerData(offlinePlayer: UUID, tableName: String, data: Map<String, JsonPrimitive>) {
-        TODO()
-
+    suspend fun ensureResponse(response: HttpResponse): String {
+        if (response.status != HttpStatusCode.OK) {
+            throw IllegalStateException("Server returned status: ${response.status}, body:  ${response.bodyAsText()}")
+        }
+        return response.bodyAsText()
     }
 }

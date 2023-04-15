@@ -1,4 +1,4 @@
-package net.tilapiamc.communication.session.client
+package net.tilapiamc.communication.session.client.server
 
 import com.google.gson.Gson
 import com.google.gson.JsonArray
@@ -7,15 +7,15 @@ import net.tilapiamc.common.json.get
 import net.tilapiamc.common.json.jsonObjectOf
 import net.tilapiamc.communication.session.SessionPacket
 
-class CPacketProxyHandShake(
-    var requiredSchemas: List<String>
+class CPacketServerHandShake(
+    var requiredSchemas: List<String>,
 ): SessionPacket.CPacket() {
 
     constructor(): this(arrayListOf())
 
     override fun toJson(gson: Gson): JsonObject {
         return gson.jsonObjectOf(
-            "requiredSchemas" to requiredSchemas
+            "requiredSchemas" to requiredSchemas,
         )
     }
 

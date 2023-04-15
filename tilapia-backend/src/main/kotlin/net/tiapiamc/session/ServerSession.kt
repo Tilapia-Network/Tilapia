@@ -3,22 +3,28 @@ package net.tiapiamc.session
 import io.ktor.websocket.*
 import net.tiapiamc.data.DatabaseManager
 import net.tiapiamc.getSuspendEventTarget
+import net.tiapiamc.obj.Player
+import net.tiapiamc.obj.game.Game
+import net.tilapiamc.communication.ServerInfo
 import net.tilapiamc.communication.session.PacketRegistry
 import net.tilapiamc.communication.session.Session
-import net.tilapiamc.communication.session.client.CPacketServerHandShake
+import net.tilapiamc.communication.session.client.server.CPacketServerHandShake
 import net.tilapiamc.communication.session.server.SPacketDatabaseLogin
-import net.tilapiamc.communication.session.server.SPacketServerHandShake
+import net.tilapiamc.communication.session.server.server.SPacketServerHandShake
 import java.util.*
 
 class ServerSession(val remoteIp: String,
-                    webSocket: WebSocketSession,
-                    val proxyId: UUID,
+                    webSocket: DefaultWebSocketSession,
+                    val proxy: ProxySession,
                     val serverId: UUID
 ) : Session(PacketRegistry.clientPackets, { getSuspendEventTarget(it) }, webSocket) {
 
+    val games = ArrayList<Game>()
+    val players = HashMap<UUID, Player>()
+
     init {
         onSessionStarted.add {
-            sendPacket(SPacketServerHandShake(proxyId, serverId))
+            sendPacket(SPacketServerHandShake(proxy.proxyId, serverId))
             val handShake = waitForPacketWithType<CPacketServerHandShake>()?:clientError("Not receiving handshake packet")
             val login = DatabaseManager.createSession(remoteIp, handShake.requiredSchemas)
             onSessionClosed.add {
@@ -27,5 +33,7 @@ class ServerSession(val remoteIp: String,
             sendPacket(SPacketDatabaseLogin(login))
         }
     }
+
+    fun toServerInfo(): ServerInfo = ServerInfo(proxy.proxyId, serverId, games.map { it.gameId })
 
 }
