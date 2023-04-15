@@ -5,6 +5,8 @@ import net.tiapiamc.obj.Player
 import net.tiapiamc.obj.game.Game
 import net.tiapiamc.session.ProxySession
 import net.tiapiamc.session.ServerSession
+import net.tilapiamc.communication.session.server.proxy.SPacketProxyAddServer
+import net.tilapiamc.communication.session.server.proxy.SPacketProxyRemoveServer
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -34,6 +36,7 @@ class ServerManager {
         logger.info("Server ${server.serverId} has started")
         servers[server.serverId] = server
         server.proxy.servers.add(server)
+        server.proxy.sendPacket(SPacketProxyAddServer(server.toServerInfo()))
     }
     suspend fun deleteProxy(proxy: ProxySession, closedByServer: Boolean, reason: CloseReason?) {
         if (proxy.proxyId in proxies) {
@@ -54,6 +57,7 @@ class ServerManager {
         }
         servers.remove(server.serverId)
         server.proxy.servers.remove(server)
+        server.proxy.sendPacket(SPacketProxyRemoveServer(server.serverId))
     }
 
 }
