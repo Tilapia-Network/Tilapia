@@ -8,21 +8,18 @@ import net.tilapiamc.communication.session.SessionPacket
 import java.util.*
 
 class CPacketProxyPlayerLogout(
-    var transmissionId: Long,
     var playerUUID: UUID,
 ): SessionPacket.CPacket() {
 
-    constructor(): this(0L, UUID.randomUUID())
+    constructor(): this(UUID.randomUUID())
 
     override fun toJson(gson: Gson): JsonObject {
         return gson.jsonObjectOf(
-            "transmissionId" to transmissionId,
             "playerUUID" to playerUUID,
         )
     }
 
     override fun fromJson(gson: Gson, jsonObject: JsonObject) {
-        this.transmissionId = jsonObject[gson, "transmissionId"]!!
         this.playerUUID = jsonObject[gson, "playerUUID"]!!
     }
 

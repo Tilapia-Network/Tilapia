@@ -6,16 +6,20 @@ import net.tiapiamc.getSuspendEventTarget
 import net.tiapiamc.obj.Player
 import net.tiapiamc.obj.game.Game
 import net.tilapiamc.common.SuspendEventTarget
+import net.tilapiamc.communication.JoinResult
+import net.tilapiamc.communication.PlayerInfo
 import net.tilapiamc.communication.ServerInfo
 import net.tilapiamc.communication.session.PacketRegistry
 import net.tilapiamc.communication.session.Session
 import net.tilapiamc.communication.session.SessionEvent
 import net.tilapiamc.communication.session.client.server.CPacketServerHandShake
+import net.tilapiamc.communication.session.client.server.CPacketServerJoinResult
 import net.tilapiamc.communication.session.server.SPacketDatabaseLogin
 import net.tilapiamc.communication.session.server.server.SPacketServerHandShake
+import net.tilapiamc.communication.session.server.server.SPacketServerRequestJoinResult
 import java.util.*
 
-class ServerSession(val remoteIp: String,
+class ServerSession( val remoteIp: String,
                     webSocket: DefaultWebSocketSession,
                     val proxy: ProxySession,
                     val serverId: UUID
@@ -36,10 +40,23 @@ class ServerSession(val remoteIp: String,
             sendPacket(SPacketDatabaseLogin(login))
             onHandshakeFinished(HandshakeFinishedEvent(this))
         }
+
     }
 
     fun toServerInfo(): ServerInfo = ServerInfo(proxy.proxyId, serverId, games.map { it.gameId })
 
     class HandshakeFinishedEvent(override val session: ServerSession): SessionEvent(session)
+
+    var latestTransmissionId = 0L
+
+    fun newTransmissionId(): Long = latestTransmissionId++
+
+    suspend fun getJoinResult(gameId: UUID, playerInfo: PlayerInfo): JoinResult {
+        val newTransmissionId = newTransmissionId()
+        sendPacket(SPacketServerRequestJoinResult(newTransmissionId, playerInfo, gameId))
+        val packet = waitForPacketWithType<CPacketServerJoinResult>({it.transmissionId == newTransmissionId}, 5000)
+            ?: throw IllegalStateException("Server did not respond")
+        return packet.joinResult
+    }
 
 }

@@ -6,6 +6,7 @@ import net.tilapiamc.communication.session.client.proxy.CPacketProxyHandShake
 import net.tilapiamc.communication.session.client.proxy.CPacketProxyPlayerLogin
 import net.tilapiamc.communication.session.client.proxy.CPacketProxyPlayerLogout
 import net.tilapiamc.communication.session.client.server.CPacketServerHandShake
+import net.tilapiamc.communication.session.client.server.CPacketServerJoinResult
 import net.tilapiamc.communication.session.server.SPacketAcknowledge
 import net.tilapiamc.communication.session.server.SPacketDatabaseLogin
 import net.tilapiamc.communication.session.server.SPacketStatus
@@ -15,6 +16,7 @@ import net.tilapiamc.communication.session.server.proxy.SPacketProxyHandShake
 import net.tilapiamc.communication.session.server.proxy.SPacketProxyRemoveServer
 import net.tilapiamc.communication.session.server.server.SPacketServerAcceptPlayer
 import net.tilapiamc.communication.session.server.server.SPacketServerHandShake
+import net.tilapiamc.communication.session.server.server.SPacketServerRequestJoinResult
 
 object PacketRegistry {
 
@@ -28,6 +30,7 @@ object PacketRegistry {
         "SPacketServerAcceptPlayer" to { SPacketServerAcceptPlayer() },
         "SPacketProxyAcceptPlayer" to { SPacketProxyAcceptPlayer() },
         "SPacketStatus" to { SPacketStatus() },
+        "SPacketServerRequestJoinResult" to { SPacketServerRequestJoinResult() },
     )
     val clientPackets = hashMapOf<String, () -> SessionPacket>(
         "CPacketServerHandShake" to { CPacketServerHandShake() },
@@ -36,6 +39,7 @@ object PacketRegistry {
         "CPacketStatus" to { CPacketStatus() },
         "CPacketProxyPlayerLogin" to { CPacketProxyPlayerLogin() },
         "CPacketProxyPlayerLogout" to { CPacketProxyPlayerLogout() },
+        "CPacketServerJoinResult" to { CPacketServerJoinResult() },
     )
 
     fun getPacketName(packet: SessionPacket): String {

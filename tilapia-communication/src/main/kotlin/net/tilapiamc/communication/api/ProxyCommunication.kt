@@ -5,6 +5,7 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.websocket.*
 import net.tilapiamc.common.SuspendEventTarget
 import net.tilapiamc.communication.DatabaseLogin
+import net.tilapiamc.communication.PlayerInfo
 import net.tilapiamc.communication.ServerInfo
 import net.tilapiamc.communication.session.PacketRegistry
 import net.tilapiamc.communication.session.Session
@@ -71,13 +72,11 @@ class ProxyCommunicationSession(requiredSchemas: List<String>,
         }
     }
 
-    fun login(player: UUID) {
+    fun login(player: PlayerInfo) {
         TODO()
-
     }
     fun logout(player: UUID) {
         TODO()
-
     }
 
     class ProxyConnectedEvent(override val session: ProxyCommunicationSession): SessionEvent(session)

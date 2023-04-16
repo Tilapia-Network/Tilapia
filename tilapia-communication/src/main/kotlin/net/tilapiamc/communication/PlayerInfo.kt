@@ -6,5 +6,5 @@ data class PlayerInfo(
     val playerName: String,
     val uniqueId: UUID,
     val locale: Locale,
-    val currentGame: UUID
+    val currentGame: UUID?
 )

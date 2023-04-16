@@ -8,8 +8,11 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import net.tiapiamc.managers.ServerManager
+import net.tiapiamc.obj.Player.Companion.toPlayer
 import net.tiapiamc.session.ProxySession
 import net.tilapiamc.communication.ProxyInfo
+import net.tilapiamc.communication.session.client.proxy.CPacketProxyPlayerLogin
+import net.tilapiamc.communication.session.client.proxy.CPacketProxyPlayerLogout
 
 object ProxyService {
 
@@ -31,6 +34,25 @@ object ProxyService {
                 webSocket("/proxy/gateway") {
                     val proxyId = serverManager.generateProxyId()
                     val session = ProxySession(call.request.origin.remoteHost, this, proxyId)
+
+                    session.onPacket.add {
+                        val packet = it.packet
+                        if (packet is CPacketProxyPlayerLogin) {
+                            val player = packet.playerInfo.toPlayer(serverManager)
+                            session.players[packet.playerInfo.uniqueId] = player
+                            serverManager.players[packet.playerInfo.uniqueId]  = player
+                        }
+                        if (packet is CPacketProxyPlayerLogout) {
+                            val player = session.players[packet.playerUUID]
+                            if (player != null) {
+                                session.players.remove(player.uuid)
+                                serverManager.players.remove(player.uuid)
+                                serverManager.games.values.filter { player in it.players }.forEach { game ->
+                                    game.players.remove(player)
+                                }
+                            }
+                        }
+                    }
                     session.onHandshakeFinished.add {
                         serverManager.createProxy(session)
                     }

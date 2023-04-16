@@ -4,29 +4,24 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import net.tilapiamc.common.json.get
 import net.tilapiamc.common.json.jsonObjectOf
+import net.tilapiamc.communication.PlayerInfo
 import net.tilapiamc.communication.session.SessionPacket
 import java.util.*
 
 class CPacketProxyPlayerLogin(
-    var transmissionId: Long,
-    var playerUUID: UUID,
-    var playerName: String
+    var playerInfo: PlayerInfo
 ): SessionPacket.CPacket() {
 
-    constructor(): this(0L, UUID.randomUUID(), "")
+    constructor(): this(PlayerInfo("", UUID.randomUUID(), Locale.TRADITIONAL_CHINESE, UUID.randomUUID()))
 
     override fun toJson(gson: Gson): JsonObject {
         return gson.jsonObjectOf(
-            "transmissionId" to transmissionId,
-            "playerUUID" to playerUUID,
-            "playerName" to playerName,
+            "playerInfo" to playerInfo,
         )
     }
 
     override fun fromJson(gson: Gson, jsonObject: JsonObject) {
-        this.transmissionId = jsonObject[gson, "transmissionId"]!!
-        this.playerUUID = jsonObject[gson, "playerUUID"]!!
-        this.playerName = jsonObject[gson, "playerName"]!!
+        this.playerInfo = jsonObject[gson, "playerInfo"]!!
     }
 
 }
