@@ -1,5 +1,6 @@
 package net.tilapiamc.core.networking
 
+import kotlinx.coroutines.runBlocking
 import net.tilapiamc.api.game.Game
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.game.lobby.Lobby
@@ -13,11 +14,15 @@ class LocalGameFinderImpl(val core: TilapiaCoreImpl): GameFinder {
 
 
     override fun findLobbies(lobbyType: String): List<Lobby> {
-        return core.communication.getLobbies().map { NetworkLobbyImpl(core.communication, it) }
+        return runBlocking {
+            core.communication.getGames(lobbyType).map { NetworkLobbyImpl(core.communication, it.lobby!!) }
+        }
     }
 
     override fun findMiniGames(miniGameType: String): List<MiniGame> {
-        return core.communication.getMiniGames().map { NetworkMiniGameImpl(core.communication, it) }
+        return runBlocking {
+            core.communication.getGames(miniGameType).map { NetworkMiniGameImpl(core.communication, it.miniGame!!) }
+        }
     }
 
     override fun findLobbiesForPlayer(
@@ -26,9 +31,11 @@ class LocalGameFinderImpl(val core: TilapiaCoreImpl): GameFinder {
         forceJoin: Boolean
     ): HashMap<Lobby, ManagedGame.PlayerJoinResult> {
         return HashMap<Lobby, ManagedGame.PlayerJoinResult>().also { out ->
-            core.communication.getLobbiesForPlayer(player.uuid).entries.forEach {
-                val result = it.value
-                out[NetworkLobbyImpl(core.communication, it.key)] = ManagedGame.PlayerJoinResult(if (result.success) ManagedGame.PlayerJoinResultType.ACCEPTED else ManagedGame.PlayerJoinResultType.DENIED, result.chance, result.message)
+            runBlocking {
+                core.communication.getGamesForPlayer(player.uuid, lobbyType = lobbyType, forceJoin = forceJoin).entries.forEach {
+                    val result = it.value
+                    out[NetworkLobbyImpl(core.communication, it.key.lobby!!)] = ManagedGame.PlayerJoinResult(if (result.success) ManagedGame.PlayerJoinResultType.ACCEPTED else ManagedGame.PlayerJoinResultType.DENIED, result.chance, result.message)
+                }
             }
         }
     }
@@ -39,9 +46,11 @@ class LocalGameFinderImpl(val core: TilapiaCoreImpl): GameFinder {
         forceJoin: Boolean
     ): HashMap<MiniGame, ManagedGame.PlayerJoinResult> {
         return HashMap<MiniGame, ManagedGame.PlayerJoinResult>().also { out ->
-            core.communication.getMiniGamesForPlayer(player.uuid).entries.forEach {
-                val result = it.value
-                out[NetworkMiniGameImpl(core.communication, it.key)] = ManagedGame.PlayerJoinResult(if (result.success) ManagedGame.PlayerJoinResultType.ACCEPTED else ManagedGame.PlayerJoinResultType.DENIED, result.chance, result.message)
+            runBlocking {
+                core.communication.getGamesForPlayer(player.uuid, miniGameType = miniGameType, forceJoin = forceJoin).entries.forEach {
+                    val result = it.value
+                    out[NetworkMiniGameImpl(core.communication, it.key.miniGame!!)] = ManagedGame.PlayerJoinResult(if (result.success) ManagedGame.PlayerJoinResultType.ACCEPTED else ManagedGame.PlayerJoinResultType.DENIED, result.chance, result.message)
+                }
             }
         }
     }

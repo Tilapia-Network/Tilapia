@@ -10,10 +10,12 @@ import net.tilapiamc.communication.ServerInfo
 import net.tilapiamc.communication.session.PacketRegistry
 import net.tilapiamc.communication.session.Session
 import net.tilapiamc.communication.session.SessionEvent
+import net.tilapiamc.communication.session.client.CPacketAcknowledge
 import net.tilapiamc.communication.session.client.proxy.CPacketProxyHandShake
 import net.tilapiamc.communication.session.client.proxy.CPacketProxyPlayerLogin
 import net.tilapiamc.communication.session.client.proxy.CPacketProxyPlayerLogout
 import net.tilapiamc.communication.session.server.SPacketDatabaseLogin
+import net.tilapiamc.communication.session.server.proxy.SPacketProxyAcceptPlayer
 import net.tilapiamc.communication.session.server.proxy.SPacketProxyAddServer
 import net.tilapiamc.communication.session.server.proxy.SPacketProxyHandShake
 import net.tilapiamc.communication.session.server.proxy.SPacketProxyRemoveServer
@@ -50,6 +52,7 @@ class ProxyCommunicationSession(requiredSchemas: List<String>,
     val onProxyConnected = eventTargetFactory(false) as SuspendEventTarget<ProxyConnectedEvent>
     val onServerAdded = eventTargetFactory(false) as SuspendEventTarget<ProxyAddServerEvent>
     val onServerRemoved = eventTargetFactory(false) as SuspendEventTarget<ProxyRemoveServerEvent>
+    val onPlayerAccepted = eventTargetFactory(false) as SuspendEventTarget<SPacketProxyAcceptPlayer>
 
     lateinit var proxyId: UUID
     lateinit var databaseLogin: DatabaseLogin
@@ -70,6 +73,10 @@ class ProxyCommunicationSession(requiredSchemas: List<String>,
             }
             if (it.packet is SPacketProxyRemoveServer) {
                 onServerRemoved(ProxyRemoveServerEvent(this, it.packet.serverId))
+            }
+            if (it.packet is SPacketProxyAcceptPlayer) {
+                onPlayerAccepted(it.packet)
+                sendPacket(CPacketAcknowledge(it.packet.transmissionId))
             }
         }
     }

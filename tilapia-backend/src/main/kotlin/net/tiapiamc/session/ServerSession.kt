@@ -47,15 +47,13 @@ class ServerSession( val remoteIp: String,
 
     class HandshakeFinishedEvent(override val session: ServerSession): SessionEvent(session)
 
-    var latestTransmissionId = 0L
 
-    fun newTransmissionId(): Long = latestTransmissionId++
-
-    suspend fun getJoinResult(gameId: UUID, playerInfo: PlayerInfo): JoinResult {
+    suspend fun getJoinResult(gameId: UUID, playerInfo: PlayerInfo, forceJoin: Boolean = false): JoinResult {
         val newTransmissionId = newTransmissionId()
-        sendPacket(SPacketServerRequestJoinResult(newTransmissionId, playerInfo, gameId))
+        sendPacket(SPacketServerRequestJoinResult(newTransmissionId, playerInfo, gameId, forceJoin))
         val packet = waitForPacketWithType<CPacketServerJoinResult>({it.transmissionId == newTransmissionId}, 5000)
             ?: throw IllegalStateException("Server did not respond")
+        // The string is hard-coded in PlayerService
         return packet.joinResult
     }
 

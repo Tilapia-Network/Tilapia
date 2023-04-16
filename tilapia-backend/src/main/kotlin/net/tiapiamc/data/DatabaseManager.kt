@@ -42,7 +42,7 @@ object DatabaseManager {
                     identifierManager.quoteIfNecessary(schema)
                 }.* TO ${
                     identifierManager.quoteIfNecessary(username)
-                }@`${remoteIp}` WITH GRANT OPTION;", false).executeUpdate()
+                }@`${remoteIp}` WITH GRANT OPTION", false).executeUpdate()
             }
             databaseSessions[sessionId] = DatabaseLogin(sessionId, remoteIp, username, password)
         }

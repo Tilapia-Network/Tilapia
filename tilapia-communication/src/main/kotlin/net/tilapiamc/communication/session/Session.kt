@@ -21,12 +21,16 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
     val onSessionClosed = eventTargetFactory(true) as SuspendEventTarget<SessionCloseEvent>
     val onPacket = eventTargetFactory(false) as SuspendEventTarget<SessionPacketEvent>
 
+    var latestTransmissionId = 0L
+
+    fun newTransmissionId(): Long = latestTransmissionId++
+
 
     init {
 
     }
 
-    suspend fun waitForPacket(filter: (packet: SessionPacket) -> Boolean, timeOut: Long = 5000): SessionPacket? {
+    suspend fun waitForPacket(filter: (packet: SessionPacket) -> Boolean, timeOut: Long = 5000, action: suspend () -> Unit = {}): SessionPacket? {
         var listener: suspend (SessionPacketEvent) -> Unit = {}
         var packet: SessionPacket? = null
         val lock = Object()
@@ -40,13 +44,14 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
             }
         }
         onPacket.add(listener)
+        action()
         synchronized(lock) {
             lock.wait(timeOut)
         }
         return packet
     }
-    suspend inline fun <reified T: SessionPacket> waitForPacketWithType(crossinline filter: (packet: T) -> Boolean = { true }, timeOut: Long = 5000): T? {
-        return waitForPacket({ it is T && filter(it) }, timeOut) as T?
+    suspend inline fun <reified T: SessionPacket> waitForPacketWithType(crossinline filter: (packet: T) -> Boolean = { true }, timeOut: Long = 5000, noinline action: suspend () -> Unit = {}): T? {
+        return waitForPacket({ it is T && filter(it) }, timeOut, action) as T?
     }
 
 

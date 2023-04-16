@@ -46,7 +46,8 @@ interface ManagedGame: IGame {
     fun addPlayer(networkPlayer: LocalNetworkPlayer)
     fun removePlayer(networkPlayer: LocalNetworkPlayer)
 
-    class PlayerJoinResult(val type: PlayerJoinResultType, val chance: Double, val message: String = "Unknown")
+    class PlayerJoinResult(val type: PlayerJoinResultType, val chance: Double, val message: String = "Unknown") {
+    }
     enum class PlayerJoinResultType(val success: Boolean) { ACCEPTED(true), DENIED(false) }
 
 }

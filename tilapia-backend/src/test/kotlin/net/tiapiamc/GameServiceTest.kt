@@ -2,18 +2,11 @@ package net.tiapiamc
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCaseOrder
-import io.ktor.server.testing.*
-import net.tiapiamc.config.Config
 import net.tiapiamc.managers.ServerManager
-import net.tilapiamc.common.SuspendEventTarget
 import net.tilapiamc.communication.GameType
 import net.tilapiamc.communication.JoinResult
 import net.tilapiamc.communication.MiniGameInfo
 import net.tilapiamc.communication.PlayerInfo
-import net.tilapiamc.communication.api.ProxyCommunication
-import net.tilapiamc.communication.api.ProxyCommunicationSession
-import net.tilapiamc.communication.api.ServerCommunication
-import net.tilapiamc.communication.api.ServerCommunicationSession
 import strikt.api.expectThat
 import strikt.assertions.*
 import java.util.*
@@ -40,7 +33,7 @@ class GameServiceTest: StringSpec() {
             }
         }
         "Player Join Result" {
-            withServerContext(ServerManager(), { player, uuid -> JoinResult(true, 8.7, "${player.uniqueId} - $uuid") }) {
+            withServerContext(ServerManager(), { player, uuid, forceJoin -> JoinResult(true, 8.7, "${player.uniqueId} - $uuid") }) {
                 val gameInfo = MiniGameInfo(serverId, UUID.randomUUID(), "main", arrayListOf(), "fleetwars")
                 expectThat(communication.getTypes(GameType.MINIGAME))
                     .isEmpty()
@@ -80,56 +73,6 @@ class GameServiceTest: StringSpec() {
     }
 
 
-    fun withServerContext(serverManager: ServerManager, getPlayerJoinResult: (PlayerInfo, UUID) -> JoinResult = { _, _ -> JoinResult(true, 1.0, "") }, block: suspend ServerCommunicationSession.(ProxyCommunicationSession) -> Unit) {
-        testApplication {
-            application {
-                module(serverManager)
-            }
 
-            val proxyCommunication = ProxyCommunication(createClient {
-                clientConfig(Config.API_KEY)
-            })
-
-            val communication = ServerCommunication(createClient {
-                clientConfig(Config.API_KEY)
-            })
-            val closeReason = proxyCommunication.start(listOf(), { SuspendEventTarget(it) }) {
-                onProxyConnected.add { proxyCommunicationSession ->
-                    Thread.sleep(100)
-                    try {
-                        val closeReason = communication.start(listOf("test_database_1"), { ignoreException ->
-                            SuspendEventTarget(ignoreException)
-                        }, getPlayerJoinResult = { player, gameId ->
-                               JoinResult(true, 8.7, "${player.uniqueId} - $gameId")
-                        }) {
-                            onServerConnected.add {
-                                try {
-                                    expectThat(communication.listServers())
-                                        .isNotEmpty()
-                                    expectThat(communication.listServers(serverIdPrefix = "o"))
-                                        .isEmpty()
-                                    expectThat(communication.listServers(serverIdPrefix = serverId.toString()))
-                                        .isNotEmpty()
-
-                                    block(proxyCommunicationSession.session)
-                                } finally {
-                                    closeSession()
-                                }
-                            }
-                        }
-                        expectThat(closeReason)
-                            .isNull()
-                        expectThat(communication.listServers())
-                            .isEmpty()
-                    } finally {
-                        closeSession()
-                    }
-                }
-            }
-            expectThat(closeReason)
-                .isNull()
-
-        }
-    }
 
 }

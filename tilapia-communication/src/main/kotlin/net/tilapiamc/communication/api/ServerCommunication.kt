@@ -10,9 +10,11 @@ import net.tilapiamc.communication.PlayerInfo
 import net.tilapiamc.communication.session.PacketRegistry
 import net.tilapiamc.communication.session.Session
 import net.tilapiamc.communication.session.SessionEvent
+import net.tilapiamc.communication.session.client.CPacketAcknowledge
 import net.tilapiamc.communication.session.client.server.CPacketServerHandShake
 import net.tilapiamc.communication.session.client.server.CPacketServerJoinResult
 import net.tilapiamc.communication.session.server.SPacketDatabaseLogin
+import net.tilapiamc.communication.session.server.server.SPacketServerAcceptPlayer
 import net.tilapiamc.communication.session.server.server.SPacketServerHandShake
 import net.tilapiamc.communication.session.server.server.SPacketServerRequestJoinResult
 import java.util.*
@@ -22,7 +24,7 @@ class ServerCommunication(client: HttpClient): TilapiaPrivateAPI(client) {
     suspend fun start(
               requiredSchemas: List<String>,
               eventTargetFactory: (ignoreException: Boolean) -> SuspendEventTarget<out SessionEvent>,
-              getPlayerJoinResult: (PlayerInfo, UUID) -> JoinResult = { _, _ -> JoinResult(true, 1.0, "") },
+              getPlayerJoinResult: (PlayerInfo, UUID, Boolean) -> JoinResult = { _, _, _ -> JoinResult(true, 1.0, "") },
               block: suspend ServerCommunicationSession.() -> Unit = {},
 
     ): CloseReason? {
@@ -46,10 +48,11 @@ class ServerCommunicationSession(requiredSchemas: List<String>,
                                 val communication: ServerCommunication,
                                 eventTargetFactory: (ignoreException: Boolean) -> SuspendEventTarget<out SessionEvent>,
                                 websocketSession: DefaultWebSocketSession,
-                                val getPlayerJoinResult: (PlayerInfo, UUID) -> JoinResult
+                                val getPlayerJoinResult: (playerInfo: PlayerInfo, gameId: UUID, forceJoin: Boolean) -> JoinResult
 ): Session(PacketRegistry.serverPackets, eventTargetFactory, websocketSession) {
 
     val onServerConnected = eventTargetFactory(false) as SuspendEventTarget<ServerConnectedEvent>
+    val onPlayerAccepted = eventTargetFactory(false) as SuspendEventTarget<SPacketServerAcceptPlayer>
 
     lateinit var serverId: UUID
     lateinit var proxyId: UUID
@@ -65,11 +68,16 @@ class ServerCommunicationSession(requiredSchemas: List<String>,
             val databasePacket = waitForPacketWithType<SPacketDatabaseLogin>()?:clientError("Not receiving database login packet")
             databaseLogin = databasePacket.databaseLogin
             onServerConnected(ServerConnectedEvent(this))
+
         }
         onPacket.add {
             if (it.packet is SPacketServerRequestJoinResult) {
                 Thread.sleep(10)
-                sendPacket(CPacketServerJoinResult(it.packet.transmissionId, getPlayerJoinResult(it.packet.player, it.packet.gameId)))
+                sendPacket(CPacketServerJoinResult(it.packet.transmissionId, getPlayerJoinResult(it.packet.player, it.packet.gameId, it.packet.forceJoin)))
+            }
+            if (it.packet is SPacketServerAcceptPlayer) {
+                onPlayerAccepted(it.packet)
+                sendPacket(CPacketAcknowledge(it.packet.transmissionId))
             }
         }
     }

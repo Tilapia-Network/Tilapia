@@ -11,6 +11,7 @@ import java.util.*
 abstract class NetworkPlayer(
     val tilapiaCore: TilapiaCore,
     val playerName: String,
+    val locale: Locale,
     val uuid: UUID,
 ) {
 

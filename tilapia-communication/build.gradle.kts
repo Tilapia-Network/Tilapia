@@ -16,16 +16,17 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("io.ktor:ktor-client-core:$ktor_version")
-    implementation("io.ktor:ktor-client-websockets-jvm:$ktor_version")
-    implementation("io.ktor:ktor-client-okhttp:$ktor_version")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-    implementation("io.ktor:ktor-serialization-gson:$ktor_version")
+    api("com.google.code.gson:gson:2.10.1")
+    api("io.ktor:ktor-client-core:$ktor_version")
+    api("io.ktor:ktor-client-websockets-jvm:$ktor_version")
+    api("io.ktor:ktor-client-okhttp:$ktor_version")
+    api("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    api("io.ktor:ktor-client-auth-jvm:$ktor_version")
+    api("io.ktor:ktor-serialization-gson:$ktor_version")
 
-    implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
-    implementation("com.h2database:h2:$h2_version")
-    implementation("com.mysql:mysql-connector-j:8.0.32")
+    api("org.jetbrains.exposed:exposed-core:$exposed_version")
+    api("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    api("com.h2database:h2:$h2_version")
+    api("com.mysql:mysql-connector-j:8.0.32")
     implementation(project(":tilapia-common"))
 }

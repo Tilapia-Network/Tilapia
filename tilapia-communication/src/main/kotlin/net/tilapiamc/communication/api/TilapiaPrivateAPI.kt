@@ -76,7 +76,7 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
         val responseBody = gson.fromJson(ensureResponse(response), JsonArray::class.java)
         return responseBody.map { it.asString }
     }
-    suspend fun getGamesForPlayer(player: UUID, lobbyType: String? = null, miniGameType: String? = null, gameIdPrefix: String? = null): HashMap<GameData, JoinResult> {
+    suspend fun getGamesForPlayer(player: UUID, lobbyType: String? = null, miniGameType: String? = null, gameIdPrefix: String? = null, forceJoin: Boolean = false): HashMap<GameData, JoinResult> {
         val response = client.get("/game/for-player") {
             if (lobbyType != null) {
                 parameter("lobbyType", lobbyType)
@@ -88,6 +88,7 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
                 parameter("gameIdPrefix", gameIdPrefix)
             }
             parameter("player", player.toString())
+            parameter("forceJoin", forceJoin)
         }
         val responseBody = gson.fromJson(ensureResponse(response), JsonArray::class.java)
         val out = HashMap<GameData, JoinResult>()
@@ -115,11 +116,22 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
 
 
     suspend fun where(player: UUID): GameData {
-        TODO()
+        val response = client.get("/player/where") {
+            parameter("player", player)
+        }
+        return gson.fromJson(ensureResponse(response), GameData::class.java)
 
     }
-    suspend fun send(player: UUID, gameId: UUID): JoinResult {
-        TODO()
+    suspend fun send(player: UUID, gameId: UUID, forceJoin: Boolean = false): JoinResult {
+        val response = client.post("/player/send") {
+            parameter("player", player)
+            parameter("gameId", gameId)
+            parameter("forceJoin", forceJoin)
+        }
+        if (response.status != HttpStatusCode.OK && response.status != HttpStatusCode.NotAcceptable) {
+            throw IllegalStateException("Server returned status: ${response.status}, body:  ${response.bodyAsText()}")
+        }
+        return gson.fromJson(response.bodyAsText(), JoinResult::class.java)
     }
 
 

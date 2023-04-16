@@ -1,5 +1,6 @@
 package net.tilapiamc.core.networking
 
+import kotlinx.coroutines.runBlocking
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.game.Game
 import net.tilapiamc.api.player.NetworkPlayer
@@ -10,6 +11,7 @@ import java.util.*
 class NetworkPlayerImpl(val session: ServerCommunicationSession, val data: PlayerInfo): NetworkPlayer(
     TilapiaCore.instance,
     data.playerName,
+    data.locale,
     data.uniqueId
 ) {
     override val isLocal: Boolean
@@ -18,7 +20,9 @@ class NetworkPlayerImpl(val session: ServerCommunicationSession, val data: Playe
         get() = data.locale
 
     override fun where(): Game {
-        return session.communication.where(uuid).toGame(session.communication)!!
+        return runBlocking {
+            session.communication.where(uuid).toGame(session.communication)!!
+        }
     }
 
     override fun equals(other: Any?): Boolean {

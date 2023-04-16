@@ -12,15 +12,17 @@ class SPacketServerRequestJoinResult(
     var transmissionId: Long,
     var player: PlayerInfo,
     var gameId: UUID,
+    var forceJoin: Boolean
 ): SessionPacket.SPacket() {
 
-    constructor(): this(0L, PlayerInfo("", UUID.randomUUID(), Locale.TRADITIONAL_CHINESE, UUID.randomUUID()), UUID.randomUUID())
+    constructor(): this(0L, PlayerInfo("", UUID.randomUUID(), Locale.TRADITIONAL_CHINESE, UUID.randomUUID()), UUID.randomUUID(), false)
 
     override fun toJson(gson: Gson): JsonObject {
         return gson.jsonObjectOf(
             "transmissionId" to transmissionId,
             "player" to player,
             "gameId" to gameId,
+            "forceJoin" to forceJoin,
         )
     }
 
@@ -28,6 +30,7 @@ class SPacketServerRequestJoinResult(
         this.transmissionId = jsonObject[gson, "transmissionId"]!!
         this.player = jsonObject[gson, "player"]!!
         this.gameId = jsonObject[gson, "gameId"]!!
+        this.forceJoin = jsonObject[gson, "forceJoin"]!!
     }
 
 }

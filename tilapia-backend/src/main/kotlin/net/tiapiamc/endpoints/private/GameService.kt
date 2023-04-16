@@ -123,6 +123,7 @@ object GameService {
                 }
                 get("/game/for-player") {
                     val out = JsonArray()
+                    val forceJoin = call.parameters["forceJoin"]?.toBoolean()?:false
                     val games = call.filterGames(serverManager)
                     val player = serverManager.players[UUID.fromString(call.parameters["player"])]
                     if (player == null) {
@@ -134,7 +135,7 @@ object GameService {
                     for (game in games) {
                         results.add(threadPool.submit {
                             runBlocking {
-                                out.add(gson.jsonArrayOf(game.toInfo(), game.server.getJoinResult(game.gameId, player.toPlayerInfo())))
+                                out.add(gson.jsonArrayOf(game.toInfo(), game.server.getJoinResult(game.gameId, player.toPlayerInfo(), forceJoin)))
                             }
                         })
                     }
