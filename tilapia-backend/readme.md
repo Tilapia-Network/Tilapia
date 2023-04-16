@@ -14,11 +14,13 @@ from the reverse proxy.
 Once a connection to the session is closed, related database users will be deleted
 
 ### Player Join Behavior
-1. Send SPacketServerAcceptPlayer to target server
-2. Wait for ack
-3. Send SPacketProxyAcceptPlayer to target proxy
-4. [TODO] Wait for ack
-5. [TODO] Notify root server that the player is accepted
+The backend won't actually be handling player join, but instead,
+letting the proxy to decide where to send the player to.
+The proxy is required to send a CPacketProxyPlayerLogin after
+the player has joined, then try to send the player to desired 
+game. If it could not find a game or the player disconnected
+while it's trying to find a game, it will send 
+CPacketProxyPlayerLogout to the backend server.
 
 ## Client API
 
