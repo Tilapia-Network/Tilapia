@@ -38,40 +38,32 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
         return array.map { gson.fromJson(it, ProxyInfo::class.java) }
     }
 
+    // Game Service
+    suspend fun registerGame(gameInfo: GameInfo) {
+        val response = client.post("/game/register") {
+            setBody(gameInfo)
+        }
+        ensureResponse(response)
+    }
+    suspend fun endGame(gameInfo: GameInfo) {
+        val response = client.post("/game/end") {
+            setBody(gameInfo)
+        }
+        ensureResponse(response)
+    }
+
 
 
     // Game Service
-    fun getLobbyTypes(): List<String> {
+    fun getTypes(gameType: GameType): List<String> {
+        TODO()
+    }
+    fun getGamesForPlayer(lobbyType: String? = null, miniGameType: String? = null, gameIdPrefix: String? = null): HashMap<GameData, JoinResult> {
         TODO()
 
     }
-    fun getMiniGameTypes(): List<String> {
+    fun getGames(lobbyType: String? = null, miniGameType: String? = null, gameIdPrefix: String? = null): List<GameData> {
         TODO()
-
-    }
-    fun getLobbiesForPlayer(uuid: UUID): HashMap<LobbyInfo, JoinResult> {
-        TODO()
-
-    }
-    fun getMiniGamesForPlayer(uuid: UUID): HashMap<MiniGameInfo, JoinResult> {
-        TODO()
-
-    }
-    fun getLobbies(lobbyType: String? = null, gameIdPrefix: String? = null): List<LobbyInfo> {
-        TODO()
-
-    }
-    fun getMiniGames(miniGameType: String? = null, gameIdPrefix: String? = null): List<MiniGameInfo> {
-        TODO()
-
-    }
-    fun getFromId(uuid: UUID): GameData {
-        TODO()
-
-    }
-    fun getFromShortId(shortId: String): GameData {
-        TODO()
-
     }
 
 
@@ -81,7 +73,6 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
     }
     fun send(player: UUID, gameId: UUID): JoinResult {
         TODO()
-
     }
 
 
