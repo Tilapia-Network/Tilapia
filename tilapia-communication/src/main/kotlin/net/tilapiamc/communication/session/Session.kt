@@ -72,9 +72,9 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
                     } catch (e: WebSocketClientError) {
                         e.printStackTrace()
                         closeSession(CloseReason(CloseReason.Codes.PROTOCOL_ERROR, e.message!!))
-                    } catch (e: Throwable) {
+                    } catch (e: Exception) {
                         e.printStackTrace()
-                        closeSession(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error while reading frames"))
+                        closeSession(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error while handling session start"))
                     }
                 }
             }.start()
@@ -102,7 +102,7 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
             } catch (e: WebSocketClientError) {
                 e.printStackTrace()
                 closeSession(CloseReason(CloseReason.Codes.PROTOCOL_ERROR, e.message!!))
-            } catch (e: Throwable) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 closeSession(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error while reading frames"))
             }

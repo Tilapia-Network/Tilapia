@@ -33,6 +33,7 @@ class ProxySession(val remoteIp: String,
                 DatabaseManager.closeSession(login.sessionId)
             }
             sendPacket(SPacketDatabaseLogin(login))
+            onHandshakeFinished(HandshakeFinishedEvent(this))
         }
     }
 
