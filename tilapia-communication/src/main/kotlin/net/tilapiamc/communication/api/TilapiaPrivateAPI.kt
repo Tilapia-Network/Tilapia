@@ -41,13 +41,25 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
     // Game Service
     suspend fun registerGame(gameInfo: GameInfo) {
         val response = client.post("/game/register") {
-            setBody(gameInfo)
+            contentType(ContentType.Application.Json)
+            if (gameInfo is LobbyInfo) {
+                setBody(GameData(null, gameInfo))
+            }
+            if (gameInfo is MiniGameInfo) {
+                setBody(GameData(gameInfo, null))
+            }
         }
         ensureResponse(response)
     }
     suspend fun endGame(gameInfo: GameInfo) {
         val response = client.post("/game/end") {
-            setBody(gameInfo)
+            contentType(ContentType.Application.Json)
+            if (gameInfo is LobbyInfo) {
+                setBody(GameData(null, gameInfo))
+            }
+            if (gameInfo is MiniGameInfo) {
+                setBody(GameData(gameInfo, null))
+            }
         }
         ensureResponse(response)
     }
@@ -55,23 +67,57 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
 
 
     // Game Service
-    fun getTypes(gameType: GameType): List<String> {
-        TODO()
+    suspend fun getTypes(gameType: GameType? = null): List<String> {
+        val response = client.get("/game/types") {
+            if (gameType != null) {
+                parameter("gameType", gameType.name)
+            }
+        }
+        val responseBody = gson.fromJson(ensureResponse(response), JsonArray::class.java)
+        return responseBody.map { it.asString }
     }
-    fun getGamesForPlayer(lobbyType: String? = null, miniGameType: String? = null, gameIdPrefix: String? = null): HashMap<GameData, JoinResult> {
+    suspend fun getGamesForPlayer(lobbyType: String? = null, miniGameType: String? = null, gameIdPrefix: String? = null): HashMap<GameData, JoinResult> {
+        val response = client.get("/game/for-player") {
+            if (lobbyType != null) {
+                parameter("lobbyType", lobbyType)
+            }
+            if (miniGameType != null) {
+                parameter("miniGameType", miniGameType)
+            }
+            if (gameIdPrefix != null) {
+                parameter("gameIdPrefix", gameIdPrefix)
+            }
+        }
+        val responseBody = gson.fromJson(ensureResponse(response), JsonArray::class.java)
+        val out = HashMap<GameData, JoinResult>()
+        for (jsonElement in responseBody) {
+            out[gson.fromJson(jsonElement.asJsonArray[0], GameData::class.java)] = gson.fromJson(jsonElement.asJsonArray[1], JoinResult::class.java)
+        }
+        return out
+
+    }
+    suspend fun getGames(lobbyType: String? = null, miniGameType: String? = null, gameIdPrefix: String? = null): List<GameData> {
+        val response = client.get("/game/list") {
+            if (lobbyType != null) {
+                parameter("lobbyType", lobbyType)
+            }
+            if (miniGameType != null) {
+                parameter("miniGameType", miniGameType)
+            }
+            if (gameIdPrefix != null) {
+                parameter("gameIdPrefix", gameIdPrefix)
+            }
+        }
+        val responseBody = gson.fromJson(ensureResponse(response), JsonArray::class.java)
+        return responseBody.map { gson.fromJson(it, GameData::class.java) }
+    }
+
+
+    suspend fun where(player: UUID): GameData {
         TODO()
 
     }
-    fun getGames(lobbyType: String? = null, miniGameType: String? = null, gameIdPrefix: String? = null): List<GameData> {
-        TODO()
-    }
-
-
-    fun where(player: UUID): GameData {
-        TODO()
-
-    }
-    fun send(player: UUID, gameId: UUID): JoinResult {
+    suspend fun send(player: UUID, gameId: UUID): JoinResult {
         TODO()
     }
 

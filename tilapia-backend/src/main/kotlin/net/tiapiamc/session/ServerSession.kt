@@ -24,7 +24,7 @@ class ServerSession(val remoteIp: String,
     val games = ArrayList<Game>()
     val players = HashMap<UUID, Player>()
     val onHandshakeFinished = eventTargetFactory(false) as SuspendEventTarget<HandshakeFinishedEvent>
-
+    // TODO: Send a warning when a server is closed without closing all the games
     init {
         onSessionStarted.add {
             sendPacket(SPacketServerHandShake(proxy.proxyId, serverId))

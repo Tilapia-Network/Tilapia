@@ -2,12 +2,6 @@ package net.tiapiamc
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCaseOrder
-import io.ktor.client.*
-import io.ktor.client.plugins.auth.*
-import io.ktor.client.plugins.auth.providers.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.websocket.*
-import io.ktor.serialization.gson.*
 import io.ktor.server.testing.*
 import net.tiapiamc.config.Config
 import net.tiapiamc.managers.ServerManager
@@ -127,24 +121,6 @@ class ServerServiceTest: StringSpec() {
             }
         }
 
-    }
-
-    fun HttpClientConfig<*>.clientConfig(apiKey: String) {
-        install(WebSockets) {
-            timeout = 15000
-            maxFrameSize = Long.MAX_VALUE
-            pingInterval = 15000
-        }
-        install(ContentNegotiation) {
-            gson()
-        }
-        install(Auth) {
-            bearer {
-                loadTokens {
-                    BearerTokens(apiKey, "")
-                }
-            }
-        }
     }
 
     override fun testCaseOrder(): TestCaseOrder? {

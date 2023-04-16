@@ -2,7 +2,7 @@ package net.tilapiamc.communication
 
 import java.util.*
 
-open class GameInfo(
+abstract class GameInfo(
     val serverId: UUID,
     val gameId: UUID,
     val lobbyType: String,

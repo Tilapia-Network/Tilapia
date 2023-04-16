@@ -1,21 +1,47 @@
 package net.tiapiamc.endpoints.private
 
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import net.tiapiamc.managers.ServerManager
+import net.tiapiamc.obj.game.Game
 import net.tiapiamc.obj.game.Lobby
 import net.tiapiamc.obj.game.MiniGame
-import net.tilapiamc.communication.GameData
-import net.tilapiamc.communication.GameInfo
-import net.tilapiamc.communication.LobbyInfo
-import net.tilapiamc.communication.MiniGameInfo
+import net.tilapiamc.common.json.jsonArrayOf
+import net.tilapiamc.communication.*
 
 object GameService {
-
+    fun ApplicationCall.filterGames(serverManager: ServerManager): List<Game> {
+        val gameIdPrefix = parameters["gameIdPrefix"]
+        val lobbyType = parameters["lobbyType"]
+        val miniGameType = parameters["miniGameType"]
+        return serverManager.games.values.filter {
+            if (gameIdPrefix != null)
+                it.gameId.toString().lowercase().startsWith(gameIdPrefix.lowercase())
+            else
+                true
+        }.filter {
+            if (lobbyType != null)
+                if (it is Lobby)
+                    lobbyType == it.lobbyType
+                else
+                    false
+            else
+                true
+        }.filter {
+            if (miniGameType != null)
+                if (it is MiniGame)
+                    miniGameType == it.miniGameType
+                else
+                    false
+            else
+                true
+        }
+    }
     fun Application.applyGameService(serverManager: ServerManager, gson: Gson) {
         routing {
             authenticate("private-api") {
@@ -43,6 +69,7 @@ object GameService {
                         call.respond(HttpStatusCode.NotFound, "The server with ID ${game.serverId} could not be found")
                         return@post
                     }
+                    serverManager.logger.info("Registered game: ${game.gameId}")
                     if (game is LobbyInfo) {
                         val lobby = Lobby(server, game.gameId, game.lobbyType)
                         server.games.add(lobby)
@@ -73,6 +100,7 @@ object GameService {
                             call.respond(HttpStatusCode.BadRequest, "The game still has players in it")
                             return@post
                         }
+                        serverManager.logger.info("Unregistered game: ${game.gameId}")
                         serverManager.games.remove(game.gameId)
                     } else {
                         call.respond(HttpStatusCode.NotFound, "The requested game is not found")
@@ -87,19 +115,31 @@ object GameService {
                     call.respond(HttpStatusCode.OK)
                 }
                 get("/game/list") {
-                    // game type
-                    // game ID starts with
-                    // type
+                    call.respond(call.filterGames(serverManager).map { it.toInfo() })
                 }
                 get("/game/for-player") {
-                    // game ID starts with
-                    // type
+                    val out = JsonArray()
+                    val games = call.filterGames(serverManager)
+                    for (game in games) {
+                        out.add(gson.jsonArrayOf(game.toInfo(), JoinResult(true, 1.0, "")))
+                        // TODO: implementation of gathering join result
+                    }
+                    call.respond(out)
                 }
                 get("/game/types") {
-                    // Game type
+                    val gameType = call.parameters["gameType"]?.let { GameType.valueOf(it) }
+
+                    call.respond(serverManager.games.values
+                        .filter {
+                            if (gameType != null) it.getGameType() == gameType else true
+                        }
+                        .map { if (it is Lobby) it.lobbyType else if (it is MiniGame) it.miniGameType else "" }
+                        .toSet())
                 }
             }
         }
     }
+
+
 
 }

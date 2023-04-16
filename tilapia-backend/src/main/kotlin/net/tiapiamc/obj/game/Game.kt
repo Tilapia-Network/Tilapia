@@ -3,6 +3,7 @@ package net.tiapiamc.obj.game
 import net.tiapiamc.obj.Player
 import net.tiapiamc.session.ServerSession
 import net.tilapiamc.communication.GameData
+import net.tilapiamc.communication.GameType
 import java.util.*
 
 abstract class Game(val server: ServerSession, val gameId: UUID, val players: MutableList<Player> = ArrayList<Player>()) {
@@ -15,5 +16,7 @@ abstract class Game(val server: ServerSession, val gameId: UUID, val players: Mu
         }
         error("Unsupported game type")
     }
+
+    abstract fun getGameType(): GameType
 
 }
