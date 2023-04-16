@@ -5,23 +5,30 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.websocket.*
 import net.tilapiamc.common.SuspendEventTarget
 import net.tilapiamc.communication.DatabaseLogin
+import net.tilapiamc.communication.JoinResult
+import net.tilapiamc.communication.PlayerInfo
 import net.tilapiamc.communication.session.PacketRegistry
 import net.tilapiamc.communication.session.Session
 import net.tilapiamc.communication.session.SessionEvent
 import net.tilapiamc.communication.session.client.server.CPacketServerHandShake
+import net.tilapiamc.communication.session.client.server.CPacketServerJoinResult
 import net.tilapiamc.communication.session.server.SPacketDatabaseLogin
 import net.tilapiamc.communication.session.server.server.SPacketServerHandShake
+import net.tilapiamc.communication.session.server.server.SPacketServerRequestJoinResult
 import java.util.*
 
 class ServerCommunication(client: HttpClient): TilapiaPrivateAPI(client) {
 
-    suspend fun start(requiredSchemas: List<String>,
+    suspend fun start(
+              requiredSchemas: List<String>,
               eventTargetFactory: (ignoreException: Boolean) -> SuspendEventTarget<out SessionEvent>,
-              block: suspend ServerCommunicationSession.() -> Unit = {}
+              getPlayerJoinResult: (PlayerInfo, UUID) -> JoinResult = { _, _ -> JoinResult(true, 1.0, "") },
+              block: suspend ServerCommunicationSession.() -> Unit = {},
+
     ): CloseReason? {
         var reason: CloseReason? = null
         client.webSocket("/server/gateway") {
-            ServerCommunicationSession(requiredSchemas, this@ServerCommunication, eventTargetFactory, this).also {
+            ServerCommunicationSession(requiredSchemas, this@ServerCommunication, eventTargetFactory, this, getPlayerJoinResult).also {
                 it.block()
                 it.onSessionClosed.add {
                     if (!it.closedBySelf) {
@@ -38,7 +45,8 @@ class ServerCommunication(client: HttpClient): TilapiaPrivateAPI(client) {
 class ServerCommunicationSession(requiredSchemas: List<String>,
                                 val communication: ServerCommunication,
                                 eventTargetFactory: (ignoreException: Boolean) -> SuspendEventTarget<out SessionEvent>,
-                                websocketSession: DefaultWebSocketSession
+                                websocketSession: DefaultWebSocketSession,
+                                val getPlayerJoinResult: (PlayerInfo, UUID) -> JoinResult
 ): Session(PacketRegistry.serverPackets, eventTargetFactory, websocketSession) {
 
     val onServerConnected = eventTargetFactory(false) as SuspendEventTarget<ServerConnectedEvent>
@@ -57,6 +65,12 @@ class ServerCommunicationSession(requiredSchemas: List<String>,
             val databasePacket = waitForPacketWithType<SPacketDatabaseLogin>()?:clientError("Not receiving database login packet")
             databaseLogin = databasePacket.databaseLogin
             onServerConnected(ServerConnectedEvent(this))
+        }
+        onPacket.add {
+            if (it.packet is SPacketServerRequestJoinResult) {
+                Thread.sleep(10)
+                sendPacket(CPacketServerJoinResult(it.packet.transmissionId, getPlayerJoinResult(it.packet.player, it.packet.gameId)))
+            }
         }
     }
 

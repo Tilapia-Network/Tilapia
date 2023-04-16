@@ -11,6 +11,8 @@ import net.tilapiamc.communication.session.PacketRegistry
 import net.tilapiamc.communication.session.Session
 import net.tilapiamc.communication.session.SessionEvent
 import net.tilapiamc.communication.session.client.proxy.CPacketProxyHandShake
+import net.tilapiamc.communication.session.client.proxy.CPacketProxyPlayerLogin
+import net.tilapiamc.communication.session.client.proxy.CPacketProxyPlayerLogout
 import net.tilapiamc.communication.session.server.SPacketDatabaseLogin
 import net.tilapiamc.communication.session.server.proxy.SPacketProxyAddServer
 import net.tilapiamc.communication.session.server.proxy.SPacketProxyHandShake
@@ -72,11 +74,11 @@ class ProxyCommunicationSession(requiredSchemas: List<String>,
         }
     }
 
-    fun login(player: PlayerInfo) {
-        TODO()
+    suspend fun login(player: PlayerInfo) {
+        sendPacket(CPacketProxyPlayerLogin(player))
     }
-    fun logout(player: UUID) {
-        TODO()
+    suspend fun logout(player: UUID) {
+        sendPacket(CPacketProxyPlayerLogout(player))
     }
 
     class ProxyConnectedEvent(override val session: ProxyCommunicationSession): SessionEvent(session)

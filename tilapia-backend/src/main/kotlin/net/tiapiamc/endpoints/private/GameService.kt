@@ -7,12 +7,16 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.runBlocking
 import net.tiapiamc.managers.ServerManager
 import net.tiapiamc.obj.game.Game
 import net.tiapiamc.obj.game.Lobby
 import net.tiapiamc.obj.game.MiniGame
 import net.tilapiamc.common.json.jsonArrayOf
 import net.tilapiamc.communication.*
+import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
 object GameService {
     fun ApplicationCall.filterGames(serverManager: ServerManager): List<Game> {
@@ -120,10 +124,21 @@ object GameService {
                 get("/game/for-player") {
                     val out = JsonArray()
                     val games = call.filterGames(serverManager)
-                    for (game in games) {
-                        out.add(gson.jsonArrayOf(game.toInfo(), JoinResult(true, 1.0, "")))
-                        // TODO: implementation of gathering join result
+                    val player = serverManager.players[UUID.fromString(call.parameters["player"])]
+                    if (player == null) {
+                        call.respond(HttpStatusCode.NotFound, "Player is not found")
+                        return@get
                     }
+                    val threadPool = Executors.newFixedThreadPool(100)
+                    val results = ArrayList<Future<*>>()
+                    for (game in games) {
+                        results.add(threadPool.submit {
+                            runBlocking {
+                                out.add(gson.jsonArrayOf(game.toInfo(), game.server.getJoinResult(game.gameId, player.toPlayerInfo())))
+                            }
+                        })
+                    }
+                    results.forEach { it.get() }
                     call.respond(out)
                 }
                 get("/game/types") {

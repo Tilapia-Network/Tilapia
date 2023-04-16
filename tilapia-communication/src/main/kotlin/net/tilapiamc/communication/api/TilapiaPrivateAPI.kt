@@ -76,7 +76,7 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
         val responseBody = gson.fromJson(ensureResponse(response), JsonArray::class.java)
         return responseBody.map { it.asString }
     }
-    suspend fun getGamesForPlayer(lobbyType: String? = null, miniGameType: String? = null, gameIdPrefix: String? = null): HashMap<GameData, JoinResult> {
+    suspend fun getGamesForPlayer(player: UUID, lobbyType: String? = null, miniGameType: String? = null, gameIdPrefix: String? = null): HashMap<GameData, JoinResult> {
         val response = client.get("/game/for-player") {
             if (lobbyType != null) {
                 parameter("lobbyType", lobbyType)
@@ -87,6 +87,7 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
             if (gameIdPrefix != null) {
                 parameter("gameIdPrefix", gameIdPrefix)
             }
+            parameter("player", player.toString())
         }
         val responseBody = gson.fromJson(ensureResponse(response), JsonArray::class.java)
         val out = HashMap<GameData, JoinResult>()

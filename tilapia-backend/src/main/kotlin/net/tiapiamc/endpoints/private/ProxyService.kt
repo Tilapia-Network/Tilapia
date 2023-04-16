@@ -39,12 +39,14 @@ object ProxyService {
                         val packet = it.packet
                         if (packet is CPacketProxyPlayerLogin) {
                             val player = packet.playerInfo.toPlayer(serverManager)
+                            serverManager.logger.info("Player ${player.playerName} (${player.uuid}) has logged in")
                             session.players[packet.playerInfo.uniqueId] = player
                             serverManager.players[packet.playerInfo.uniqueId]  = player
                         }
                         if (packet is CPacketProxyPlayerLogout) {
                             val player = session.players[packet.playerUUID]
                             if (player != null) {
+                                serverManager.logger.info("Player ${player.playerName} (${player.uuid}) has logged out")
                                 session.players.remove(player.uuid)
                                 serverManager.players.remove(player.uuid)
                                 serverManager.games.values.filter { player in it.players }.forEach { game ->
