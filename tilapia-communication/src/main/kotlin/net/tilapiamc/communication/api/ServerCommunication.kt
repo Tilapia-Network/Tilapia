@@ -25,11 +25,12 @@ class ServerCommunication(client: HttpClient): TilapiaPrivateAPI(client) {
               requiredSchemas: List<String>,
               eventTargetFactory: (ignoreException: Boolean) -> SuspendEventTarget<out SessionEvent>,
               getPlayerJoinResult: (PlayerInfo, UUID, Boolean) -> JoinResult = { _, _, _ -> JoinResult(true, 1.0, "") },
+              port: Int = 25565,
               block: suspend ServerCommunicationSession.() -> Unit = {},
 
     ): CloseReason? {
         var reason: CloseReason? = null
-        client.webSocket("/server/gateway") {
+        client.webSocket("/server/gateway?port=$port") {
             ServerCommunicationSession(requiredSchemas, this@ServerCommunication, eventTargetFactory, this, getPlayerJoinResult).also {
                 it.block()
                 it.onSessionClosed.add {

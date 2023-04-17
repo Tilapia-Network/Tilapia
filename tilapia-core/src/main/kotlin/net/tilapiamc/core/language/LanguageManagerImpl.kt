@@ -1,8 +1,8 @@
 package net.tilapiamc.core.language
 
-import net.tilapiamc.api.language.LanguageBundle
-import net.tilapiamc.api.language.LanguageKey
-import net.tilapiamc.api.language.LanguageManager
+import net.tilapiamc.common.language.LanguageBundle
+import net.tilapiamc.common.language.LanguageKey
+import net.tilapiamc.common.language.LanguageManager
 import org.apache.logging.log4j.LogManager
 import java.util.*
 

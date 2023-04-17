@@ -4,8 +4,8 @@ import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.game.Game
 import net.tilapiamc.api.game.lobby.Lobby
 import net.tilapiamc.api.game.minigame.MiniGame
-import net.tilapiamc.api.language.LanguageBundle
 import net.tilapiamc.api.server.TilapiaServer
+import net.tilapiamc.common.language.LanguageBundle
 import java.util.*
 
 abstract class NetworkPlayer(
@@ -27,7 +27,6 @@ abstract class NetworkPlayer(
     }
     fun findMiniGameToJoin(gameType: String, forceJoin: Boolean = false): MiniGame? {
         return tilapiaCore.gameFinder.findMiniGameToJoin(this, gameType, forceJoin)
-
     }
 
     fun findLobbyToJoin(lobbyType: String, forceJoin: Boolean = false): Lobby? {

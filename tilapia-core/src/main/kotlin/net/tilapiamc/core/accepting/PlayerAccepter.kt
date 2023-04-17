@@ -1,7 +1,7 @@
 package net.tilapiamc.core.accepting
 
 import kotlinx.coroutines.runBlocking
-import net.tilapiamc.api.events.annotation.Subscribe
+import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.game.minigame.ManagedMiniGame
 import net.tilapiamc.api.game.minigame.MiniGame

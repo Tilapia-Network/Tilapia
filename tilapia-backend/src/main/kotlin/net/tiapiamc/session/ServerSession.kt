@@ -17,9 +17,10 @@ import net.tilapiamc.communication.session.client.server.CPacketServerJoinResult
 import net.tilapiamc.communication.session.server.SPacketDatabaseLogin
 import net.tilapiamc.communication.session.server.server.SPacketServerHandShake
 import net.tilapiamc.communication.session.server.server.SPacketServerRequestJoinResult
+import java.net.InetSocketAddress
 import java.util.*
 
-class ServerSession( val remoteIp: String,
+class ServerSession(val remoteIp: InetSocketAddress,
                     webSocket: DefaultWebSocketSession,
                     val proxy: ProxySession,
                     val serverId: UUID
@@ -33,7 +34,7 @@ class ServerSession( val remoteIp: String,
         onSessionStarted.add {
             sendPacket(SPacketServerHandShake(proxy.proxyId, serverId))
             val handShake = waitForPacketWithType<CPacketServerHandShake>()?:clientError("Not receiving handshake packet")
-            val login = DatabaseManager.createSession(remoteIp, handShake.requiredSchemas)
+            val login = DatabaseManager.createSession(remoteIp.hostName, handShake.requiredSchemas)
             onSessionClosed.add {
                 DatabaseManager.closeSession(login.sessionId)
             }
@@ -43,7 +44,7 @@ class ServerSession( val remoteIp: String,
 
     }
 
-    fun toServerInfo(): ServerInfo = ServerInfo(proxy.proxyId, serverId, games.map { it.gameId })
+    fun toServerInfo(): ServerInfo = ServerInfo(remoteIp, proxy.proxyId, serverId, games.map { it.gameId })
 
     class HandshakeFinishedEvent(override val session: ServerSession): SessionEvent(session)
 

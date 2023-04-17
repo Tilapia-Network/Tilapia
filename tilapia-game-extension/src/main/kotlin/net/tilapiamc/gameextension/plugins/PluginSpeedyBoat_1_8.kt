@@ -3,7 +3,7 @@ package net.tilapiamc.gameextension.plugins
 import com.comphenix.protocol.PacketType
 import me.fan87.plugindevkit.events.EntityTickEvent
 import net.minecraft.server.v1_8_R3.EntityBoat
-import net.tilapiamc.api.events.annotation.Subscribe
+import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.api.events.game.PlayerQuitGameEvent
 import net.tilapiamc.api.events.packet.PacketReceiveEvent
 import net.tilapiamc.api.hook.MethodTransformer

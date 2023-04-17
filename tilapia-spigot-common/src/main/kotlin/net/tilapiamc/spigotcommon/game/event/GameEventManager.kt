@@ -1,8 +1,8 @@
 package net.tilapiamc.spigotcommon.game.event
 
 import net.tilapiamc.api.events.EventsManager
-import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
-import net.tilapiamc.api.events.annotation.unregisterAnnotationBasedListener
+import net.tilapiamc.common.events.annotation.registerAnnotationBasedListener
+import net.tilapiamc.common.events.annotation.unregisterAnnotationBasedListener
 import net.tilapiamc.spigotcommon.game.LocalGame
 
 class GameEventManager(val game: LocalGame) {

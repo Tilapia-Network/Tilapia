@@ -6,13 +6,14 @@ import net.tilapiamc.common.json.get
 import net.tilapiamc.common.json.jsonObjectOf
 import net.tilapiamc.communication.ServerInfo
 import net.tilapiamc.communication.session.SessionPacket
+import java.net.InetSocketAddress
 import java.util.*
 
 class SPacketProxyAddServer(
     var server: ServerInfo,
 ): SessionPacket.SPacket() {
 
-    constructor(): this(ServerInfo(UUID.randomUUID(), UUID.randomUUID(), arrayListOf()))
+    constructor(): this(ServerInfo(InetSocketAddress(25565), UUID.randomUUID(), UUID.randomUUID(), arrayListOf()))
 
     override fun toJson(gson: Gson): JsonObject {
         return gson.jsonObjectOf(

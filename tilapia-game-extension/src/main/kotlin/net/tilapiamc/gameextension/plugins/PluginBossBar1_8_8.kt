@@ -5,7 +5,7 @@ import net.citizensnpcs.api.CitizensAPI
 import net.citizensnpcs.api.npc.MemoryNPCDataStore
 import net.citizensnpcs.api.npc.NPC
 import net.citizensnpcs.api.trait.trait.PlayerFilter
-import net.tilapiamc.api.events.annotation.Subscribe
+import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.api.events.game.PlayerJoinGameEvent
 import net.tilapiamc.api.events.game.PlayerQuitGameEvent
 import net.tilapiamc.api.player.LocalNetworkPlayer

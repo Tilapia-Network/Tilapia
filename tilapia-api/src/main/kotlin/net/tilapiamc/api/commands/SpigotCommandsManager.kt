@@ -5,13 +5,13 @@ import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.commands.args.GameNotFoundException
 import net.tilapiamc.api.commands.args.PlayerNotFoundException
 import net.tilapiamc.api.events.EventsManager
-import net.tilapiamc.api.events.annotation.Subscribe
-import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
+import net.tilapiamc.common.events.annotation.Subscribe
+import net.tilapiamc.common.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.api.events.packet.PacketReceiveEvent
 import net.tilapiamc.api.events.packet.PacketSendEvent
 import net.tilapiamc.api.internal.JoinDeniedException
-import net.tilapiamc.api.language.LanguageBundle
-import net.tilapiamc.api.language.LanguageKey
+import net.tilapiamc.common.language.LanguageBundle
+import net.tilapiamc.common.language.LanguageKey
 import net.tilapiamc.api.permission.PermissionManager
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import net.tilapiamc.command.*
@@ -139,7 +139,7 @@ open class BukkitSubCommand(parent: BukkitCommand, depth: Int, name: String, val
     }
 }
 
-abstract class BukkitCommand(name: String, val descriptionKey: LanguageKey, requiresOp: Boolean = false, val requiresPermission: Boolean = true): NetworkCommand<CommandSender, BukkitSubCommand>({parent, depth, name, description ->
+abstract class BukkitCommand(name: String, val descriptionKey: LanguageKey, requiresOp: Boolean = false, val requiresPermission: Boolean = true): NetworkCommand<CommandSender, BukkitSubCommand>({ parent, depth, name, description ->
     BukkitSubCommand(parent as BukkitCommand, depth, name, LanguageKey("COMMAND_${parent.name.replace("-", "_").uppercase()}_SUB_COMMAND_${name.replace("-", "_").uppercase()}_DESCRIPTION", description))
 }, name) {
     val permission: Permission?

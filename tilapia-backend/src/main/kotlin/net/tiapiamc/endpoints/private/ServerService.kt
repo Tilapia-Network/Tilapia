@@ -9,11 +9,9 @@ import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import net.tiapiamc.managers.ServerManager
-import net.tiapiamc.obj.Player.Companion.toPlayer
 import net.tiapiamc.session.ServerSession
 import net.tilapiamc.communication.ServerInfo
-import net.tilapiamc.communication.session.client.proxy.CPacketProxyPlayerLogin
-import net.tilapiamc.communication.session.client.proxy.CPacketProxyPlayerLogout
+import java.net.InetSocketAddress
 
 object ServerService {
 
@@ -44,9 +42,10 @@ object ServerService {
                         close(CloseReason(CloseReason.Codes.NORMAL, "No proxy is connected"))
                         return@webSocket
                     }
+                    val port = call.parameters["port"]!!.toInt()
                     val serverId = serverManager.generateServerId()
                     val proxyId = serverManager.getProxyAssignment()
-                    val session = ServerSession(call.request.origin.remoteHost, this, proxyId, serverId)
+                    val session = ServerSession(InetSocketAddress(call.request.origin.remoteHost, port), this, proxyId, serverId)
                     session.onHandshakeFinished.add {
                         serverManager.createServer(session)
                     }

@@ -1,7 +1,7 @@
 package net.tilapiamc.spigotcommon.game.minigame
 
 import net.tilapiamc.api.TilapiaCore
-import net.tilapiamc.api.events.annotation.Subscribe
+import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.api.events.game.SpectatorJoinEvent
 import net.tilapiamc.api.events.game.SpectatorQuitEvent
 import net.tilapiamc.api.game.minigame.ManagedMiniGame

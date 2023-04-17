@@ -1,7 +1,7 @@
 package net.tilapiamc.gameextension.minigame
 
 import me.fan87.plugindevkit.events.ServerTickEvent
-import net.tilapiamc.api.events.annotation.Subscribe
+import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.api.events.game.PlayerJoinGameEvent
 import net.tilapiamc.api.events.game.PlayerJoinMiniGameEvent
 import net.tilapiamc.api.events.game.PlayerQuitMiniGameEvent

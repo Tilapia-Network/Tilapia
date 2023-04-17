@@ -16,4 +16,5 @@ repositories {
 
 dependencies {
     compileOnly("org.apache.logging.log4j:log4j-core:2.20.0")
+    api("com.mojang:brigadier:1.0.18")
 }

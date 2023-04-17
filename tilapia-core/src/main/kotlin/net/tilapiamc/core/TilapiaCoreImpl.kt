@@ -16,8 +16,8 @@ import net.tilapiamc.api.TilapiaPlugin
 import net.tilapiamc.api.commands.LanguageCommand
 import net.tilapiamc.api.commands.SpigotCommandsManager
 import net.tilapiamc.api.events.EventsManager
-import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
-import net.tilapiamc.api.events.annotation.unregisterAnnotationBasedListener
+import net.tilapiamc.common.events.annotation.registerAnnotationBasedListener
+import net.tilapiamc.common.events.annotation.unregisterAnnotationBasedListener
 import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.GamesManager
 import net.tilapiamc.api.game.IGame
@@ -25,7 +25,7 @@ import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.game.lobby.Lobby
 import net.tilapiamc.api.game.minigame.MiniGame
 import net.tilapiamc.api.internal.TilapiaInternal
-import net.tilapiamc.api.language.LanguageManager
+import net.tilapiamc.common.language.LanguageManager
 import net.tilapiamc.api.networking.GameFinder
 import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.api.player.PlayersManager

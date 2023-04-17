@@ -4,7 +4,7 @@ import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.GamesManager
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.internal.TilapiaInternal
-import net.tilapiamc.api.language.LanguageManager
+import net.tilapiamc.common.language.LanguageManager
 import net.tilapiamc.api.networking.GameFinder
 import net.tilapiamc.api.server.TilapiaServer
 import org.bukkit.plugin.java.JavaPlugin

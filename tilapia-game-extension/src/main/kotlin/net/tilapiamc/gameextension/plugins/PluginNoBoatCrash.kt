@@ -1,6 +1,6 @@
 package net.tilapiamc.gameextension.plugins
 
-import net.tilapiamc.api.events.annotation.Subscribe
+import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.spigotcommon.game.plugin.GamePlugin
 import org.bukkit.entity.Boat
 import org.bukkit.event.vehicle.VehicleDestroyEvent

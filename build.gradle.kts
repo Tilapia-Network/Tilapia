@@ -10,6 +10,7 @@ allprojects {
         maven("https://libraries.minecraft.net")
         maven("https://jitpack.io")
         maven("https://maven.citizensnpcs.co/repo")
+        maven("https://libraries.minecraft.net")
     }
 }
 

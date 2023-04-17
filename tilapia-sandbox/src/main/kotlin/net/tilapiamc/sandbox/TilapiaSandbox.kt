@@ -4,7 +4,7 @@ import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.commands.getSenderLanguageBundle
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.game.getGameLanguageKey
-import net.tilapiamc.api.language.LanguageKeyDelegation
+import net.tilapiamc.common.language.LanguageKeyDelegation
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.api.utils.HashMapPlayerProvider

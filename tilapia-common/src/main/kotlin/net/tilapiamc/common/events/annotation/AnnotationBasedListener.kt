@@ -1,6 +1,6 @@
-package net.tilapiamc.api.events.annotation
+package net.tilapiamc.common.events.annotation
 
-import net.tilapiamc.api.events.*
+import net.tilapiamc.common.events.*
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
@@ -24,7 +24,7 @@ private fun Method.getListenerAnnotation(): Subscribe {
 
 private val associatedListeners = HashMap<Any, List<EventListener>>()
 
-fun EventsManager.registerAnnotationBasedListener(listener: Any, includeEventSubClasses: Boolean = true, filter: (event: AbstractEvent) -> Boolean = { true }) {
+fun AbstractEventsManager.registerAnnotationBasedListener(listener: Any, includeEventSubClasses: Boolean = true, filter: (event: AbstractEvent) -> Boolean = { true }) {
     if (listener in associatedListeners) {
         throw IllegalArgumentException("Listener has already been registered!")
     }
@@ -47,7 +47,7 @@ fun EventsManager.registerAnnotationBasedListener(listener: Any, includeEventSub
     associatedListeners[listener] = listeners
 }
 
-fun EventsManager.unregisterAnnotationBasedListener(listener: Any) {
+fun AbstractEventsManager.unregisterAnnotationBasedListener(listener: Any) {
     if (listener !in associatedListeners) {
         throw IllegalArgumentException("Listener has not been registered yet!")
     }

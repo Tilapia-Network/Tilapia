@@ -1,15 +1,17 @@
 package net.tilapiamc.command
 
+import com.mojang.brigadier.CommandDispatcher
 import org.apache.logging.log4j.Logger
 
-open class CommandsManager<T>(val logger: Logger) {
+open class CommandsManager<T>(val logger: Logger): CommandDispatcher<T>() {
 
     val commands = ArrayList<AbstractCommand<T>>()
 
 
-
+    @Deprecated("The command API has been ported to be using brigadier")
     open fun registerCommand(command: AbstractCommand<T>) {
         logger.debug("Registered command: ${command.name}")
+        logger.warn("Tilapia command API has been deprecated, as it's switching to use brigadier")
         commands.add(command)
     }
 

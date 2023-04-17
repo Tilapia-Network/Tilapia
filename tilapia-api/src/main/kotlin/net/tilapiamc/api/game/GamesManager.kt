@@ -2,11 +2,11 @@ package net.tilapiamc.api.game
 
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.events.EventsManager
-import net.tilapiamc.api.events.annotation.Subscribe
-import net.tilapiamc.api.events.annotation.registerAnnotationBasedListener
+import net.tilapiamc.common.events.annotation.Subscribe
+import net.tilapiamc.common.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.api.game.lobby.Lobby
 import net.tilapiamc.api.game.minigame.MiniGame
-import net.tilapiamc.api.language.LanguageKey
+import net.tilapiamc.common.language.LanguageKey
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import org.bukkit.event.player.PlayerAchievementAwardedEvent
 import org.bukkit.event.player.PlayerJoinEvent

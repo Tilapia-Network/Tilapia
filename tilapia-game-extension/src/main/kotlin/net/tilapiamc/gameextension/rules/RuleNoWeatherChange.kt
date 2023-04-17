@@ -1,6 +1,6 @@
 package net.tilapiamc.gameextension.rules
 
-import net.tilapiamc.api.events.annotation.Subscribe
+import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.spigotcommon.game.AbstractRule
 import net.tilapiamc.spigotcommon.game.LocalGame
 import org.bukkit.event.weather.WeatherChangeEvent

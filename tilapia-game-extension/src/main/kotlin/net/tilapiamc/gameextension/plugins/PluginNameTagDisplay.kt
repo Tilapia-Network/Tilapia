@@ -1,7 +1,7 @@
 package net.tilapiamc.gameextension.plugins
 
 import me.fan87.plugindevkit.events.EntityTickEvent
-import net.tilapiamc.api.events.annotation.Subscribe
+import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.api.events.game.PlayerJoinGameEvent
 import net.tilapiamc.api.events.game.PlayerQuitGameEvent
 import net.tilapiamc.api.player.LocalNetworkPlayer

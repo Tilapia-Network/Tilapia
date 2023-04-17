@@ -1,4 +1,4 @@
-package net.tilapiamc.api.language
+package net.tilapiamc.common.language
 
 import java.util.*
 

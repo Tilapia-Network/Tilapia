@@ -11,5 +11,6 @@ repositories {
 
 dependencies {
     compileOnly("com.google.code.gson:gson:2.10.1")
+    api("org.apache.logging.log4j:log4j-core:2.20.0")
 
 }
