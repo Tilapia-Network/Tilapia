@@ -29,7 +29,7 @@ class PlayerSendingTest: StringSpec() {
                     }
 
                 proxySession.logout(playerInfo.uniqueId)
-                communication.endGame(gameInfo)
+                communication.endGame(gameInfo.gameId)
             }
         }
     }

@@ -7,7 +7,7 @@ import org.bukkit.entity.Player
 
 interface TilapiaInternal {
 
-    fun sendToGame(player: NetworkPlayer, game: Game?, forceJoin: Boolean, spectate: Boolean)
+    fun sendToGame(player: NetworkPlayer, game: Game, forceJoin: Boolean, spectate: Boolean)
 
     fun createLocalPlayer(bukkitPlayer: Player): LocalNetworkPlayer
 

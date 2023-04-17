@@ -34,10 +34,10 @@ abstract class NetworkPlayer(
         return tilapiaCore.gameFinder.findLobbyToJoin(this, lobbyType, forceJoin)
     }
 
-    fun sendToGame(game: Game?, forceJoin: Boolean = false, spectate: Boolean = false) {
+    fun sendToGame(game: Game, forceJoin: Boolean = false, spectate: Boolean = false) {
         tilapiaCore.getInternal().sendToGame(this, game, forceJoin, spectate)
     }
 
-    abstract fun where(): Game
+    abstract fun where(): Game?
 
 }

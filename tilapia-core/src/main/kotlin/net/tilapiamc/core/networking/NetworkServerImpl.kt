@@ -13,7 +13,8 @@ class NetworkServerImpl(val data: ServerInfo): TilapiaServer(data.proxy, data.se
             if (uuid in cache) {
                 return cache[uuid]!!
             }
-            val data = communication.getServerInfo(uuid)?:return null
+            // TODO: GetServerInfo
+            val data = ServerInfo(UUID.randomUUID(), uuid, emptyList())?:return null
             val server = NetworkServerImpl(data)
             cache[uuid] = server
             return server

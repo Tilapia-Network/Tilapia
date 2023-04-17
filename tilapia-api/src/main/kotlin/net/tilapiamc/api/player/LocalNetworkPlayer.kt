@@ -4,9 +4,12 @@ import net.tilapiamc.api.TilapiaCore
 import org.apache.logging.log4j.Logger
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
+import java.util.*
 
 abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
-    NetworkPlayer(core, bukkitPlayer.name, bukkitPlayer.uniqueId), Player by bukkitPlayer {
+    NetworkPlayer(core, bukkitPlayer.name, Locale.TRADITIONAL_CHINESE, bukkitPlayer.uniqueId), Player by bukkitPlayer {
+    // TODO: Load locale from database
+
     override val isLocal: Boolean = true
     abstract val logger: Logger
 

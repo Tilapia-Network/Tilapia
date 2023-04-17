@@ -62,7 +62,7 @@ class GameServiceTest: StringSpec() {
                 expectThat(result.values).first().get { this.message }.isEqualTo("$playerId - ${gameInfo.gameId}")
                 it.logout(playerId)
 
-                communication.endGame(gameInfo)
+                communication.endGame(gameInfo.gameId)
 
             }
         }

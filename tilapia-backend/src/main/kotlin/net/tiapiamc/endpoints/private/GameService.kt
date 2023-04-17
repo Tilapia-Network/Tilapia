@@ -89,34 +89,26 @@ object GameService {
                     call.respond(HttpStatusCode.OK)
                 }
                 post<GameData>("/game/end") {
-                    if ((it.miniGame != null && it.lobby != null) || (it.miniGame == null && it.lobby == null)) {
-                        call.respond(HttpStatusCode.BadRequest, "Only one game registration in 1 request is support")
-                        return@post
-                    }
-                    val game: GameInfo = if (it.miniGame != null) {
-                        it.miniGame!!
-                    } else {
-                        it.lobby!!
-                    }
-                    if (game.gameId in serverManager.games) {
-                        val game = serverManager.games[game.gameId]!!
+                    val gameId = call.parameters["gameId"]?.let { UUID.fromString(it) }
+                    if (gameId in serverManager.games) {
+                        val game = serverManager.games[gameId]!!
                         if (game.players.isNotEmpty()) {
                             call.respond(HttpStatusCode.BadRequest, "The game still has players in it")
                             return@post
                         }
                         serverManager.logger.info("Unregistered game: ${game.gameId}")
                         serverManager.games.remove(game.gameId)
+                        val server = serverManager.servers[game.server.serverId]
+                        if (server == null) {
+                            call.respond(HttpStatusCode.OK)
+                            return@post
+                        }
+                        server.games.removeIf { it.gameId == game.gameId }
+                        call.respond(HttpStatusCode.OK)
                     } else {
                         call.respond(HttpStatusCode.NotFound, "The requested game is not found")
                     }
-                    val server = serverManager.servers[game.serverId]
-                    if (server == null) {
-                        call.respond(HttpStatusCode.OK)
-                        return@post
-                    }
-                    server.games.removeIf { it.gameId == game.gameId }
 
-                    call.respond(HttpStatusCode.OK)
                 }
                 get("/game/list") {
                     call.respond(call.filterGames(serverManager).map { it.toInfo() })

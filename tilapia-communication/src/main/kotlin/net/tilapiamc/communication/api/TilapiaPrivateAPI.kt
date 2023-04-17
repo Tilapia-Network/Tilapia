@@ -51,15 +51,10 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
         }
         ensureResponse(response)
     }
-    suspend fun endGame(gameInfo: GameInfo) {
+    suspend fun endGame(gameId: UUID) {
         val response = client.post("/game/end") {
             contentType(ContentType.Application.Json)
-            if (gameInfo is LobbyInfo) {
-                setBody(GameData(null, gameInfo))
-            }
-            if (gameInfo is MiniGameInfo) {
-                setBody(GameData(gameInfo, null))
-            }
+            parameter("gameId", gameId)
         }
         ensureResponse(response)
     }
@@ -122,11 +117,12 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
         return gson.fromJson(ensureResponse(response), GameData::class.java)
 
     }
-    suspend fun send(player: UUID, gameId: UUID, forceJoin: Boolean = false): JoinResult {
+    suspend fun send(player: UUID, gameId: UUID, forceJoin: Boolean = false, spectate: Boolean = false): JoinResult {
         val response = client.post("/player/send") {
             parameter("player", player)
             parameter("gameId", gameId)
             parameter("forceJoin", forceJoin)
+            parameter("spectate", spectate)
         }
         if (response.status != HttpStatusCode.OK && response.status != HttpStatusCode.NotAcceptable) {
             throw IllegalStateException("Server returned status: ${response.status}, body:  ${response.bodyAsText()}")

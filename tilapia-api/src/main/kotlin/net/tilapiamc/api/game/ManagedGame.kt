@@ -7,6 +7,7 @@ import net.tilapiamc.api.events.game.PlayerQuitGameEvent
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
 import org.apache.logging.log4j.Logger
+import org.bukkit.Location
 import org.bukkit.World
 import java.util.*
 
@@ -49,6 +50,8 @@ interface ManagedGame: IGame {
     class PlayerJoinResult(val type: PlayerJoinResultType, val chance: Double, val message: String = "Unknown") {
     }
     enum class PlayerJoinResultType(val success: Boolean) { ACCEPTED(true), DENIED(false) }
+
+    open fun getSpawnLocation(player: LocalNetworkPlayer): Location = gameWorld.spawnLocation
 
 }
 

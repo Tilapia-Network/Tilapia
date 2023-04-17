@@ -19,9 +19,9 @@ class NetworkPlayerImpl(val session: ServerCommunicationSession, val data: Playe
     override val language: Locale
         get() = data.locale
 
-    override fun where(): Game {
+    override fun where(): Game? {
         return runBlocking {
-            session.communication.where(uuid).toGame(session.communication)!!
+            session.communication.where(uuid).toGame(session.communication)
         }
     }
 

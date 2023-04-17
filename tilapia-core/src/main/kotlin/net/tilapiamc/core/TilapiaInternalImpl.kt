@@ -1,53 +1,23 @@
 package net.tilapiamc.core
 
+import kotlinx.coroutines.runBlocking
 import net.tilapiamc.api.game.Game
-import net.tilapiamc.api.game.GameType
-import net.tilapiamc.api.game.ManagedGame
-import net.tilapiamc.api.game.minigame.ManagedMiniGame
-import net.tilapiamc.api.internal.JoinDeniedException
 import net.tilapiamc.api.internal.TilapiaInternal
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
-import net.tilapiamc.language.LanguageCore
 import org.bukkit.entity.Player
 
 class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
-    override fun sendToGame(player: NetworkPlayer, game: Game?, forceJoin: Boolean, spectate: Boolean) {
-        // TODO: Communication
+    override fun sendToGame(player: NetworkPlayer, game: Game, forceJoin: Boolean, spectate: Boolean) {
         if (player is LocalNetworkPlayer) {
-            player.logger.debug("Sending player to ${game?.gameId}")
-            if (game != null) {
-                player.sendMessage(player.getLanguageBundle()[LanguageCore.SEND_TO_A_GAME].format(game.gameId))
-            }
+            player.logger.debug("Sending player to ${game.gameId}")
+//            if (game != null) {
+//                player.sendMessage(player.getLanguageBundle()[LanguageCore.SEND_TO_A_GAME].format(game.gameId))
+//            }
         }
-        if (player.currentGame != null && player is LocalNetworkPlayer) {
-            if (player.currentGame!!.managed) {
-                val managedGame = player.currentGame!! as ManagedGame
-                managedGame.remove(player)
-            }
-        }
-        if (game != null) {
-            if (spectate && game.gameType != GameType.MINIGAME) {
-                throw JoinDeniedException(game.shortGameId, "The game doesn't accept spectators")
-            }
-            if (game.managed && game is ManagedGame && player.isLocal && player is LocalNetworkPlayer) {
-                player.resetPlayerState()
-                player.teleport(game.gameWorld.spawnLocation)
-                if (spectate) {
-                    (game as ManagedMiniGame).addSpectator(player)
-                } else {
-                    val result = game.couldAdd(player, forceJoin)
-                    if (result.type.success) {
-                        game.add(player)
-                    } else {
-                        throw JoinDeniedException(game.shortGameId, result.message)
-                    }
-                }
 
-            }
-            player.currentGameId = game.gameId
-        } else {
-            player.currentGameId = null
+        runBlocking {
+            core.communication.send(player.uuid, game.gameId, forceJoin, spectate)
         }
 
     }

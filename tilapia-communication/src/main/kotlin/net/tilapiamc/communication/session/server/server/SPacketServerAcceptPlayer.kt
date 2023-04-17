@@ -10,16 +10,18 @@ import java.util.*
 class SPacketServerAcceptPlayer(
     var transmissionId: Long,
     var gameId: UUID,
-    var player: UUID
+    var player: UUID,
+    var spectate: Boolean
 ): SessionPacket.SPacket() {
 
-    constructor(): this(0L, UUID.randomUUID(), UUID.randomUUID())
+    constructor(): this(0L, UUID.randomUUID(), UUID.randomUUID(), false)
 
     override fun toJson(gson: Gson): JsonObject {
         return gson.jsonObjectOf(
             "transmissionId" to transmissionId,
             "gameId" to gameId,
             "player" to gameId,
+            "spectate" to spectate,
         )
     }
 
@@ -27,6 +29,7 @@ class SPacketServerAcceptPlayer(
         this.transmissionId = jsonObject[gson, "transmissionId"]!!
         this.gameId = jsonObject[gson, "gameId"]!!
         this.player = jsonObject[gson, "player"]!!
+        this.spectate = jsonObject[gson, "spectate"]!!
     }
 
 }

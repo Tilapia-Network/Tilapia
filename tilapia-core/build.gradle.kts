@@ -18,6 +18,7 @@ repositories {
 
 dependencies {
     compileOnly(MinecraftDependencyHelper.spigotApi("1.8.8"))
+    compileOnly(MinecraftDependencyHelper.spigot("1.8.8"))
     implementation(project(":tilapia-command"))
     implementation(project(":fan87-plugin-dev-kit"))
     implementation(project(":tilapia-api"))

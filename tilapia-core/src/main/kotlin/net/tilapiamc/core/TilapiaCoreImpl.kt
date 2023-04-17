@@ -1,6 +1,7 @@
 package net.tilapiamc.core
 
 import io.ktor.client.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -33,12 +34,14 @@ import net.tilapiamc.common.SuspendEventTarget
 import net.tilapiamc.communication.*
 import net.tilapiamc.communication.api.ServerCommunication
 import net.tilapiamc.communication.api.ServerCommunicationSession
+import net.tilapiamc.core.accepting.PlayerAccepter
 import net.tilapiamc.core.commands.CommandJoinLocal
 import net.tilapiamc.core.commands.CommandLobbyLocal
 import net.tilapiamc.core.commands.CommandSpectateLocal
 import net.tilapiamc.core.language.LanguageManagerImpl
 import net.tilapiamc.core.main.Main
-import net.tilapiamc.core.networking.LocalGameFinderImpl
+import net.tilapiamc.core.networking.GameFinderImpl
+import net.tilapiamc.core.networking.NetworkPlayerImpl
 import net.tilapiamc.core.networking.NetworkServerImpl
 import net.tilapiamc.core.server.LocalServerImpl
 import net.tilapiamc.language.LanguageCore
@@ -50,7 +53,7 @@ import java.util.*
 
 const val DISCONNECT_REASON = "Plugin disabled"
 
-class TilapiaCoreImpl: TilapiaCore {
+class TilapiaCoreImpl : TilapiaCore {
 
     val communication = ServerCommunication(HttpClient {
         install(WebSockets) {
@@ -67,13 +70,21 @@ class TilapiaCoreImpl: TilapiaCore {
                 }
             }
         }
+        defaultRequest {
+            url("http://localhost:8080")
+        }
     })
     lateinit var session: ServerCommunicationSession
-    val sessionThread: Thread
-    private val localServer: LocalServerImpl
+    lateinit var sessionThread: Thread
+    private lateinit var localServer: LocalServerImpl
     val logger = LogManager.getLogger("TilapiaCore")
 
+
     init {
+
+    }
+
+    fun onEnable() {
         val schemas = ArrayList<String>()
         for (plugin in Bukkit.getPluginManager().plugins) {
             if (plugin is TilapiaPlugin) {
@@ -89,14 +100,31 @@ class TilapiaCoreImpl: TilapiaCore {
         EventsManager.registerAnnotationBasedListener(this)
         EventsManager.listenForEvent(ServerTickEvent::class.java)
         EventsManager.listenForEvent(EntityTickEvent::class.java)
+        val lock = Object()
+        var initialized = false
         sessionThread = Thread {
             runBlocking {
-                communication.start(schemas, { SuspendEventTarget(it) }, { player, gameInfo, forceJoin ->
-                    // TODO: Player join result
-                    JoinResult(true, 1.0, "")
+                communication.start(schemas, { SuspendEventTarget(it) }, { player, gameId, forceJoin ->
+                    val game = localGameManager.getLocalGameById(gameId) ?: run {
+                        runBlocking {
+                            try {
+                                communication.endGame(gameId)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+
+                        return@start JoinResult(false, 0.0, "The game is not found")
+                    }
+                    val result = game.couldAdd(NetworkPlayerImpl(session, player), forceJoin)
+                    JoinResult(result.type.success, result.chance, result.message)
                 }) {
+                    session = this
                     onServerConnected.add {
-                        session = this
+                        initialized = true
+                        synchronized(lock) {
+                            lock.notifyAll()
+                        }
                     }
                     onSessionClosed.add {
                         if (it.closeReason?.message != DISCONNECT_REASON) {
@@ -104,21 +132,30 @@ class TilapiaCoreImpl: TilapiaCore {
                             Bukkit.getServer().shutdown()
                         }
                     }
+                    onPlayerAccepted.add {
+
+                    }
                 }
             }
         }
         sessionThread.start()
-
+        synchronized(lock) {
+            lock.wait(5000)
+        }
+        if (!initialized) {
+            logger.error("Failed to connect to central server! Shutting down...")
+            Bukkit.getServer().shutdown()
+        }
         localServer = LocalServerImpl(session.proxyId, session.serverId)
-//        TODO("Handle accept player")
-    }
-    init {
         NetworkServerImpl.cache[localServer.serverId] = localServer
+
     }
+
     val games = ArrayList<ManagedGame>()
     override val languageManager: LanguageManager = LanguageManagerImpl
     override val localGameManager: GamesManager = GamesManager()
-    override val gameFinder: GameFinder = LocalGameFinderImpl(this)   // TODO: Communication
+    override val gameFinder: GameFinder = GameFinderImpl(this)   // TODO: Communication
+    val accepter = PlayerAccepter().also { EventsManager.registerAnnotationBasedListener(it) }
 
 
     fun registerCommands() {
@@ -155,6 +192,7 @@ class TilapiaCoreImpl: TilapiaCore {
         localGameManager.registerManagedGame(game)
         EventsManager.registerAnnotationBasedListener(game)
     }
+
     override fun removeGame(game: ManagedGame) {
         if (!game.managed) {
             throw IllegalArgumentException("Game is not managed!")
@@ -220,9 +258,11 @@ class TilapiaCoreImpl: TilapiaCore {
             }
             throw IllegalArgumentException("The game is not lobby or minigame")
         }
+
         fun Lobby.toLobbyInfo(): LobbyInfo {
             return LobbyInfo(server.serverId, gameId, lobbyType, players.map { it.toPlayerInfo() })
         }
+
         fun MiniGame.toMiniGameInfo(): MiniGameInfo {
             return MiniGameInfo(server.serverId, gameId, lobbyType, players.map { it.toPlayerInfo() }, miniGameType)
         }

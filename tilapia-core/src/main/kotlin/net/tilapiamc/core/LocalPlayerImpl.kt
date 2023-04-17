@@ -29,12 +29,6 @@ class LocalPlayerImpl(core: TilapiaCoreImpl, bukkitPlayer: Player,
     }
 
     fun onJoin() {
-        if (tilapiaCore.localGameManager.getAllLocalGames().isEmpty()) {
-            logger.error("Could not find a game to join!")
-            kickPlayer(getLanguageBundle()[LanguageCore.INVALID_JOIN_NO_GAME])
-            return
-        }
-        sendToGame(findLobbyToJoin("main"))
     }
 
     fun onQuit() {

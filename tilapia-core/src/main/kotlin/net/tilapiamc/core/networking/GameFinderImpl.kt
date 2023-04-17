@@ -10,7 +10,7 @@ import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.core.TilapiaCoreImpl
 import java.util.*
 
-class LocalGameFinderImpl(val core: TilapiaCoreImpl): GameFinder {
+class GameFinderImpl(val core: TilapiaCoreImpl): GameFinder {
 
 
     override fun findLobbies(lobbyType: String): List<Lobby> {

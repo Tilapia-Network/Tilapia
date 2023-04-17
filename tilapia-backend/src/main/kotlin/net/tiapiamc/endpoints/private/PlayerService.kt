@@ -8,6 +8,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import net.tiapiamc.managers.ServerManager
 import net.tilapiamc.communication.GameData
+import net.tilapiamc.communication.GameType
 import net.tilapiamc.communication.session.client.CPacketAcknowledge
 import net.tilapiamc.communication.session.server.proxy.SPacketProxyAcceptPlayer
 import net.tilapiamc.communication.session.server.server.SPacketServerAcceptPlayer
@@ -31,6 +32,7 @@ object PlayerService {
                     val player = call.parameters["player"]
                     val gameId = call.parameters["gameId"]
                     val forceJoin = call.parameters["forceJoin"]?.toBooleanStrictOrNull()?:false
+                    var spectate = call.parameters["spectate"]?.toBooleanStrictOrNull()?:false
                     if (player?.let { serverManager.players[UUID.fromString(it)] } == null) {
                         call.respond(HttpStatusCode.BadRequest, "Player is not found")
                         return@post
@@ -44,6 +46,9 @@ object PlayerService {
 
                     val server = gameInstance.server
                     val proxy = gameInstance.server.proxy
+                    if (gameInstance.getGameType() != GameType.MINIGAME) {
+                        spectate = false
+                    }
                     val joinResult = try {
                         server.getJoinResult(
                             gameInstance.gameId,
@@ -66,7 +71,7 @@ object PlayerService {
                     val transmissionId = server.newTransmissionId()
 
                     server.waitForPacketWithType<CPacketAcknowledge>({ it.transmissionId == transmissionId }) {
-                        server.sendPacket(SPacketServerAcceptPlayer(transmissionId, gameInstance.gameId, playerInstance.uuid))
+                        server.sendPacket(SPacketServerAcceptPlayer(transmissionId, gameInstance.gameId, playerInstance.uuid, spectate))
                     }?:run {
                         call.respond(HttpStatusCode.ServiceUnavailable, "The server did not respond to accept player packet")
                         return@post
