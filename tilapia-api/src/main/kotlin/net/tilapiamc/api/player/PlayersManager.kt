@@ -18,13 +18,13 @@ object PlayersManager {
     val localPlayers = HashMap<UUID, LocalNetworkPlayer>()
     val players = HashMap<UUID, NetworkPlayer>()
 
-    @Subscribe("playerJoinInit", mustRunBefore = ["acceptedPlayerJoin"])
+    @Subscribe("playerJoinInit")
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        println("WTF?")
         localPlayers[event.player.uniqueId] = TilapiaCore.instance.getInternal().createLocalPlayer(event.player)
     }
     @Subscribe("playerLeaveInit")
     fun onPlayerLeave(event: PlayerQuitEvent) {
+        localPlayers[event.player.uniqueId]?.resetPlayerState()
         localPlayers.remove(event.player.uniqueId)
     }
     @Subscribe("playerDeathMessageRemoval")

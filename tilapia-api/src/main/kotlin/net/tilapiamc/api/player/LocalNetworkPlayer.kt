@@ -39,6 +39,8 @@ abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
             bedSpawnLocation = null
             activePotionEffects.forEach { removePotionEffect(it.type) }
             leaveVehicle()
+            scoreboard.teams.filter { it.removeEntry(name) }
+            scoreboard.resetScores(name)
         }
     }
 

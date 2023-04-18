@@ -43,50 +43,55 @@ object PlayerService {
                     }
                     val playerInstance = serverManager.players[UUID.fromString(player)]!!
                     val gameInstance = serverManager.games[UUID.fromString(gameId)]!!
+                    try {
+                        playerInstance.joiningLock.lock()
+                        val server = gameInstance.server
+                        val proxy = gameInstance.server.proxy
+                        if (gameInstance.getGameType() != GameType.MINIGAME) {
+                            spectate = false
+                        }
+                        val joinResult = try {
+                            server.getJoinResult(
+                                gameInstance.gameId,
+                                playerInstance.toPlayerInfo(),
+                                forceJoin
+                            )
+                        } catch (e: IllegalStateException) {
+                            // TODO: Bad practice on hard-coded string, should use custom exception
+                            if (e.message == "Server did not respond") {
+                                call.respond(HttpStatusCode.ServiceUnavailable, "The server did not respond a join result")
+                                return@post
+                            }
+                            throw e
+                        }
 
-                    val server = gameInstance.server
-                    val proxy = gameInstance.server.proxy
-                    if (gameInstance.getGameType() != GameType.MINIGAME) {
-                        spectate = false
-                    }
-                    val joinResult = try {
-                        server.getJoinResult(
-                            gameInstance.gameId,
-                            playerInstance.toPlayerInfo(),
-                            forceJoin
-                        )
-                    } catch (e: IllegalStateException) {
-                        // TODO: Bad practice on hard-coded string, should use custom exception
-                        if (e.message == "Server did not respond") {
-                            call.respond(HttpStatusCode.ServiceUnavailable, "The server did not respond a join result")
+                        if (!joinResult.success) {
+                            call.respond(HttpStatusCode.NotAcceptable, joinResult)
                             return@post
                         }
-                        throw e
+                        val transmissionId = server.newTransmissionId()
+
+                        server.waitForPacketWithType<CPacketAcknowledge>({ it.transmissionId == transmissionId }) {
+                            server.sendPacket(SPacketServerAcceptPlayer(transmissionId, gameInstance.server.serverId, gameInstance.gameId, playerInstance.uuid, spectate))
+                        }?:run {
+                            call.respond(HttpStatusCode.ServiceUnavailable, "The server did not respond to accept player packet")
+                            return@post
+                        }
+
+                        proxy.waitForPacketWithType<CPacketAcknowledge>({ it.transmissionId == transmissionId }) {
+                            proxy.sendPacket(SPacketProxyAcceptPlayer(transmissionId, server.serverId, playerInstance.uuid))
+                        }?:run {
+                            call.respond(HttpStatusCode.ServiceUnavailable, "The proxy did not respond to accept player packet")
+                            return@post
+                        }
+                        gameInstance.players.add(playerInstance)
+                        playerInstance.currentGame = gameInstance
+
+                        call.respond(HttpStatusCode.OK, joinResult)
+                    } finally {
+                        playerInstance.joiningLock.unlock()
                     }
 
-                    if (!joinResult.success) {
-                        call.respond(HttpStatusCode.NotAcceptable, joinResult)
-                        return@post
-                    }
-                    val transmissionId = server.newTransmissionId()
-
-                    server.waitForPacketWithType<CPacketAcknowledge>({ it.transmissionId == transmissionId }) {
-                        server.sendPacket(SPacketServerAcceptPlayer(transmissionId, gameInstance.gameId, playerInstance.uuid, spectate))
-                    }?:run {
-                        call.respond(HttpStatusCode.ServiceUnavailable, "The server did not respond to accept player packet")
-                        return@post
-                    }
-
-                    proxy.waitForPacketWithType<CPacketAcknowledge>({ it.transmissionId == transmissionId }) {
-                        proxy.sendPacket(SPacketProxyAcceptPlayer(transmissionId, server.serverId, playerInstance.uuid))
-                    }?:run {
-                        call.respond(HttpStatusCode.ServiceUnavailable, "The proxy did not respond to accept player packet")
-                        return@post
-                    }
-                    gameInstance.players.add(playerInstance)
-                    playerInstance.currentGame = gameInstance
-
-                    call.respond(HttpStatusCode.OK, joinResult)
                 }
             }
 

@@ -2,8 +2,8 @@ package net.tilapiamc.proxycore
 
 import com.velocitypowered.api.proxy.Player
 import kotlinx.coroutines.runBlocking
-import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.tilapiamc.common.language.LanguageKeyDelegation
 import net.tilapiamc.communication.PlayerInfo
 import net.tilapiamc.proxyapi.TilapiaProxyInternal
@@ -21,7 +21,7 @@ class TilapiaProxyInternalImpl(val proxyApi: TilapiaProxyCore): TilapiaProxyInte
     override fun sendToGame(player: NetworkPlayer, game: Game, forceJoin: Boolean, spectate: Boolean) {
         if (player is LocalNetworkPlayer) {
             player.logger.debug("Sending player to ${game.gameId}")
-            player.sendMessage(Component.text(player.getLanguageBundle()[SEND_TO_A_GAME]))
+            player.sendMessage(LegacyComponentSerializer.legacySection().deserialize(player.getLanguageBundle()[SEND_TO_A_GAME].format(game.shortGameId)))
         }
 
         runBlocking {

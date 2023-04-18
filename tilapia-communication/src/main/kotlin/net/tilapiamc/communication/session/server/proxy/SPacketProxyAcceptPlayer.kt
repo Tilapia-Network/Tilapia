@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import net.tilapiamc.common.json.get
 import net.tilapiamc.common.json.jsonObjectOf
+import net.tilapiamc.communication.GameInfo
 import net.tilapiamc.communication.session.SessionPacket
 import java.util.*
 

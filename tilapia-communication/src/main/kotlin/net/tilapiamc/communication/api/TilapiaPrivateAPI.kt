@@ -12,8 +12,12 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.gson.*
+import kotlinx.coroutines.runBlocking
 import net.tilapiamc.communication.*
 import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import java.util.concurrent.FutureTask
 
 open class TilapiaPrivateAPI(val client: HttpClient) {
 
@@ -149,17 +153,30 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
         return gson.fromJson(ensureResponse(response), GameData::class.java)
 
     }
-    suspend fun send(player: UUID, gameId: UUID, forceJoin: Boolean = false, spectate: Boolean = false): JoinResult {
-        val response = client.post("/player/send") {
-            parameter("player", player)
-            parameter("gameId", gameId)
-            parameter("forceJoin", forceJoin)
-            parameter("spectate", spectate)
+
+
+    val threadPool = Executors.newFixedThreadPool(200)
+
+    suspend fun send(player: UUID, gameId: UUID, forceJoin: Boolean = false, spectate: Boolean = false): Future<JoinResult> {
+        // TODO: Player joining too fast
+        // See #5
+        val future = FutureTask {
+            runBlocking {
+                val response = client.post("/player/send") {
+                    parameter("player", player)
+                    parameter("gameId", gameId)
+                    parameter("forceJoin", forceJoin)
+                    parameter("spectate", spectate)
+                }
+                if (response.status != HttpStatusCode.OK && response.status != HttpStatusCode.NotAcceptable) {
+                    throw IllegalStateException("Server returned status: ${response.status}, body:  ${response.bodyAsText()}")
+                }
+                gson.fromJson(response.bodyAsText(), JoinResult::class.java)
+            }
         }
-        if (response.status != HttpStatusCode.OK && response.status != HttpStatusCode.NotAcceptable) {
-            throw IllegalStateException("Server returned status: ${response.status}, body:  ${response.bodyAsText()}")
-        }
-        return gson.fromJson(response.bodyAsText(), JoinResult::class.java)
+        threadPool.submit { future.run() }
+        return future
+
     }
 
 

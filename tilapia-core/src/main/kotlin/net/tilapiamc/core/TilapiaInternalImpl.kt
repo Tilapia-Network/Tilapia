@@ -5,6 +5,7 @@ import net.tilapiamc.api.game.Game
 import net.tilapiamc.api.internal.TilapiaInternal
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
+import net.tilapiamc.language.LanguageCore
 import org.bukkit.entity.Player
 
 class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
@@ -12,7 +13,7 @@ class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
         if (player is LocalNetworkPlayer) {
             player.logger.info("Sending player to ${game.gameId}")
 //            if (game != null) {
-//                player.sendMessage(player.getLanguageBundle()[LanguageCore.SEND_TO_A_GAME].format(game.gameId))
+            player.sendMessage(player.getLanguageBundle()[LanguageCore.SEND_TO_A_GAME].format(game.shortGameId))
 //            }
         }
 
