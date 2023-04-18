@@ -24,7 +24,15 @@ object EventsManager: AbstractEventsManager(), Listener {
     val logger = LogManager.getLogger("EventsManager")
 
     init {
-        val reflections = Reflections("org.bukkit.event")
+
+
+        listenInPackage("org.bukkit.event")
+        listenInPackage("org.spigotmc.event")
+
+    }
+
+    fun listenInPackage(packageName: String) {
+        val reflections = Reflections(packageName)
 
         for (clazz in reflections.getSubTypesOf(Event::class.java)) {
             if (clazz.declaredMethods.any { it.name == "getHandlerList" }) { // Valid Spigot Event
@@ -43,9 +51,7 @@ object EventsManager: AbstractEventsManager(), Listener {
                 fireEvent(PacketReceiveEvent(event))
             }
         })
-
     }
-
 
     fun listenForEvent(eventType: Class<out Event>) {
         if (eventType in listening) {

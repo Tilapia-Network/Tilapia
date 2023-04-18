@@ -13,7 +13,7 @@ import net.tilapiamc.core.TilapiaCoreImpl
 import org.apache.logging.log4j.LogManager
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
-import org.bukkit.event.player.PlayerJoinEvent
+import org.spigotmc.event.player.PlayerSpawnLocationEvent
 import java.util.*
 
 class PlayerAccepter {
@@ -41,7 +41,7 @@ class PlayerAccepter {
     }
 
     @Subscribe("acceptedPlayerJoin", mustRunAfter = ["playerJoinInit"])
-    fun handlePlayerJoin(event: PlayerJoinEvent) {
+    fun handlePlayerJoin(event: PlayerSpawnLocationEvent) {
         val acceptedInfo = acceptedPlayers[event.player.uniqueId]
         acceptedPlayers.remove(event.player.uniqueId)
         if (acceptedInfo == null) {
@@ -56,7 +56,7 @@ class PlayerAccepter {
         val game = acceptedInfo.game
         if (game.managed && game is ManagedGame && player.isLocal && player is LocalNetworkPlayer) {
             player.resetPlayerState()
-            player.teleport(game.getSpawnLocation(player))
+            event.spawnLocation = game.getSpawnLocation(player)
             if (spectate) {
                 (game as ManagedMiniGame).addSpectator(player)
             } else {
