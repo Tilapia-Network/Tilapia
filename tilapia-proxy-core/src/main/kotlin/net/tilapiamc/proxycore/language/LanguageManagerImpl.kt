@@ -1,4 +1,4 @@
-package net.tilapiamc.core.language
+package net.tilapiamc.proxycore.language
 
 import net.tilapiamc.common.language.LanguageBundle
 import net.tilapiamc.common.language.LanguageKey
@@ -7,10 +7,10 @@ import org.apache.logging.log4j.LogManager
 import java.util.*
 
 object LanguageManagerImpl: LanguageManager {
+
     init {
         LanguageManager.instance = this
     }
-
     val logger = LogManager.getLogger("LanguageManager")
 
     val bundleCache = HashMap<Locale, LanguageBundle>()

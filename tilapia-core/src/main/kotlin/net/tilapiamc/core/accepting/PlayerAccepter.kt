@@ -1,17 +1,17 @@
 package net.tilapiamc.core.accepting
 
 import kotlinx.coroutines.runBlocking
-import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.game.minigame.ManagedMiniGame
 import net.tilapiamc.api.game.minigame.MiniGame
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
+import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.communication.session.server.server.SPacketServerAcceptPlayer
 import net.tilapiamc.core.TilapiaCoreImpl
 import org.apache.logging.log4j.LogManager
 import org.bukkit.ChatColor
-import org.spigotmc.event.player.PlayerSpawnLocationEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import java.util.*
 
 class PlayerAccepter {
@@ -35,8 +35,8 @@ class PlayerAccepter {
         acceptedPlayers[packet.player] = AcceptedInfo(game, if (game is MiniGame) packet.spectate else false)
     }
 
-    @Subscribe("acceptedPlayerJoin", mustRunAfter = ["playerJoinInit"])
-    fun handlePlayerJoin(event: PlayerSpawnLocationEvent) {
+    @Subscribe("acceptedPlayerJoin")
+    fun handlePlayerJoin(event: PlayerJoinEvent) {
         val acceptedInfo = acceptedPlayers[event.player.uniqueId]
         acceptedPlayers.remove(event.player.uniqueId)
         if (acceptedInfo == null) {
@@ -51,13 +51,12 @@ class PlayerAccepter {
         val game = acceptedInfo.game
         if (game.managed && game is ManagedGame && player.isLocal && player is LocalNetworkPlayer) {
             player.resetPlayerState()
-            event.spawnLocation = game.getSpawnLocation(player)
+            player.teleport(game.getSpawnLocation(player))
             if (spectate) {
                 (game as ManagedMiniGame).addSpectator(player)
             } else {
                 game.add(player)
             }
-
         }
         player.currentGameId = game.gameId
     }

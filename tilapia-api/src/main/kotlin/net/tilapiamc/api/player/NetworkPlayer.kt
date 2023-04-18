@@ -18,9 +18,6 @@ abstract class NetworkPlayer(
     open val isLocal: Boolean = false
 
     lateinit var currentServer: TilapiaServer
-    var currentGameId: UUID? = null
-    val currentGame: Game?
-        get() = if (currentGameId == null) null else tilapiaCore.localGameManager.getLocalGameById(currentGameId!!) as Game
     abstract val language: Locale
     fun getLanguageBundle(): LanguageBundle {
         return tilapiaCore.languageManager.getLanguageBundle(language)
@@ -38,5 +35,6 @@ abstract class NetworkPlayer(
     }
 
     abstract fun where(): Game?
+    abstract fun send(game: Game, forceJoin: Boolean, spectate: Boolean)
 
 }

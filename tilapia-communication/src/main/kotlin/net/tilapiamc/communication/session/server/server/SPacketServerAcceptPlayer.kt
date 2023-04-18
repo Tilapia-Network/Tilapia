@@ -20,7 +20,7 @@ class SPacketServerAcceptPlayer(
         return gson.jsonObjectOf(
             "transmissionId" to transmissionId,
             "gameId" to gameId,
-            "player" to gameId,
+            "player" to player,
             "spectate" to spectate,
         )
     }

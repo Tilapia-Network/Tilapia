@@ -8,6 +8,7 @@ import com.comphenix.protocol.injector.packet.PacketRegistry
 import me.fan87.plugindevkit.PluginInstanceGrabber
 import net.tilapiamc.api.events.packet.PacketReceiveEvent
 import net.tilapiamc.api.events.packet.PacketSendEvent
+import net.tilapiamc.common.events.AbstractEvent
 import net.tilapiamc.common.events.AbstractEventsManager
 import org.apache.logging.log4j.LogManager
 import org.bukkit.Bukkit
@@ -58,10 +59,19 @@ object EventsManager: AbstractEventsManager(), Listener {
         }, PluginInstanceGrabber.getPluginInstance())
     }
 
+    override fun invoke(event: AbstractEvent) {
+        fireEvent(event)
+    }
+
     @JvmStatic
     fun fireEvent(event: AbstractEvent) {
         for (listener in ArrayList(listeners)) {
-            listener(event)
+            try {
+                listener(event)
+            } catch (e: Throwable) {
+                logger.error("Could not pass event ${event.javaClass.simpleName}")
+                e.printStackTrace()
+            }
         }
     }
 

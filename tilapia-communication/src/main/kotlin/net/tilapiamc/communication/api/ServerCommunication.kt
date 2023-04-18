@@ -20,7 +20,8 @@ import net.tilapiamc.communication.session.server.server.SPacketServerRequestJoi
 import java.util.*
 
 class ServerCommunication(client: HttpClient): TilapiaPrivateAPI(client) {
-
+    constructor(apiKey: String, baseURL: String): this(
+        getHttpClient(apiKey, baseURL))
     suspend fun start(
               requiredSchemas: List<String>,
               eventTargetFactory: (ignoreException: Boolean) -> SuspendEventTarget<out SessionEvent>,

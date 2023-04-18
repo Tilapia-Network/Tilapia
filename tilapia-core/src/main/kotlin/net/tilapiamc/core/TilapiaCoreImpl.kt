@@ -1,12 +1,5 @@
 package net.tilapiamc.core
 
-import io.ktor.client.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.auth.*
-import io.ktor.client.plugins.auth.providers.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.websocket.*
-import io.ktor.serialization.gson.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.runBlocking
 import me.fan87.plugindevkit.events.EntityTickEvent
@@ -16,8 +9,6 @@ import net.tilapiamc.api.TilapiaPlugin
 import net.tilapiamc.api.commands.LanguageCommand
 import net.tilapiamc.api.commands.SpigotCommandsManager
 import net.tilapiamc.api.events.EventsManager
-import net.tilapiamc.common.events.annotation.registerAnnotationBasedListener
-import net.tilapiamc.common.events.annotation.unregisterAnnotationBasedListener
 import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.GamesManager
 import net.tilapiamc.api.game.IGame
@@ -25,12 +16,14 @@ import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.game.lobby.Lobby
 import net.tilapiamc.api.game.minigame.MiniGame
 import net.tilapiamc.api.internal.TilapiaInternal
-import net.tilapiamc.common.language.LanguageManager
 import net.tilapiamc.api.networking.GameFinder
 import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.api.player.PlayersManager
 import net.tilapiamc.api.server.TilapiaServer
 import net.tilapiamc.common.SuspendEventTarget
+import net.tilapiamc.common.events.annotation.registerAnnotationBasedListener
+import net.tilapiamc.common.events.annotation.unregisterAnnotationBasedListener
+import net.tilapiamc.common.language.LanguageManager
 import net.tilapiamc.communication.*
 import net.tilapiamc.communication.api.ServerCommunication
 import net.tilapiamc.communication.api.ServerCommunicationSession
@@ -55,25 +48,7 @@ const val DISCONNECT_REASON = "Plugin disabled"
 
 class TilapiaCoreImpl : TilapiaCore {
 
-    val communication = ServerCommunication(HttpClient {
-        install(WebSockets) {
-            maxFrameSize = Long.MAX_VALUE
-            pingInterval = 15000
-        }
-        install(ContentNegotiation) {
-            gson()
-        }
-        install(Auth) {
-            bearer {
-                loadTokens {
-                    BearerTokens("testKey", "")
-                }
-            }
-        }
-        defaultRequest {
-            url("http://localhost:8080")
-        }
-    })
+    val communication = ServerCommunication("testKey", "http://localhost:8080")
     lateinit var session: ServerCommunicationSession
     lateinit var sessionThread: Thread
     private lateinit var localServer: LocalServerImpl
@@ -118,7 +93,7 @@ class TilapiaCoreImpl : TilapiaCore {
                     }
                     val result = game.couldAdd(NetworkPlayerImpl(session, player), forceJoin)
                     JoinResult(result.type.success, result.chance, result.message)
-                }) {
+                }, Bukkit.getPort()) {
                     session = this
                     onServerConnected.add {
                         initialized = true
@@ -133,7 +108,7 @@ class TilapiaCoreImpl : TilapiaCore {
                         }
                     }
                     onPlayerAccepted.add {
-
+                        accepter.handleAcceptPlayerPacket(this@TilapiaCoreImpl, it)
                     }
                 }
             }
@@ -191,6 +166,9 @@ class TilapiaCoreImpl : TilapiaCore {
         games.add(game)
         localGameManager.registerManagedGame(game)
         EventsManager.registerAnnotationBasedListener(game)
+        runBlocking {
+            communication.registerGame(game.toGameData())
+        }
     }
 
     override fun removeGame(game: ManagedGame) {
@@ -203,20 +181,12 @@ class TilapiaCoreImpl : TilapiaCore {
         for (player in ArrayList(game.players)) {
             val localPlayer = PlayersManager.localPlayers[player.uuid]
             localPlayer!!.kickPlayer(localPlayer.getLanguageBundle()[LanguageCore.TEMP_GAME_STOPPED])
-//            TODO("Add to fall back server logic")
         }
         games.remove(game)
         localGameManager.unregisterManagedGame(game.gameId)
         EventsManager.unregisterAnnotationBasedListener(game)
         runBlocking {
-            session.communication.registerGame(
-                if (game is Lobby)
-                    game.toLobbyInfo()
-                else if (game is MiniGame)
-                    game.toMiniGameInfo()
-                else
-                    throw IllegalArgumentException("Game is not lobby or minigame")
-            )
+            session.communication.endGame(game.gameId)
         }
     }
 
@@ -268,7 +238,8 @@ class TilapiaCoreImpl : TilapiaCore {
         }
 
         fun NetworkPlayer.toPlayerInfo(): PlayerInfo {
-            return PlayerInfo(playerName, uuid, locale, currentGameId)
+            // TODO: Inefficiency (calling where() two times)
+            return PlayerInfo(playerName, uuid, locale, where()!!.gameId)
         }
     }
 

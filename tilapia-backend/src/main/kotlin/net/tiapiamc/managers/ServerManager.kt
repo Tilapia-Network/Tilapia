@@ -45,7 +45,7 @@ class ServerManager {
             logger.info("Proxy ${proxy.proxyId} has disconnected before handshake, reason: ${reason?.message}")
         }
         proxies.remove(proxy.proxyId)
-        for (server in proxy.servers) {
+        for (server in ArrayList(proxy.servers)) {
             server.closeSession(CloseReason(CloseReason.Codes.NORMAL, "The parent proxy has stopped"))
         }
     }
@@ -54,6 +54,9 @@ class ServerManager {
             logger.info("Server ${server.serverId} has stopped, reason: ${reason?.message}")
         } else {
             logger.info("Server ${server.serverId} has disconnected before handshake, reason: ${reason?.message}")
+        }
+        for (game in server.games) {
+            games.remove(game.gameId)
         }
         servers.remove(server.serverId)
         server.proxy.servers.remove(server)

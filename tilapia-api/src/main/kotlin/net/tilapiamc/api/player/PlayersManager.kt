@@ -6,8 +6,8 @@ import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.common.events.annotation.registerAnnotationBasedListener
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import org.spigotmc.event.player.PlayerSpawnLocationEvent
 import java.util.*
 
 object PlayersManager {
@@ -18,8 +18,9 @@ object PlayersManager {
     val localPlayers = HashMap<UUID, LocalNetworkPlayer>()
     val players = HashMap<UUID, NetworkPlayer>()
 
-    @Subscribe("playerJoinInit")
-    fun onPlayerJoin(event: PlayerSpawnLocationEvent) {
+    @Subscribe("playerJoinInit", mustRunBefore = ["acceptedPlayerJoin"])
+    fun onPlayerJoin(event: PlayerJoinEvent) {
+        println("WTF?")
         localPlayers[event.player.uniqueId] = TilapiaCore.instance.getInternal().createLocalPlayer(event.player)
     }
     @Subscribe("playerLeaveInit")

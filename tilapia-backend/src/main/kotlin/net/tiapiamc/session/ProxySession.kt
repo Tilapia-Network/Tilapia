@@ -25,6 +25,7 @@ class ProxySession(val remoteIp: String,
 
 
     init {
+
         onSessionStarted.add {
             sendPacket(SPacketProxyHandShake(proxyId))
             val handShake = waitForPacketWithType<CPacketProxyHandShake>()?:clientError("Not receiving handshake packet")

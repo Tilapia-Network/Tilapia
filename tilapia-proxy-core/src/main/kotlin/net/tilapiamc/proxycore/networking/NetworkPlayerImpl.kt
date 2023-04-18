@@ -1,15 +1,15 @@
-package net.tilapiamc.core.networking
+package net.tilapiamc.proxycore.networking
 
 import kotlinx.coroutines.runBlocking
-import net.tilapiamc.api.TilapiaCore
-import net.tilapiamc.api.game.Game
-import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.communication.PlayerInfo
-import net.tilapiamc.communication.api.ServerCommunicationSession
+import net.tilapiamc.communication.api.ProxyCommunicationSession
+import net.tilapiamc.proxyapi.TilapiaProxyAPI
+import net.tilapiamc.proxyapi.game.Game
+import net.tilapiamc.proxyapi.player.NetworkPlayer
 import java.util.*
 
-class NetworkPlayerImpl(val session: ServerCommunicationSession, val data: PlayerInfo): NetworkPlayer(
-    TilapiaCore.instance,
+class NetworkPlayerImpl(val session: ProxyCommunicationSession, val data: PlayerInfo): NetworkPlayer(
+    TilapiaProxyAPI.instance,
     data.playerName,
     data.locale,
     data.uniqueId
@@ -27,7 +27,7 @@ class NetworkPlayerImpl(val session: ServerCommunicationSession, val data: Playe
 
     override fun send(game: Game, forceJoin: Boolean, spectate: Boolean) {
         return runBlocking {
-            tilapiaCore.getInternal().sendToGame(this@NetworkPlayerImpl, game, forceJoin, spectate)
+            proxyAPI.internal.sendToGame(this@NetworkPlayerImpl, game, forceJoin, spectate)
         }
     }
 

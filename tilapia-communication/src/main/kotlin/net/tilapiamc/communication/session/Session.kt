@@ -66,6 +66,7 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
         out["data"] = packet.toJson(gson)
         webSocket.send(gson.toJson(out))
         webSocket.flush()
+        println("Sent: ${gson.toJson(out)}")
     }
 
     suspend fun startSession() {
@@ -90,27 +91,25 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
         // TODO: Workaround - Race condition
         // Please refer to internal #1
 
-        runBlocking {
-            try {
-                while (true) {
-                    val frame = webSocket.incoming.receive()
-                    val packet = readPacket(frame)
-                    try {
-                        onPacket(SessionPacketEvent(this@Session, packet))
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        closeSession(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error while handling packet"))
-                    }
+        try {
+            while (true) {
+                val frame = webSocket.incoming.receive()
+                val packet = readPacket(frame)
+                try {
+                    onPacket(SessionPacketEvent(this@Session, packet))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    closeSession(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error while handling packet"))
                 }
-            } catch (e: ClosedReceiveChannelException) {
-                closeSession()
-            } catch (e: WebSocketClientError) {
-                e.printStackTrace()
-                closeSession(CloseReason(CloseReason.Codes.PROTOCOL_ERROR, e.message!!))
-            } catch (e: Exception) {
-                e.printStackTrace()
-                closeSession(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error while reading frames"))
             }
+        } catch (e: ClosedReceiveChannelException) {
+            closeSession()
+        } catch (e: WebSocketClientError) {
+            e.printStackTrace()
+            closeSession(CloseReason(CloseReason.Codes.PROTOCOL_ERROR, e.message!!))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            closeSession(CloseReason(CloseReason.Codes.INTERNAL_ERROR, "Internal error while reading frames"))
         }
 
 
@@ -140,6 +139,7 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
 
 
     private fun readPacket(frame: Frame): SessionPacket {
+        println("Received: ${frame.data.decodeToString()}")
         val json = gson.fromJson(frame.data.decodeToString(), JsonObject::class.java)
         val type: String = json[gson, "type"]?: clientError("Type is not found")
         val packetType = packetRegistry[type]?: clientError("Packet type is not registered")

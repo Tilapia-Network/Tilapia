@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
 class TilapiaInternalImpl(val core: TilapiaCoreImpl): TilapiaInternal {
     override fun sendToGame(player: NetworkPlayer, game: Game, forceJoin: Boolean, spectate: Boolean) {
         if (player is LocalNetworkPlayer) {
-            player.logger.debug("Sending player to ${game.gameId}")
+            player.logger.info("Sending player to ${game.gameId}")
 //            if (game != null) {
 //                player.sendMessage(player.getLanguageBundle()[LanguageCore.SEND_TO_A_GAME].format(game.gameId))
 //            }

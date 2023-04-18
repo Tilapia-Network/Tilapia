@@ -44,7 +44,7 @@ class ServerSession(val remoteIp: InetSocketAddress,
 
     }
 
-    fun toServerInfo(): ServerInfo = ServerInfo(remoteIp, proxy.proxyId, serverId, games.map { it.gameId })
+    fun toServerInfo(): ServerInfo = ServerInfo(remoteIp.hostName, remoteIp.port, proxy.proxyId, serverId, games.map { it.gameId })
 
     class HandshakeFinishedEvent(override val session: ServerSession): SessionEvent(session)
 

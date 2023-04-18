@@ -36,24 +36,26 @@ object ServerService {
 
                     call.respond(out)
                 }
-                webSocket("/server/gateway") {
-                    if (serverManager.proxies.isEmpty()) {
-                        serverManager.logger.warn("A server has attempted to connect to gateway while there's no proxy connected")
-                        close(CloseReason(CloseReason.Codes.NORMAL, "No proxy is connected"))
-                        return@webSocket
-                    }
-                    val port = call.parameters["port"]!!.toInt()
-                    val serverId = serverManager.generateServerId()
-                    val proxyId = serverManager.getProxyAssignment()
-                    val session = ServerSession(InetSocketAddress(call.request.origin.remoteHost, port), this, proxyId, serverId)
-                    session.onHandshakeFinished.add {
-                        serverManager.createServer(session)
-                    }
-                    session.onSessionClosed.add {
-                        serverManager.deleteServer(session, it.closedBySelf, it.closeReason)
-                    }
-                    session.startSession()
+            }
+
+            webSocket("/server/gateway") {
+                if (serverManager.proxies.isEmpty()) {
+                    serverManager.logger.warn("A server has attempted to connect to gateway while there's no proxy connected")
+                    close(CloseReason(CloseReason.Codes.NORMAL, "No proxy is connected"))
+                    return@webSocket
                 }
+                val port = call.parameters["port"]!!.toInt()
+                val serverId = serverManager.generateServerId()
+                val proxyId = serverManager.getProxyAssignment()
+                val session = ServerSession(InetSocketAddress(call.request.origin.remoteHost, port), this, proxyId, serverId)
+                session.onHandshakeFinished.add {
+                    serverManager.createServer(session)
+                }
+                session.onSessionClosed.add {
+                    serverManager.deleteServer(session, it.closedBySelf, it.closeReason)
+                }
+                flush()
+                session.startSession()
             }
         }
     }

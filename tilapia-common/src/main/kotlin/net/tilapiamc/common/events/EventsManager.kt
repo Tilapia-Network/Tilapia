@@ -29,13 +29,19 @@ abstract class AbstractEventsManager {
 
     }
 
+
     private fun sortListeners() {
-        val comparator = ListenerComparator()
-        listeners.sortWith(comparator)
+
     }
-    operator fun invoke(event: AbstractEvent) {
+
+
+    open operator fun invoke(event: AbstractEvent) {
         for (listener in ArrayList(listeners)) {
-            listener(event)
+            try {
+                listener(event)
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -56,18 +62,18 @@ abstract class AbstractEventsManager {
                 error("Circular dependency detected")
             }
 
-            if (obj1.mustRunAfter.contains(obj2.name)) {
-                return 1
-            }
-            if (obj2.mustRunAfter.contains(obj1.name)) {
-                return -1
-            }
-            if (obj1.mustRunBefore.contains(obj2.name)) {
-                return -1
-            }
-            return if (obj2.mustRunBefore.contains(obj1.name)) {
+            val result = if (obj1.mustRunAfter.contains(obj2.name)) {
                 1
-            } else obj1.name.compareTo(obj2.name)
+            } else if (obj2.mustRunAfter.contains(obj1.name)) {
+                -1
+            } else if (obj1.mustRunBefore.contains(obj2.name)) {
+                -1
+            } else if (obj2.mustRunBefore.contains(obj1.name)) {
+                1
+            } else 0
+
+            println("Comparing ${obj1.name} (A: ${obj1.mustRunAfter}  B: ${obj1.mustRunBefore}) / ${obj2.name}  (A: ${obj2.mustRunAfter}  B: ${obj2.mustRunBefore})   Result: $result")
+            return result
 
         }
 
