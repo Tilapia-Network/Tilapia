@@ -13,7 +13,7 @@ import org.slf4j.Logger
 import javax.inject.Inject
 
 
-@Plugin(id = "proxy-util-commands", name = "Proxy Util Commands", version = "1.0", dependencies = [Dependency(id = "tilapia-proxy-core")])
+@Plugin(id = "proxy-util-commandsa", name = "Proxy Util Commands", version = "1.0", dependencies = [Dependency(id = "tilapia-proxy-core")])
 class ProxyUtilCommands @Inject constructor(val proxy: ProxyServer, val logger: Logger) {
 
     @Subscribe

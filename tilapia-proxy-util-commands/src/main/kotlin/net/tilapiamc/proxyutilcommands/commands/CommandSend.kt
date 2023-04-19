@@ -14,7 +14,7 @@ import net.tilapiamc.proxyapi.player.PlayersManager.Companion.getLocalPlayer
 class CommandSend: ProxyCommand("send", "傳送一個玩家到一局遊戲", false) {
 
     val success = getCommandLanguageKey("SUCCESS", "&a成功傳送 &e%1\$s &a到 &e%2\$s")
-    val failed = getCommandLanguageKey("FAILED", "&c無法傳送 &e%1\$s &c到 &e%s2\$ &c！原因: %s3\$s")
+    val failed = getCommandLanguageKey("FAILED", "&c無法傳送 &e%1\$s &c到 &e%2\$s &c！原因: %3\$s")
     val alreadyIn = getCommandLanguageKey("ALREADY_IN", "&c該玩家早就在此遊戲")
     val spectateLobbyNotSupported = getCommandLanguageKey("SPECTATE_LOBBY_NOT_SUPPORT", "&c你無法旁觀一個大廳")
 

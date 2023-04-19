@@ -27,6 +27,8 @@ class ProxyCommandsManager(val proxyApi: TilapiaProxyAPI): CommandsManager<Comma
         proxyApi.eventsManager.registerAnnotationBasedListener(this)
     }
 
+
+
     @Subscribe("proxyCommandsManager-handleCommand")
     fun handleCommand(event: CommandExecuteEvent) {
         try {
