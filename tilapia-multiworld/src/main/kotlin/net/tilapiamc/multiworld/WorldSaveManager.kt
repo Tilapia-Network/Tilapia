@@ -97,7 +97,7 @@ class WorldSaveManager(val database: Database, val trashBin: Database) {
             }
             if (childrenFile.isDirectory) continue
             try {
-                zipOutputStream.putNextEntry(ZipEntry(childrenFile.name))
+                zipOutputStream.putNextEntry(ZipEntry(childrenFile.relativeTo(file).path))
                 childrenFile.inputStream().copyTo(zipOutputStream)
                 zipOutputStream.closeEntry()
             } catch (e: ZipException) {}
@@ -109,6 +109,7 @@ class WorldSaveManager(val database: Database, val trashBin: Database) {
         while (entry != null) {
             if (!entry.isDirectory) {
                 val targetFile = File(file, entry.name)
+                println("Decompressed ${targetFile.absolutePath}")
                 targetFile.parentFile.mkdirs()
                 targetFile.createNewFile()
                 zipInputStream.copyTo(targetFile.outputStream())

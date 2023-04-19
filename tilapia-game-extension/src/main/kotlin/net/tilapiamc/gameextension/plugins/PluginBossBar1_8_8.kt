@@ -1,8 +1,6 @@
 package net.tilapiamc.gameextension.plugins
 
 import me.fan87.plugindevkit.events.EntityTickEvent
-import net.citizensnpcs.api.CitizensAPI
-import net.citizensnpcs.api.npc.MemoryNPCDataStore
 import net.minecraft.server.v1_8_R3.EntityTrackerEntry
 import net.minecraft.server.v1_8_R3.EntityWither
 import net.tilapiamc.api.events.game.PlayerJoinGameEvent
@@ -18,9 +16,6 @@ import org.bukkit.event.player.PlayerRespawnEvent
 
 class PluginBossBar1_8_8(val getBossBarText: (LocalNetworkPlayer) -> String?): GamePlugin() {
 
-    companion object {
-        val registry = CitizensAPI.createNamedNPCRegistry("bossbar", MemoryNPCDataStore())
-    }
 
     val bossBarForPlayer = HashMap<Player, EntityTrackerEntry>()
 
@@ -66,7 +61,7 @@ class PluginBossBar1_8_8(val getBossBarText: (LocalNetworkPlayer) -> String?): G
 
     @Subscribe("bossBar-onPlayerQuit")
     fun onPlayerQuit(event: PlayerQuitGameEvent) {
-        bossBarForPlayer[event.player.bukkitPlayer]?.a((event.player as CraftPlayer).handle)
+        bossBarForPlayer[event.player.bukkitPlayer]?.a((event.player.bukkitPlayer as CraftPlayer).handle)
         bossBarForPlayer.remove(event.player.bukkitPlayer)
     }
 
