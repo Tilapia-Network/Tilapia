@@ -3,8 +3,8 @@ package net.tilapiamc.gameextension.plugins
 import me.fan87.plugindevkit.events.EntityTickEvent
 import net.citizensnpcs.api.CitizensAPI
 import net.citizensnpcs.api.npc.MemoryNPCDataStore
-import net.citizensnpcs.api.npc.NPC
-import net.citizensnpcs.api.trait.trait.PlayerFilter
+import net.minecraft.server.v1_8_R3.EntityTrackerEntry
+import net.minecraft.server.v1_8_R3.EntityWither
 import net.tilapiamc.api.events.game.PlayerJoinGameEvent
 import net.tilapiamc.api.events.game.PlayerQuitGameEvent
 import net.tilapiamc.api.player.LocalNetworkPlayer
@@ -12,10 +12,9 @@ import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.spigotcommon.game.plugin.GamePlugin
 import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity
-import org.bukkit.entity.EntityType
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerTeleportEvent
+import org.bukkit.event.player.PlayerRespawnEvent
 
 class PluginBossBar1_8_8(val getBossBarText: (LocalNetworkPlayer) -> String?): GamePlugin() {
 
@@ -23,7 +22,7 @@ class PluginBossBar1_8_8(val getBossBarText: (LocalNetworkPlayer) -> String?): G
         val registry = CitizensAPI.createNamedNPCRegistry("bossbar", MemoryNPCDataStore())
     }
 
-    val bossBarForPlayer = HashMap<Player, NPC>()
+    val bossBarForPlayer = HashMap<Player, EntityTrackerEntry>()
 
     override fun onEnable() {
         eventManager.registerListener(this)
@@ -44,35 +43,37 @@ class PluginBossBar1_8_8(val getBossBarText: (LocalNetworkPlayer) -> String?): G
             val text = getBossBarText(player.getLocalPlayer())
             if (text != null) {
                 if (bossBarForPlayer[player] != null) {
-                    bossBarForPlayer[player]!!.name = text
-                    (bossBarForPlayer[player]!!.entity as CraftEntity).handle.isInvisible = true
-                    bossBarForPlayer[player]!!.teleport(getNPCLocation(player), PlayerTeleportEvent.TeleportCause.PLUGIN)
+                    bossBarForPlayer[player]!!.tracker.customName = text
+                    bossBarForPlayer[player]!!.tracker.isInvisible = true
+                    val location = getNPCLocation(player)
+                    bossBarForPlayer[player]!!.tracker.setPositionRotation(location.x, location.y, location.z, 0f, 0f)
+                    bossBarForPlayer[player]!!.track(listOf((player as CraftPlayer).handle))
                 } else {
                     val npc = createNPC(player)
                     bossBarForPlayer[player] = npc
-                    npc.name = text
+                    npc.tracker.customName = text
+                    npc.track(listOf((player as CraftPlayer).handle))
                 }
             }
         } catch (e: NullPointerException) {}
     }
 
-    @Subscribe("bossBar-onPlayerQuit")
-    fun onPlayerQuit(event: PlayerQuitGameEvent) {
-        bossBarForPlayer[event.player.bukkitPlayer]?.destroy()
+    @Subscribe("bossBar-onRespawn")
+    fun onRespawn(event: PlayerRespawnEvent) {
+        bossBarForPlayer[event.player]?.a((event.player as CraftPlayer).handle)
         bossBarForPlayer.remove(event.player)
     }
 
-    fun createNPC(player: Player): NPC {
-        val npc = registry.createNPC(EntityType.WITHER, "Bossbar for ${player.name}")
-        npc.isProtected = true
-        npc.addTrait(PlayerFilter().also {
-            it.only(player.uniqueId)
-        })
-        npc.data().setPersistent(NPC.Metadata.SHOULD_SAVE, false)
-        npc.data().setPersistent(NPC.Metadata.SILENT, true)
-        npc.spawn(getNPCLocation(player))
+    @Subscribe("bossBar-onPlayerQuit")
+    fun onPlayerQuit(event: PlayerQuitGameEvent) {
+        bossBarForPlayer[event.player.bukkitPlayer]?.a((event.player as CraftPlayer).handle)
+        bossBarForPlayer.remove(event.player.bukkitPlayer)
+    }
 
-        return npc
+    fun createNPC(player: Player): EntityTrackerEntry {
+        val npc = EntityWither((player as CraftPlayer).handle.world)
+        val tracker = EntityTrackerEntry(npc, 128, 1, false)
+        return tracker
     }
 
     fun getNPCLocation(player: Player): Location {
