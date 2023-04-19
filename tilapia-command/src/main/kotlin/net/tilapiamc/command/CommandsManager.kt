@@ -12,6 +12,10 @@ open class CommandsManager<T>(val logger: Logger) {
         logger.warn("Tilapia command API has been deprecated, as it's switching to use brigadier")
         commands.add(command)
     }
+    open fun unregisterCommand(command: AbstractCommand<T>) {
+        logger.debug("Unregistered command: ${command.name}")
+        commands.remove(command)
+    }
 
     fun handleCommand(sender: T, commandIn: String): Boolean {
         val split = commandIn.split(" ")

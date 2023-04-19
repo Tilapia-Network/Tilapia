@@ -1,5 +1,6 @@
 package net.tilapiamc.proxyapi.player
 
+import net.tilapiamc.proxyapi.PlayerJoinResult
 import net.tilapiamc.proxyapi.TilapiaProxyAPI
 import net.tilapiamc.proxyapi.game.Game
 import java.util.*
@@ -14,7 +15,7 @@ abstract class NetworkPlayer(
     abstract val isLocal: Boolean
 
     abstract fun where(): Game?
-    abstract fun send(game: Game, forceJoin: Boolean, spectate: Boolean)
+    abstract fun send(game: Game, forceJoin: Boolean, spectate: Boolean): PlayerJoinResult
 
 
 }

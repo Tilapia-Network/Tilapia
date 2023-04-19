@@ -4,6 +4,7 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.runBlocking
 import me.fan87.plugindevkit.events.EntityTickEvent
 import me.fan87.plugindevkit.events.ServerTickEvent
+import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.TilapiaPlugin
 import net.tilapiamc.api.commands.LanguageCommand
@@ -42,30 +43,36 @@ import net.tilapiamc.language.LanguageGame
 import org.apache.logging.log4j.LogManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
+import org.jetbrains.exposed.sql.Database
+import java.net.URI
 import java.util.*
 
 const val DISCONNECT_REASON = "Plugin disabled"
 
 class TilapiaCoreImpl : TilapiaCore {
 
-    val communication = ServerCommunication("testKey", "http://localhost:8080")
+    val backendAddress = "localhost"
+    val communication = ServerCommunication("testKey", "http://${backendAddress}:8080")
     lateinit var session: ServerCommunicationSession
     lateinit var sessionThread: Thread
     private lateinit var localServer: LocalServerImpl
     val logger = LogManager.getLogger("TilapiaCore")
-
+    override lateinit var adventure: BukkitAudiences
 
     init {
 
     }
 
     fun onEnable() {
+        adventure = BukkitAudiences.create(getPlugin())
         val schemas = ArrayList<String>()
         for (plugin in Bukkit.getPluginManager().plugins) {
             if (plugin is TilapiaPlugin) {
                 schemas.addAll(plugin.schemaAccess)
             }
         }
+        schemaAccess.clear()
+        schemaAccess.addAll(schemas)
         // Initialize managers
         PlayersManager
         SpigotCommandsManager
@@ -204,6 +211,18 @@ class TilapiaCoreImpl : TilapiaCore {
         if (schema !in schemaAccess) {
             logger.info("Registered schema access: $schema")
             schemaAccess.add(schema)
+        }
+    }
+
+    val databaseCache = HashMap<String, Database>()
+
+    override fun getDatabase(databaseName: String): Database {
+        return databaseCache[databaseName]?: run {
+            val databaseLogin = session.databaseLogin
+            val uri = URI("mysql", null, backendAddress, 3306, "/$databaseName", null, null)
+            val database = Database.connect("jdbc:${uri.toASCIIString()}", user = databaseLogin.username, password = databaseLogin.password)
+            databaseCache[databaseName] = database
+            database
         }
     }
 

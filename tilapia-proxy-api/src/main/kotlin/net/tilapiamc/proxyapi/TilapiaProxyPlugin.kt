@@ -1,6 +1,6 @@
 package net.tilapiamc.proxyapi
 
-class TilapiaProxyPlugin {
+open class TilapiaProxyPlugin {
 
     val schemaAccess = ArrayList<String>()
 

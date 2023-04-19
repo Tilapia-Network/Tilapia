@@ -6,6 +6,7 @@ import net.tilapiamc.proxyapi.command.ProxyCommandsManager
 import net.tilapiamc.proxyapi.events.EventsManager
 import net.tilapiamc.proxyapi.player.PlayersManager
 import net.tilapiamc.proxyapi.servers.LocalServerManager
+import org.jetbrains.exposed.sql.Database
 
 interface TilapiaProxyAPI {
 
@@ -22,5 +23,7 @@ interface TilapiaProxyAPI {
     val gameFinder: GameFinder
     val internal: TilapiaProxyInternal
     val localServerManager: LocalServerManager
+
+    fun getDatabase(databaseName: String): Database
 
 }

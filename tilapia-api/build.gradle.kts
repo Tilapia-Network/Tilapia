@@ -42,9 +42,11 @@ dependencies {
     api(project(":fan87-plugin-dev-kit"))
     api(project(":tilapia-command"))
     api(project(":tilapia-common"))
+    api(project(":tilapia-database"))
 
     api("org.jetbrains.exposed:exposed-core:$exposed_version")
     api("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     api("com.h2database:h2:$h2_version")
     api("com.mysql:mysql-connector-j:8.0.32")
+    api("net.kyori:adventure-platform-bukkit:4.3.0")
 }

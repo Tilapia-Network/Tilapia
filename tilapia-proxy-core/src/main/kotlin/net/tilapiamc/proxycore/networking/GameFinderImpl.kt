@@ -68,13 +68,13 @@ class GameFinderImpl(val core: TilapiaProxyCore): GameFinder {
 
     override fun getGameFromID(gameId: UUID): Game? {
         return runBlocking {
-            core.communication.getGames(gameIdPrefix = gameId.toString())[0].toGame(core.communication)
+            core.communication.getGames(gameIdPrefix = gameId.toString()).firstOrNull()?.toGame(core.communication)
         }
     }
 
     override fun getGameFromShortID(shortGameId: String): Game? {
         return runBlocking {
-            core.communication.getGames(gameIdPrefix = shortGameId)[0].toGame(core.communication)
+            core.communication.getGames(gameIdPrefix = shortGameId).firstOrNull()?.toGame(core.communication)
         }
     }
 }

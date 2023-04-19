@@ -14,4 +14,5 @@ repositories {
 dependencies {
     api("org.jetbrains.exposed:exposed-core:$exposed_version")
     api("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    api("net.dzikoysk:exposed-upsert:1.1.0")
 }

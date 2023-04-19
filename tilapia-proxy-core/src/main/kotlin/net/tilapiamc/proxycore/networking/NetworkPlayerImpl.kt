@@ -3,6 +3,7 @@ package net.tilapiamc.proxycore.networking
 import kotlinx.coroutines.runBlocking
 import net.tilapiamc.communication.PlayerInfo
 import net.tilapiamc.communication.api.ProxyCommunicationSession
+import net.tilapiamc.proxyapi.PlayerJoinResult
 import net.tilapiamc.proxyapi.TilapiaProxyAPI
 import net.tilapiamc.proxyapi.game.Game
 import net.tilapiamc.proxyapi.player.NetworkPlayer
@@ -25,7 +26,7 @@ class NetworkPlayerImpl(val session: ProxyCommunicationSession, val data: Player
         }
     }
 
-    override fun send(game: Game, forceJoin: Boolean, spectate: Boolean) {
+    override fun send(game: Game, forceJoin: Boolean, spectate: Boolean): PlayerJoinResult {
         return runBlocking {
             proxyAPI.internal.sendToGame(this@NetworkPlayerImpl, game, forceJoin, spectate)
         }

@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
     api(project(":tilapia-common"))
+    api(project(":tilapia-database"))
     compileOnly("com.velocitypowered:velocity-api:3.1.1")
     annotationProcessor("com.velocitypowered:velocity-api:3.1.1")
     implementation("org.reflections:reflections:0.10.2")

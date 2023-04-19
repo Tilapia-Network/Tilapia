@@ -36,7 +36,9 @@ import net.tilapiamc.proxyapi.servers.LocalServerManager
 import net.tilapiamc.proxycore.language.LanguageManagerImpl
 import net.tilapiamc.proxycore.networking.GameFinderImpl
 import net.tilapiamc.proxycore.networking.NetworkServerImpl
+import org.jetbrains.exposed.sql.Database
 import org.slf4j.Logger
+import java.net.URI
 import java.util.*
 import javax.inject.Inject
 import kotlin.jvm.optionals.getOrNull
@@ -55,7 +57,8 @@ class TilapiaProxyCore @Inject constructor(override val proxy: ProxyServer, val 
     override val internal: TilapiaProxyInternal = TilapiaProxyInternalImpl(this)
     override val localServerManager: LocalServerManager = LocalServerManager(this)
 
-    val communication = ProxyCommunication("testKey", "http://localhost:8080")
+    val backendAddress = "localhost"
+    val communication = ProxyCommunication("testKey", "http://$backendAddress:8080")
 
     init {
         TilapiaProxyAPI.instance = this
@@ -101,20 +104,24 @@ class TilapiaProxyCore @Inject constructor(override val proxy: ProxyServer, val 
                         proxy.shutdown()
                     }
                     onPlayerAccepted.add { packet ->
-                        val player = proxy.allPlayers.filter { it.uniqueId == packet.player }.firstOrNull()?:return@add
-                        if (player.uniqueId in joinCancel) {
-                            joinCancel.remove(player.uniqueId)
-                            return@add
-                        }
-                        if (player.currentServer.getOrNull()?.serverInfo?.name == packet.serverId.toString()) {
-                            return@add
-                        }
-                        val status = withContext(Dispatchers.IO) {
-                            player.createConnectionRequest(proxy.allServers.first { it.serverInfo.name == packet.serverId.toString() })
-                                .connect().get()
-                        }.status
-                        if (status == Status.SERVER_DISCONNECTED || status == Status.CONNECTION_CANCELLED) {
-                            player.disconnect(Component.text(player.getLocalPlayer().getLanguageBundle()[COULD_NOT_SEND]))
+                        try {
+                            val player = proxy.allPlayers.filter { it.uniqueId == packet.player }.firstOrNull()?:return@add
+                            if (player.uniqueId in joinCancel) {
+                                joinCancel.remove(player.uniqueId)
+                                return@add
+                            }
+                            if (player.currentServer.getOrNull()?.serverInfo?.name == packet.serverId.toString()) {
+                                return@add
+                            }
+                            val status = withContext(Dispatchers.IO) {
+                                player.createConnectionRequest(proxy.allServers.first { it.serverInfo.name == packet.serverId.toString() })
+                                    .connect().get()
+                            }.status
+                            if (status == Status.SERVER_DISCONNECTED || status == Status.CONNECTION_CANCELLED) {
+                                player.disconnect(Component.text(player.getLocalPlayer().getLanguageBundle()[COULD_NOT_SEND]))
+                            }
+                        } catch (e: Throwable) {
+                            e.printStackTrace()
                         }
                     }
                     onServerAdded.add {
@@ -178,6 +185,17 @@ class TilapiaProxyCore @Inject constructor(override val proxy: ProxyServer, val 
     fun onDisconnect(event: DisconnectEvent) {
         runBlocking {
             session.logout(event.player.uniqueId)
+        }
+    }
+    val databaseCache = HashMap<String, Database>()
+
+    override fun getDatabase(databaseName: String): Database {
+        return databaseCache[databaseName]?: run {
+            val databaseLogin = session.databaseLogin
+            val uri = URI("mysql", null, backendAddress, 3306, "/$databaseName", null, null)
+            val database = Database.connect("jdbc:${uri.toASCIIString()}", user = databaseLogin.username, password = databaseLogin.password)
+            databaseCache[databaseName] = database
+            database
         }
     }
 

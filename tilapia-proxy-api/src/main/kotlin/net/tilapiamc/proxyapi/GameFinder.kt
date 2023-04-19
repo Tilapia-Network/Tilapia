@@ -22,11 +22,11 @@ interface GameFinder {
     }
 
     fun findLobbyToJoin(player: NetworkPlayer, lobbyType: String, forceJoin: Boolean): Lobby? {
-        return findAvailableLobbiesForPlayer(player, lobbyType, forceJoin).entries.sortedBy { it.value.chance }.map { it.key }.firstOrNull()
+        return findAvailableLobbiesForPlayer(player, lobbyType, forceJoin).entries.shuffled().sortedBy { it.value.chance }.map { it.key }.firstOrNull()
     }
 
     fun findMiniGameToJoin(player: NetworkPlayer, miniGameType: String, forceJoin: Boolean): MiniGame? {
-        return findAvailableMiniGamesForPlayer(player, miniGameType, forceJoin).entries.sortedBy { it.value.chance }.map { it.key }.firstOrNull()
+        return findAvailableMiniGamesForPlayer(player, miniGameType, forceJoin).entries.shuffled().sortedBy { it.value.chance }.map { it.key }.firstOrNull()
     }
 
     fun getGameFromID(gameId: UUID): Game?

@@ -1,5 +1,6 @@
 package net.tilapiamc.api.player
 
+import net.kyori.adventure.audience.Audience
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.game.Game
 import org.apache.logging.log4j.Logger
@@ -23,6 +24,10 @@ abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
 
 
     companion object {
+        fun Player.getAdventureAudience(): Audience {
+            return TilapiaCore.instance.adventure.player(this)
+        }
+
         fun Player.resetBukkitPlayer() {
             closeInventory()
             inventory.heldItemSlot = 0
@@ -49,6 +54,7 @@ abstract class LocalNetworkPlayer(core: TilapiaCore, val bukkitPlayer: Player):
         // Gotta find a way to disable player data save
         resetBukkitPlayer()
     }
+
 
 
 

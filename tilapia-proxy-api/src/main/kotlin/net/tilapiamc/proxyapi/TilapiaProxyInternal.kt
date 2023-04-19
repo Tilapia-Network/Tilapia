@@ -9,7 +9,7 @@ import net.tilapiamc.proxyapi.servers.TilapiaServer
 
 interface TilapiaProxyInternal {
 
-    fun sendToGame(player: NetworkPlayer, game: Game, forceJoin: Boolean, spectate: Boolean)
+    fun sendToGame(player: NetworkPlayer, game: Game, forceJoin: Boolean, spectate: Boolean): PlayerJoinResult
     fun createLocalPlayer(bukkitPlayer: Player): LocalNetworkPlayer
     fun createLocalServer(tilapiaServer: TilapiaServer): LocalTilapiaServer
 

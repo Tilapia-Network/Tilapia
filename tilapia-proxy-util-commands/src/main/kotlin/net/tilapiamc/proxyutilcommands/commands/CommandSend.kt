@@ -13,7 +13,8 @@ import net.tilapiamc.proxyapi.player.PlayersManager.Companion.getLocalPlayer
 
 class CommandSend: ProxyCommand("send", "傳送一個玩家到一局遊戲", false) {
 
-    val success = getCommandLanguageKey("SUCCESS", "&a成功傳送 &a%1\$s 到 &e%2\$s")
+    val success = getCommandLanguageKey("SUCCESS", "&a成功傳送 &e%1\$s &a到 &e%2\$s")
+    val failed = getCommandLanguageKey("FAILED", "&c無法傳送 &e%1\$s &c到 &e%s2\$ &c！原因: %s3\$s")
     val alreadyIn = getCommandLanguageKey("ALREADY_IN", "&c該玩家早就在此遊戲")
     val spectateLobbyNotSupported = getCommandLanguageKey("SPECTATE_LOBBY_NOT_SUPPORT", "&c你無法旁觀一個大廳")
 
@@ -35,10 +36,16 @@ class CommandSend: ProxyCommand("send", "傳送一個玩家到一局遊戲", fal
                 sender.sendMessage(getLanguageBundle()[spectateLobbyNotSupported])
                 return@onCommand true
             }
-            localPlayer.send(targetGame, joinModeText == "force-join", joinModeText == "spectate")
-            sender.sendMessage("")
-            sender.sendMessage(getLanguageBundle()[success].format(localPlayer.playerName, targetGame.shortGameId))
-            sender.sendMessage("")
+            val result = localPlayer.send(targetGame, joinModeText == "force-join", joinModeText == "spectate")
+            if (result.success) {
+                sender.sendMessage("")
+                sender.sendMessage(getLanguageBundle()[success].format(localPlayer.playerName, targetGame.shortGameId))
+                sender.sendMessage("")
+            } else {
+                sender.sendMessage("")
+                sender.sendMessage(getLanguageBundle()[failed].format(localPlayer.playerName, targetGame.shortGameId, result.message))
+                sender.sendMessage("")
+            }
             true
         }
     }

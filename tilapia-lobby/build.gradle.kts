@@ -29,7 +29,7 @@ spigot {
     desc {
         named(project.name)
         version(project.version.toString())
-        main("net.tilapiamc.lobby.main.Main")
+        main("net.tilapiamc.lobby.TilapiaLobbyPlugin")
         depend("tilapia-core")
     }
 }
