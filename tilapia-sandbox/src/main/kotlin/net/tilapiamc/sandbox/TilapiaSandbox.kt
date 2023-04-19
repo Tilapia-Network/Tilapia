@@ -4,12 +4,13 @@ import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.commands.getSenderLanguageBundle
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.game.getGameLanguageKey
-import net.tilapiamc.common.language.LanguageKeyDelegation
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.api.utils.HashMapPlayerProvider
 import net.tilapiamc.api.utils.PlayerBasedProvider
+import net.tilapiamc.common.language.LanguageKeyDelegation
 import net.tilapiamc.gameextension.plugins.PluginBossBar1_8_8
+import net.tilapiamc.gameextension.plugins.PluginChat
 import net.tilapiamc.spigotcommon.game.lobby.LocalLobby
 import org.bukkit.ChatColor
 import org.bukkit.World
@@ -28,6 +29,7 @@ class TilapiaSandbox(core: TilapiaCore, world: World): LocalLobby(core, world, "
     val rainbowTextProvider = BossBarTextProvider()
 
     init {
+        applyPlugin(PluginChat { player, message -> "${player.nameWithPrefix}${ChatColor.WHITE}: $message" })
         applyPlugin(PluginBossBar1_8_8 { rainbowTextProvider(it) + "  ${ChatColor.RESET}${ChatColor.YELLOW}${world.name}" })
     }
 

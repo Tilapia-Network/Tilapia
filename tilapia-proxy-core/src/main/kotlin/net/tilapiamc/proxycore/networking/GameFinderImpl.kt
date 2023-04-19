@@ -13,13 +13,13 @@ import java.util.*
 class GameFinderImpl(val core: TilapiaProxyCore): GameFinder {
 
 
-    override fun findLobbies(lobbyType: String): List<Lobby> {
+    override fun findLobbies(lobbyType: String?): List<Lobby> {
         return runBlocking {
             core.communication.getGames(lobbyType).map { NetworkLobbyImpl(core.communication, it.lobby!!) }
         }
     }
 
-    override fun findMiniGames(miniGameType: String): List<MiniGame> {
+    override fun findMiniGames(miniGameType: String?): List<MiniGame> {
         return runBlocking {
             core.communication.getGames(miniGameType).map { NetworkMiniGameImpl(core.communication, it.miniGame!!) }
         }

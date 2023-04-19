@@ -8,8 +8,8 @@ import java.util.*
 
 interface GameFinder {
 
-    fun findLobbies(lobbyType: String): List<Lobby>
-    fun findMiniGames(miniGameType: String): List<MiniGame>
+    fun findLobbies(lobbyType: String?): List<Lobby>
+    fun findMiniGames(miniGameType: String?): List<MiniGame>
 
     fun findLobbiesForPlayer(player: NetworkPlayer, lobbyType: String, forceJoin: Boolean): Map<Lobby, PlayerJoinResult>
     fun findMiniGamesForPlayer(player: NetworkPlayer, miniGameType: String, forceJoin: Boolean): Map<MiniGame, PlayerJoinResult>

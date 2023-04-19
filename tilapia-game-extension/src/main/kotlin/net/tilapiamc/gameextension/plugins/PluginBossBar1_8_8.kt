@@ -5,11 +5,11 @@ import net.citizensnpcs.api.CitizensAPI
 import net.citizensnpcs.api.npc.MemoryNPCDataStore
 import net.citizensnpcs.api.npc.NPC
 import net.citizensnpcs.api.trait.trait.PlayerFilter
-import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.api.events.game.PlayerJoinGameEvent
 import net.tilapiamc.api.events.game.PlayerQuitGameEvent
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
+import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.spigotcommon.game.plugin.GamePlugin
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity
@@ -58,7 +58,7 @@ class PluginBossBar1_8_8(val getBossBarText: (LocalNetworkPlayer) -> String?): G
 
     @Subscribe("bossBar-onPlayerQuit")
     fun onPlayerQuit(event: PlayerQuitGameEvent) {
-        bossBarForPlayer[event.player]?.destroy()
+        bossBarForPlayer[event.player.bukkitPlayer]?.destroy()
         bossBarForPlayer.remove(event.player)
     }
 

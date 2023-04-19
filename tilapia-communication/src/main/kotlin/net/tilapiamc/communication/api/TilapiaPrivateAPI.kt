@@ -89,7 +89,6 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
     }
     suspend fun endGame(gameId: UUID) {
         val response = client.post("/game/end") {
-            contentType(ContentType.Application.Json)
             parameter("gameId", gameId)
         }
         ensureResponse(response)

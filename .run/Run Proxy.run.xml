@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Proxy" type="JarApplication">
+    <option name="JAR_PATH" value="$PROJECT_DIR$/run/proxy/server.jar" />
+    <option name="VM_PARAMETERS" value="-Xms2G -Xmx2G" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run/proxy" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="ALTERNATIVE_JRE_PATH" value="corretto-11" />
+    <method v="2">
+      <option name="Gradle.BeforeRunTask" enabled="false" tasks="shadowJar" externalProjectPath="$PROJECT_DIR$" vmOptions="" scriptParameters="" />
+    </method>
+  </configuration>
+</component>

@@ -30,6 +30,7 @@ class LocalPlayerImpl(core: TilapiaCoreImpl, bukkitPlayer: Player,
         get() = "$prefixColor[開發者] "
     override val prefixColor: String
         get() = "${ChatColor.BLUE}"
+
     init {
         onJoin()
     }
@@ -41,4 +42,7 @@ class LocalPlayerImpl(core: TilapiaCoreImpl, bukkitPlayer: Player,
 
     }
 
+    override fun equals(other: Any?): Boolean {
+        return super.equals(other) || (other is Player && other == bukkitPlayer)
+    }
 }

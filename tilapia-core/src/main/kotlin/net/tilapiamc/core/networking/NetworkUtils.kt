@@ -6,7 +6,7 @@ import net.tilapiamc.communication.api.ServerCommunication
 
 fun GameData.toGame(communication: ServerCommunication): Game? {
     if (this.lobby != null) {
-        return NetworkMiniGameImpl(communication, this.miniGame!!)
+        return NetworkLobbyImpl(communication, this.lobby!!)
     }
     if (this.miniGame != null) {
         return NetworkMiniGameImpl(communication, this.miniGame!!)

@@ -6,7 +6,7 @@ import net.tilapiamc.proxyapi.game.Game
 
 fun GameData.toGame(communication: ProxyCommunication): Game? {
     if (this.lobby != null) {
-        return NetworkMiniGameImpl(communication, this.miniGame!!)
+        return NetworkLobbyImpl(communication, this.lobby!!)
     }
     if (this.miniGame != null) {
         return NetworkMiniGameImpl(communication, this.miniGame!!)

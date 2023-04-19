@@ -14,3 +14,5 @@ interface TilapiaProxyInternal {
     fun createLocalServer(tilapiaServer: TilapiaServer): LocalTilapiaServer
 
 }
+
+class JoinDeniedException(val gameId: String, val reason: String): RuntimeException()

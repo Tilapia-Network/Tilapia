@@ -7,6 +7,14 @@ import net.tilapiamc.proxyapi.player.LocalNetworkPlayer
 import net.tilapiamc.proxycore.networking.toGame
 
 class LocalPlayerImpl(val internal: TilapiaProxyCore, proxyPlayer: Player): LocalNetworkPlayer(internal, proxyPlayer) {
+
+    override val nameWithPrefix: String
+        get() = "$prefix $playerName"
+    override val prefix: String
+        get() = "$prefixColor[開發者] "
+    override val prefixColor: String
+        get() = "&9"
+
     override val isLocal: Boolean = true
     override fun where(): Game? {
         return runBlocking {

@@ -14,6 +14,10 @@ abstract class LocalNetworkPlayer(proxyAPI: TilapiaProxyAPI,
 
     val logger = LoggerFactory.getLogger("PlayerLogger ${proxyPlayer.username}")
 
+    abstract val nameWithPrefix: String
+    abstract val prefix: String
+    abstract val prefixColor: String
+
     fun getLanguageBundle(): LanguageBundle {
         return proxyAPI.languageManager.getLanguageBundle(language)
     }

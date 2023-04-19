@@ -10,6 +10,7 @@ import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
 import com.velocitypowered.api.plugin.Plugin
+import com.velocitypowered.api.proxy.ConnectionRequestBuilder.Status
 import com.velocitypowered.api.proxy.ProxyServer
 import io.ktor.websocket.*
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,7 @@ import net.tilapiamc.proxyapi.GameFinder
 import net.tilapiamc.proxyapi.TilapiaProxyAPI
 import net.tilapiamc.proxyapi.TilapiaProxyInternal
 import net.tilapiamc.proxyapi.TilapiaProxyPlugin
-import net.tilapiamc.proxyapi.command.ProxyCommandManager
+import net.tilapiamc.proxyapi.command.ProxyCommandsManager
 import net.tilapiamc.proxyapi.events.EventsManager
 import net.tilapiamc.proxyapi.player.PlayersManager
 import net.tilapiamc.proxyapi.player.PlayersManager.Companion.getLocalPlayer
@@ -46,7 +47,7 @@ import kotlin.jvm.optionals.getOrNull
     name = "Tilapia Proxy Core",
     version = "1.0.0")
 class TilapiaProxyCore @Inject constructor(override val proxy: ProxyServer, val logger: Logger): TilapiaProxyAPI {
-    override lateinit var commandManager: ProxyCommandManager
+    override lateinit var commandManager: ProxyCommandsManager
     override lateinit var eventsManager: EventsManager
     override lateinit var playersManager: PlayersManager
     override val languageManager: LanguageManager = LanguageManagerImpl
@@ -63,13 +64,13 @@ class TilapiaProxyCore @Inject constructor(override val proxy: ProxyServer, val 
     lateinit var session: ProxyCommunicationSession
     lateinit var sessionThread: Thread
 
-    val COULD_NOT_SEND by LanguageKeyDelegation("無法將你傳送至該小遊戲中！請稍後再試")
+    val COULD_NOT_SEND by LanguageKeyDelegation("&c無法將你傳送至該小遊戲中！請稍後再試")
 
-    @Subscribe
+    @Subscribe(order = PostOrder.EARLY)
     fun onInitialize(event: ProxyInitializeEvent) {
         eventsManager = EventsManager(this, proxy)
         playersManager = PlayersManager(this)
-        commandManager = ProxyCommandManager()
+        commandManager = ProxyCommandsManager(this)
 
         val schemas = ArrayList<String>()
         for (plugin in proxy.pluginManager.plugins) {
@@ -108,9 +109,11 @@ class TilapiaProxyCore @Inject constructor(override val proxy: ProxyServer, val 
                         if (player.currentServer.getOrNull()?.serverInfo?.name == packet.serverId.toString()) {
                             return@add
                         }
-                        if (withContext(Dispatchers.IO) {
-                                player.createConnectionRequest(proxy.allServers.first { it.serverInfo.name == packet.serverId.toString() })
-                                    .connectWithIndication().get() }) {
+                        val status = withContext(Dispatchers.IO) {
+                            player.createConnectionRequest(proxy.allServers.first { it.serverInfo.name == packet.serverId.toString() })
+                                .connect().get()
+                        }.status
+                        if (status == Status.SERVER_DISCONNECTED || status == Status.CONNECTION_CANCELLED) {
                             player.disconnect(Component.text(player.getLocalPlayer().getLanguageBundle()[COULD_NOT_SEND]))
                         }
                     }

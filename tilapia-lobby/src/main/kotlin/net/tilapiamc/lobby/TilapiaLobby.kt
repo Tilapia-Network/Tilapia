@@ -4,6 +4,7 @@ import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
+import net.tilapiamc.gameextension.plugins.PluginChat
 import net.tilapiamc.gameextension.plugins.PluginNoBoatCrash
 import net.tilapiamc.gameextension.plugins.PluginSpeedyBoat_1_8
 import net.tilapiamc.gameextension.rules.RuleNoDestruction
@@ -11,11 +12,13 @@ import net.tilapiamc.gameextension.rules.RuleNoTimeChange
 import net.tilapiamc.gameextension.rules.RuleNoWeatherChange
 import net.tilapiamc.spigotcommon.game.lobby.LocalLobby
 import net.tilapiamc.spigotcommon.utils.TemporaryWorldProvider
+import org.bukkit.ChatColor
 import org.bukkit.World
 
 class TilapiaLobby(core: TilapiaCore, world: World, lobbyType: String): LocalLobby(core, TemporaryWorldProvider.createTemporaryWorldFromWorld(world), lobbyType) {
 
     init {
+        applyPlugin(PluginChat { player, message -> "${player.nameWithPrefix}${ChatColor.WHITE}: $message" })
         applyPlugin(PluginNoBoatCrash())
         applyPlugin(PluginSpeedyBoat_1_8(true, {6f}) {
             0.35*6

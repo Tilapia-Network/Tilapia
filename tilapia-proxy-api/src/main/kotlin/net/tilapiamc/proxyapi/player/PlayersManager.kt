@@ -1,6 +1,7 @@
 package net.tilapiamc.proxyapi.player
 
 import com.velocitypowered.api.event.connection.DisconnectEvent
+import com.velocitypowered.api.event.connection.LoginEvent
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
 import com.velocitypowered.api.proxy.Player
 import net.tilapiamc.common.events.annotation.Subscribe
@@ -17,8 +18,12 @@ class PlayersManager(val proxyApi: TilapiaProxyAPI) {
     val localPlayers = HashMap<UUID, LocalNetworkPlayer>()
     val players = HashMap<UUID, NetworkPlayer>()
 
-    @Subscribe("playerJoinInit")
+    @Subscribe("chooseInitialServer")
     fun onPlayerJoin(event: PlayerChooseInitialServerEvent) {
+        localPlayers[event.player.uniqueId] = proxyApi.internal.createLocalPlayer(event.player)
+    }
+    @Subscribe("playerJoinInit")
+    fun onPlayerJoin(event: LoginEvent) {
         localPlayers[event.player.uniqueId] = proxyApi.internal.createLocalPlayer(event.player)
     }
     @Subscribe("playerLeaveInit")

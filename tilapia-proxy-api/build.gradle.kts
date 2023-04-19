@@ -15,4 +15,5 @@ dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.1.1")
     annotationProcessor("com.velocitypowered:velocity-api:3.1.1")
     implementation("org.reflections:reflections:0.10.2")
+    api(project(":tilapia-command"))
 }

@@ -88,7 +88,7 @@ object GameService {
                     }
                     call.respond(HttpStatusCode.OK)
                 }
-                post<GameData>("/game/end") {
+                post("/game/end") {
                     val gameId = call.parameters["gameId"]?.let { UUID.fromString(it) }
                     if (gameId in serverManager.games) {
                         val game = serverManager.games[gameId]!!
