@@ -1,7 +1,6 @@
 
 val ktor_version: String by project
 val kotlin_version: String by project
-val exposed_version: String by project
 val h2_version: String by project
 
 plugins {
@@ -24,6 +23,7 @@ dependencies {
     api("io.ktor:ktor-client-auth-jvm:$ktor_version")
     api("io.ktor:ktor-serialization-gson:$ktor_version")
 
+    val exposed_version: String by project
     api("org.jetbrains.exposed:exposed-core:$exposed_version")
     api("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     api("com.h2database:h2:$h2_version")
