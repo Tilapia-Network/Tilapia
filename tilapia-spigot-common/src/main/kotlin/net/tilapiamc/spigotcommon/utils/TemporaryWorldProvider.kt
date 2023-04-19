@@ -34,7 +34,7 @@ object TemporaryWorldProvider {
         newWorldDir.mkdirs()
         oldWorldDir.copyRecursively(newWorldDir, true)
         val uidDat = File(newWorldDir, "uid.dat")
-        val sessionLock = File(newWorldDir, "session.;pcl")
+        val sessionLock = File(newWorldDir, "session.lock")
         uidDat.delete()
         sessionLock.delete()
         return Bukkit.createWorld(WorldCreator.name(newWorldName).copy(world))

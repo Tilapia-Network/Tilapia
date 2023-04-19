@@ -1,24 +1,35 @@
 package net.tilapiamc.multiworld
 
-import net.tilapiamc.api.commands.*
+import net.tilapiamc.api.TilapiaCore
+import net.tilapiamc.api.TilapiaPlugin
+import net.tilapiamc.api.commands.BukkitCommand
+import net.tilapiamc.api.commands.SpigotCommandsManager
+import net.tilapiamc.api.commands.getCommandLanguageKey
+import net.tilapiamc.api.commands.getSenderLanguageBundle
 import net.tilapiamc.api.generators.Generators
 import net.tilapiamc.command.CommandException
 import net.tilapiamc.multiworld.subcommands.*
 import net.tilapiamc.spigotcommon.utils.TemporaryWorldProvider
 import org.apache.logging.log4j.LogManager
 import org.bukkit.ChatColor
-import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
 
-class MultiWorld: JavaPlugin() {
+class MultiWorld: TilapiaPlugin() {
 
     val logger = LogManager.getLogger("MultiWorld")
 
+    init {
+        requireSchemaAccess("backups")
+        requireSchemaAccess("backup_trashbin")
+    }
+
     override fun onEnable() {
+
         TemporaryWorldProvider // Delete useless worlds
         Generators
         SpigotCommandsManager.registerCommand(MultiWorldCommand())
+        SpigotCommandsManager.registerCommand(BackupCommand(WorldSaveManager(TilapiaCore.instance.getDatabase("backups"), TilapiaCore.instance.getDatabase("backup_trashbin"))))
         WorldManager.load()
 
         for (registeredWorld in ArrayList(WorldManager.registeredWorlds)) {
@@ -86,13 +97,7 @@ class MultiWorldCommand: BukkitCommand("multiworld", "多世界插件的主要�
         subCommand("remove", "卸載並且取消註冊一個世界", commandRemove())
 //        subCommand("clone", "複製並載入一個世界", commandClone())
 //        subCommand("clone-temporary", "複製並載入一個暫時世界", commandCloneTemporary())
-        subCommand("delete", "無用的指令，請手動刪除資料夾以刪除世界") {
-            val hint = getCommandLanguageKey("hint", "${ChatColor.RED}此插件因為安全原因並不支援此指令！請手動刪除世界資料夾以刪除世界")
-            onCommand {
-                sender.sendMessage(getLanguageBundle()[hint])
-                true
-            }
-        }
+        subCommand("delete", "刪除世界", commandDelete())
         onCommand {
             subCommands.first { it.name == "help" }.execute(commandAlias, sender, arrayOf("help", *rawArgs))
             true
