@@ -1,4 +1,4 @@
-package net.tiapiamc.config
+package net.tilapiamc.config
 
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -40,7 +40,7 @@ object Config {
 
 
         operator fun getValue(config: Config, property: KProperty<*>): T {
-            val string = System.getenv(property.name)?:configData.getProperty(property.name.lowercase().replace("_", "-"))?:defaultValue
+            val string = System.getenv(property.name)?: configData.getProperty(property.name.lowercase().replace("_", "-"))?:defaultValue
             return string?.let(converter)?: error("Invalid config: Config value ${property.name} is not found!")
         }
 

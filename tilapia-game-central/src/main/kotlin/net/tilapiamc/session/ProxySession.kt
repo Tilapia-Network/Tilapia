@@ -1,9 +1,9 @@
-package net.tiapiamc.session
+package net.tilapiamc.session
 
 import io.ktor.websocket.*
-import net.tiapiamc.data.DatabaseManager
-import net.tiapiamc.getSuspendEventTarget
-import net.tiapiamc.obj.Player
+import net.tilapiamc.data.DatabaseManager
+import net.tilapiamc.getSuspendEventTarget
+import net.tilapiamc.obj.Player
 import net.tilapiamc.common.SuspendEventTarget
 import net.tilapiamc.communication.ProxyInfo
 import net.tilapiamc.communication.session.PacketRegistry

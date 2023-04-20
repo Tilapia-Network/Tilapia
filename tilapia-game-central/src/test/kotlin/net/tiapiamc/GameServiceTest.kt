@@ -2,7 +2,7 @@ package net.tiapiamc
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCaseOrder
-import net.tiapiamc.managers.ServerManager
+import net.tilapiamc.managers.ServerManager
 import net.tilapiamc.communication.GameType
 import net.tilapiamc.communication.JoinResult
 import net.tilapiamc.communication.MiniGameInfo

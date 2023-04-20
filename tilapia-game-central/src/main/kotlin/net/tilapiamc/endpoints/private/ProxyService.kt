@@ -1,18 +1,17 @@
-package net.tiapiamc.endpoints.private
+package net.tilapiamc.endpoints.private
 
 import com.google.gson.Gson
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.plugins.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
-import net.tiapiamc.managers.ServerManager
-import net.tiapiamc.obj.Player.Companion.toPlayer
-import net.tiapiamc.session.ProxySession
 import net.tilapiamc.communication.ProxyInfo
 import net.tilapiamc.communication.session.client.proxy.CPacketProxyPlayerLogin
 import net.tilapiamc.communication.session.client.proxy.CPacketProxyPlayerLogout
+import net.tilapiamc.managers.ServerManager
+import net.tilapiamc.obj.Player.Companion.toPlayer
+import net.tilapiamc.session.ProxySession
 
 object ProxyService {
 
@@ -35,7 +34,7 @@ object ProxyService {
 
             webSocket("/proxy/gateway") {
                 val proxyId = serverManager.generateProxyId()
-                val session = ProxySession(call.request.origin.remoteHost, this, proxyId)
+                val session = ProxySession(call.request.local.remoteAddress, this, proxyId)
 
                 session.onPacket.add {
                     val packet = it.packet

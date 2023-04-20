@@ -1,4 +1,4 @@
-package net.tiapiamc.endpoints.private
+package net.tilapiamc.endpoints.private
 
 import com.google.gson.Gson
 import com.google.gson.JsonArray
@@ -8,10 +8,10 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
-import net.tiapiamc.managers.ServerManager
-import net.tiapiamc.obj.game.Game
-import net.tiapiamc.obj.game.Lobby
-import net.tiapiamc.obj.game.MiniGame
+import net.tilapiamc.managers.ServerManager
+import net.tilapiamc.obj.game.Game
+import net.tilapiamc.obj.game.Lobby
+import net.tilapiamc.obj.game.MiniGame
 import net.tilapiamc.common.json.jsonArrayOf
 import net.tilapiamc.communication.*
 import java.util.*

@@ -1,7 +1,7 @@
 package net.tiapiamc
 
 import io.kotest.core.spec.style.StringSpec
-import net.tiapiamc.managers.ServerManager
+import net.tilapiamc.managers.ServerManager
 import net.tilapiamc.communication.JoinResult
 import net.tilapiamc.communication.MiniGameInfo
 import net.tilapiamc.communication.PlayerInfo

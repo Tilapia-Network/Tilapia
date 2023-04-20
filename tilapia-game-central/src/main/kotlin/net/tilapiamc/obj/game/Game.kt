@@ -1,7 +1,7 @@
-package net.tiapiamc.obj.game
+package net.tilapiamc.obj.game
 
-import net.tiapiamc.obj.Player
-import net.tiapiamc.session.ServerSession
+import net.tilapiamc.obj.Player
+import net.tilapiamc.session.ServerSession
 import net.tilapiamc.communication.GameData
 import net.tilapiamc.communication.GameType
 import java.util.*

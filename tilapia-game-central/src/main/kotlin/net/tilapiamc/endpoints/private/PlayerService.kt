@@ -1,4 +1,4 @@
-package net.tiapiamc.endpoints.private
+package net.tilapiamc.endpoints.private
 
 import com.google.gson.Gson
 import io.ktor.http.*
@@ -6,7 +6,7 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import net.tiapiamc.managers.ServerManager
+import net.tilapiamc.managers.ServerManager
 import net.tilapiamc.communication.GameData
 import net.tilapiamc.communication.GameType
 import net.tilapiamc.communication.session.client.CPacketAcknowledge

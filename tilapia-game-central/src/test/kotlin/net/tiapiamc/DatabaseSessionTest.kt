@@ -3,8 +3,8 @@ package net.tiapiamc
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCaseOrder
 import kotlinx.coroutines.runBlocking
-import net.tiapiamc.config.Config
-import net.tiapiamc.data.DatabaseManager
+import net.tilapiamc.config.Config
+import net.tilapiamc.data.DatabaseManager
 import net.tilapiamc.communication.DatabaseLogin
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction

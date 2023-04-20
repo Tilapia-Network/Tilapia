@@ -3,12 +3,13 @@ package net.tiapiamc
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCaseOrder
 import io.ktor.server.testing.*
-import net.tiapiamc.config.Config
-import net.tiapiamc.managers.ServerManager
+import net.tilapiamc.config.Config
+import net.tilapiamc.managers.ServerManager
 import net.tilapiamc.common.SuspendEventTarget
 import net.tilapiamc.communication.DatabaseLogin
 import net.tilapiamc.communication.api.ProxyCommunication
 import net.tilapiamc.communication.api.ServerCommunication
+import net.tilapiamc.module
 import strikt.api.expect
 import strikt.api.expectThat
 import strikt.api.expectThrows

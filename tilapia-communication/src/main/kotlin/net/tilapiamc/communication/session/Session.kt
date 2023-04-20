@@ -26,11 +26,8 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
     fun newTransmissionId(): Long = latestTransmissionId++
 
 
-    init {
 
-    }
-
-    suspend fun waitForPacket(filter: (packet: SessionPacket) -> Boolean, timeOut: Long = 5000, action: suspend () -> Unit = {}): SessionPacket? {
+    suspend fun waitForPacket(filter: (packet: SessionPacket) -> Boolean, timeOut: Long = 40000, action: suspend () -> Unit = {}): SessionPacket? {
         var listener: suspend (SessionPacketEvent) -> Unit = {}
         var packet: SessionPacket? = null
         val lock = Object()
@@ -50,7 +47,7 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
         }
         return packet
     }
-    suspend inline fun <reified T: SessionPacket> waitForPacketWithType(crossinline filter: (packet: T) -> Boolean = { true }, timeOut: Long = 5000, noinline action: suspend () -> Unit = {}): T? {
+    suspend inline fun <reified T: SessionPacket> waitForPacketWithType(crossinline filter: (packet: T) -> Boolean = { true }, timeOut: Long = 40000, noinline action: suspend () -> Unit = {}): T? {
         return waitForPacket({ it is T && filter(it) }, timeOut, action) as T?
     }
 
@@ -66,7 +63,6 @@ abstract class Session(val packetRegistry: HashMap<String, () -> SessionPacket>,
         out["data"] = packet.toJson(gson)
         webSocket.send(gson.toJson(out))
         webSocket.flush()
-        println("Sent: ${gson.toJson(out)}")
     }
 
     suspend fun startSession() {

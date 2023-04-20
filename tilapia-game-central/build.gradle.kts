@@ -12,7 +12,7 @@ plugins {
 group = "net.tiapiamc"
 version = "0.0.1"
 application {
-    mainClass.set("net.tiapiamc.ApplicationKt")
+    mainClass.set("net.tilapiamc.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
@@ -38,6 +38,7 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auto-head-response-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-forwarded-header:$ktor_version")
+    implementation("io.ktor:ktor-server-call-logging:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jwt-jvm:2.2.4")
     implementation("io.ktor:ktor-server-forwarded-header-jvm:2.2.4")
@@ -49,6 +50,7 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:2.2.4")
     implementation("io.ktor:ktor-serialization-gson:2.2.4")
     implementation("io.ktor:ktor-client-auth:2.2.4")
+    implementation("io.ktor:ktor-server-call-logging-jvm:2.2.4")
 
 
     // Test

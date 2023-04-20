@@ -1,17 +1,15 @@
-package net.tiapiamc.endpoints.private
+package net.tilapiamc.endpoints.private
 
 import com.google.gson.Gson
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.plugins.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
-import net.tiapiamc.managers.ServerManager
-import net.tiapiamc.session.ServerSession
 import net.tilapiamc.communication.ServerInfo
-import java.net.InetSocketAddress
+import net.tilapiamc.managers.ServerManager
+import net.tilapiamc.session.ServerSession
 
 object ServerService {
 
@@ -47,7 +45,7 @@ object ServerService {
                 val port = call.parameters["port"]!!.toInt()
                 val serverId = serverManager.generateServerId()
                 val proxyId = serverManager.getProxyAssignment()
-                val session = ServerSession(InetSocketAddress(call.request.origin.remoteHost, port), this, proxyId, serverId)
+                val session = ServerSession(call.request.local.remoteAddress, port, this, proxyId, serverId)
                 session.onHandshakeFinished.add {
                     serverManager.createServer(session)
                 }

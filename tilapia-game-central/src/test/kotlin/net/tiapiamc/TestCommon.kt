@@ -7,8 +7,8 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.serialization.gson.*
 import io.ktor.server.testing.*
-import net.tiapiamc.config.Config
-import net.tiapiamc.managers.ServerManager
+import net.tilapiamc.config.Config
+import net.tilapiamc.managers.ServerManager
 import net.tilapiamc.common.SuspendEventTarget
 import net.tilapiamc.communication.JoinResult
 import net.tilapiamc.communication.PlayerInfo
@@ -16,6 +16,7 @@ import net.tilapiamc.communication.api.ProxyCommunication
 import net.tilapiamc.communication.api.ProxyCommunicationSession
 import net.tilapiamc.communication.api.ServerCommunication
 import net.tilapiamc.communication.api.ServerCommunicationSession
+import net.tilapiamc.module
 import strikt.api.expectThat
 import strikt.assertions.isEmpty
 import strikt.assertions.isNotEmpty

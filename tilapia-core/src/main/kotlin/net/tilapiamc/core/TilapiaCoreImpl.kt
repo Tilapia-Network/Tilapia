@@ -57,7 +57,7 @@ class TilapiaCoreImpl : TilapiaCore {
 
     init {
         if (DockerUtils.isInDocker()) {
-            backendAddress = DockerUtils.getContainerGateway()
+            backendAddress = System.getenv("BACKEND_HOST")?:DockerUtils.getContainerGateway()
             logger.info("Docker detected! IP: ${backendAddress}:${DockerUtils.getMinecraftPort()}")
         } else {
             logger.warn("The server should be run in docker! Don't use it for production.")
@@ -133,12 +133,17 @@ class TilapiaCoreImpl : TilapiaCore {
             }
         }
         sessionThread.start()
-        synchronized(lock) {
-            lock.wait(5000)
+        logger.info("Connecting...")
+        if (!initialized) {
+            synchronized(lock) {
+                lock.wait(50000)
+            }
         }
+
         if (!initialized) {
             logger.error("Failed to connect to central server! Shutting down...")
             Bukkit.getServer().shutdown()
+            return
         }
         localServer = LocalServerImpl(session.proxyId, session.serverId)
         NetworkServerImpl.cache[localServer.serverId] = localServer

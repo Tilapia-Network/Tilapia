@@ -1,10 +1,10 @@
-package net.tiapiamc.managers
+package net.tilapiamc.managers
 
 import io.ktor.websocket.*
-import net.tiapiamc.obj.Player
-import net.tiapiamc.obj.game.Game
-import net.tiapiamc.session.ProxySession
-import net.tiapiamc.session.ServerSession
+import net.tilapiamc.obj.Player
+import net.tilapiamc.obj.game.Game
+import net.tilapiamc.session.ProxySession
+import net.tilapiamc.session.ServerSession
 import net.tilapiamc.communication.session.server.proxy.SPacketProxyAddServer
 import net.tilapiamc.communication.session.server.proxy.SPacketProxyRemoveServer
 import org.slf4j.LoggerFactory
@@ -13,7 +13,7 @@ import java.util.*
 class ServerManager {
 
     val servers = HashMap<UUID, ServerSession>()
-    val proxies = HashMap<UUID,  ProxySession>()
+    val proxies = HashMap<UUID, ProxySession>()
     val games = HashMap<UUID, Game>()
     val players = HashMap<UUID, Player>()
 

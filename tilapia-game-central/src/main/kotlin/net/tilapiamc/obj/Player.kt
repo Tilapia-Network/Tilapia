@@ -1,7 +1,7 @@
-package net.tiapiamc.obj
+package net.tilapiamc.obj
 
-import net.tiapiamc.managers.ServerManager
-import net.tiapiamc.obj.game.Game
+import net.tilapiamc.managers.ServerManager
+import net.tilapiamc.obj.game.Game
 import net.tilapiamc.communication.PlayerInfo
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock

@@ -1,4 +1,4 @@
-package net.tiapiamc.data
+package net.tilapiamc.data
 
 import io.ktor.server.sessions.*
 import kotlinx.coroutines.Dispatchers

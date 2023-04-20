@@ -70,6 +70,8 @@ val spigotJar = getSpigotJar("1.8.8")
 docker {
     name = "tilapia-spigot:${getRev()}"
     tag("latest", "tilapia-spigot:latest")
+    tag("snapshot", "tilapia-spigot:snapshot")
+    tag("remoteSnapshot", "docker.tilapiamc.net:443/repository/docker/tilapia-spigot:snapshot")
     this.buildArgs(mapOf(
         "SPIGOT_JAR" to spigotJar.name
     ))
