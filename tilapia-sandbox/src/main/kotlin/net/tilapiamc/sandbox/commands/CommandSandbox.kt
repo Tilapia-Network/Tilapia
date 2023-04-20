@@ -38,9 +38,30 @@ class CommandSandbox: BukkitCommand("sandbox", "沙盒模式主要指令", true)
         subCommand("start", "開始沙盒模式") {
             val success = getCommandLanguageKey("SUCCESS", "${ChatColor.GREEN}成功開始沙盒地圖!  ")
             val errorWorldAlreadyAssigned = getCommandLanguageKey("ERROR_WORLD_ALREADY_ASSIGNED", "${ChatColor.GREEN}該世界以被其他遊戲使用")
+            val errorSandboxAlreadyExists = getCommandLanguageKey("ERROR_SANDBOX_ALREADY_EXISTS", "${ChatColor.RED}該沙盒地圖早已存在！")
             val worldName by worldNameArg("World", true)
             onCommand {
                 val worldName = worldName()!!
+                if (core.gameFinder.findLobbies("sandbox").any {
+                        it.getProperty(SandboxProperties.SANDBOX_WORLD)?.asString == worldName
+                    }) {
+                    sender.sendMessage("")
+
+                    val text = getLanguageBundle()[errorSandboxAlreadyExists]
+                    val command = "/sandbox tp $worldName"
+                    if (sender is Player) {
+                        requiresPlayer().spigot().sendMessage(TextComponent("$text    ").also {
+                            it.addExtra(TextComponent(getLanguageBundle()[clickToTeleport]).also { button ->
+                                button.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, command)
+                                button.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, arrayOf(TextComponent(getLanguageBundle()[hoverText].format(command))))
+                            })
+                        })
+                    } else {
+                        sender.sendMessage(text)
+                    }
+                    sender.sendMessage("")
+                    return@onCommand true
+                }
                 if (core.localGameManager.getAllLocalGames().filterIsInstance<ManagedGame>().any { it.gameWorld.name == worldName }) {
                     sender.sendMessage("")
                     sender.sendMessage(getLanguageBundle()[errorWorldAlreadyAssigned])
