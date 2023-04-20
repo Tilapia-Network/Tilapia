@@ -57,7 +57,7 @@ class TilapiaProxyCore @Inject constructor(override val proxy: ProxyServer, val 
     override val internal: TilapiaProxyInternal = TilapiaProxyInternalImpl(this)
     override val localServerManager: LocalServerManager = LocalServerManager(this)
 
-    val backendAddress = "localhost"
+    val backendAddress = System.getenv("BACKEND_HOST")?:"localhost"
     val communication = ProxyCommunication("testKey", "http://$backendAddress:8080")
 
     init {

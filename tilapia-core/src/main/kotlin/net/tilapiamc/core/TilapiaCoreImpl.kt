@@ -51,7 +51,7 @@ const val DISCONNECT_REASON = "Plugin disabled"
 
 class TilapiaCoreImpl : TilapiaCore {
 
-    val backendAddress = "localhost"
+    val backendAddress = System.getenv("BACKEND_HOST")?:"localhost"
     val communication = ServerCommunication("testKey", "http://${backendAddress}:8080")
     lateinit var session: ServerCommunicationSession
     lateinit var sessionThread: Thread
@@ -100,7 +100,7 @@ class TilapiaCoreImpl : TilapiaCore {
                     }
                     val result = game.couldAdd(NetworkPlayerImpl(session, player), forceJoin)
                     JoinResult(result.type.success, result.chance, result.message)
-                }, Bukkit.getPort()) {
+                }, System.getenv("MC_PORT")?.toInt()?:Bukkit.getPort()) {
                     session = this
                     onServerConnected.add {
                         initialized = true

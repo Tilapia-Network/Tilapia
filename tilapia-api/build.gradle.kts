@@ -50,3 +50,9 @@ dependencies {
     api("com.mysql:mysql-connector-j:8.0.32")
     api("net.kyori:adventure-platform-bukkit:4.3.0")
 }
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}

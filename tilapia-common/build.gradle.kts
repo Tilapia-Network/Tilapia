@@ -14,3 +14,9 @@ dependencies {
     api("org.apache.logging.log4j:log4j-core:2.20.0")
 
 }
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}
