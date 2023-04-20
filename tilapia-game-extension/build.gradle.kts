@@ -34,3 +34,9 @@ dependencies {
     implementation("com.github.fan87:Regular-Bytecode-Expression:2.1.1")
     implementation(kotlin("reflect"))
 }
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}

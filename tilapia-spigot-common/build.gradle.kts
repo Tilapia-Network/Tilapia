@@ -22,3 +22,9 @@ dependencies {
     compileOnly("org.apache.logging.log4j:log4j-core:2.20.0")
     implementation(project(":tilapia-common"))
 }
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}

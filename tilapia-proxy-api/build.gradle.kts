@@ -27,3 +27,9 @@ dependencies {
     api("com.h2database:h2:$h2_version")
     api("com.mysql:mysql-connector-j:8.0.32")
 }
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}

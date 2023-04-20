@@ -22,6 +22,7 @@ import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.api.player.PlayersManager
 import net.tilapiamc.api.server.TilapiaServer
 import net.tilapiamc.common.SuspendEventTarget
+import net.tilapiamc.common.docker.DockerUtils
 import net.tilapiamc.common.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.common.events.annotation.unregisterAnnotationBasedListener
 import net.tilapiamc.common.language.LanguageManager
@@ -50,13 +51,24 @@ import java.util.*
 const val DISCONNECT_REASON = "Plugin disabled"
 
 class TilapiaCoreImpl : TilapiaCore {
+    val logger = LogManager.getLogger("TilapiaCore")
 
-    val backendAddress = System.getenv("BACKEND_HOST")?:"localhost"
+    val backendAddress: String
+
+    init {
+        if (DockerUtils.isInDocker()) {
+            backendAddress = DockerUtils.getContainerGateway()
+            logger.info("Docker detected! IP: ${backendAddress}:${DockerUtils.getMinecraftPort()}")
+        } else {
+            logger.warn("The server should be run in docker! Don't use it for production.")
+            backendAddress = System.getenv("BACKEND_HOST")?:"localhost"
+        }
+    }
+
     val communication = ServerCommunication("testKey", "http://${backendAddress}:8080")
     lateinit var session: ServerCommunicationSession
     lateinit var sessionThread: Thread
     private lateinit var localServer: LocalServerImpl
-    val logger = LogManager.getLogger("TilapiaCore")
     override lateinit var adventure: BukkitAudiences
 
     init {
@@ -100,7 +112,7 @@ class TilapiaCoreImpl : TilapiaCore {
                     }
                     val result = game.couldAdd(NetworkPlayerImpl(session, player), forceJoin)
                     JoinResult(result.type.success, result.chance, result.message)
-                }, System.getenv("MC_PORT")?.toInt()?:Bukkit.getPort()) {
+                }, if (DockerUtils.isInDocker()) DockerUtils.getMinecraftPort() else System.getenv("MC_PORT")?.toInt()?:Bukkit.getPort()) {
                     session = this
                     onServerConnected.add {
                         initialized = true

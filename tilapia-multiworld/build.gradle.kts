@@ -35,3 +35,9 @@ spigot {
 }
 
 tasks.classes.get().dependsOn("spigotPlugin")
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}

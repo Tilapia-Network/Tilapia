@@ -18,3 +18,9 @@ dependencies {
     implementation(project(":tilapia-proxy-api"))
     implementation(project(":tilapia-communication"))
 }
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}

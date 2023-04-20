@@ -23,3 +23,9 @@ tasks.shadowJar {
         dependencyFilter.exclude { "kotlin" in it.moduleGroup }
     }
 }
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}

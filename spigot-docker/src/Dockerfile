@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11
+FROM adoptopenjdk/openjdk8
 ARG SPIGOT_JAR
 RUN mkdir /opt/minecraft
 

@@ -19,3 +19,9 @@ dependencies {
     compileOnly("net.md-5:bungeecord-chat:1.8-SNAPSHOT")
     compileOnly(project(":tilapia-api"))
 }
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}

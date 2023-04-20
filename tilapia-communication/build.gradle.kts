@@ -30,3 +30,9 @@ dependencies {
     api("com.mysql:mysql-connector-j:8.0.32")
     implementation(project(":tilapia-common"))
 }
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}

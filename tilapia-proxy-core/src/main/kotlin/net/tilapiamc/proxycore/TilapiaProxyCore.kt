@@ -22,6 +22,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.tilapiamc.common.SuspendEventTarget
 import net.tilapiamc.common.language.LanguageKeyDelegation
 import net.tilapiamc.common.language.LanguageManager
+import net.tilapiamc.communication.ServerInfo
 import net.tilapiamc.communication.api.ProxyCommunication
 import net.tilapiamc.communication.api.ProxyCommunicationSession
 import net.tilapiamc.proxyapi.GameFinder
@@ -125,7 +126,12 @@ class TilapiaProxyCore @Inject constructor(override val proxy: ProxyServer, val 
                         }
                     }
                     onServerAdded.add {
-                        localServerManager.register(NetworkServerImpl(it.serverInfo))
+                        var info = it.serverInfo
+                        if (info.host.startsWith("172.")) { // Docker IP
+                            logger.info("Found a local docker container (${info.host})")
+                            info = ServerInfo(info.host, 25565, info.proxy, info.serverId, info.games)
+                        }
+                        localServerManager.register(NetworkServerImpl(info))
                     }
                     onServerRemoved.add {
                         localServerManager.servers[it.serverId]?.also { server -> localServerManager.unregister(server) }
