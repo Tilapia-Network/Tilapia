@@ -7,7 +7,7 @@ import net.tilapiamc.proxyapi.game.MiniGame
 
 class NetworkMiniGameImpl(communication: ProxyCommunication,
                           data: MiniGameInfo,
-): MiniGame(NetworkServerImpl.getServer(communication, data.serverId)!!, data.gameId, false, data.lobbyType, data.miniGameType) {
+): MiniGame(NetworkServerImpl.getServer(communication, data.serverId)!!, data.gameId, false, data.lobbyType, data.miniGameType, data.properties) {
 
 
 

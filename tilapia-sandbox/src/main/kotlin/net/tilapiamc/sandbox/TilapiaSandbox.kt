@@ -34,7 +34,7 @@ class TilapiaSandbox(core: TilapiaCore, world: World): LocalLobby(core, world, "
     }
 
     override fun onStart() {
-
+        setProperty(SandboxProperties.SANDBOX_WORLD, gameWorld.name)
     }
 
     override fun onEnd() {

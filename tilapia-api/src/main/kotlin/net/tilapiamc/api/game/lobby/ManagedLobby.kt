@@ -1,5 +1,8 @@
 package net.tilapiamc.api.game.lobby
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.ManagedGame
@@ -33,5 +36,32 @@ abstract class ManagedLobby(
 
     override fun start() {
         onStart()
+    }
+
+    open val gson = GsonBuilder().create()
+    private val properties = JsonObject()
+    override fun hasProperty(name: String): Boolean {
+        return properties.has(name)
+    }
+
+    override fun getProperty(name: String): JsonElement? {
+        return properties[name]
+    }
+
+    override fun setProperty(name: String, value: Any) {
+        properties.add(name, gson.toJsonTree(value))
+        core.updateGame(this)
+    }
+
+    override fun removeProperty(name: String) {
+        properties.remove(name)
+        core.updateGame(this)
+    }
+    override fun getProperties(): Map<String, JsonElement> {
+        return HashMap<String, JsonElement>().also {
+            for (mutableEntry in properties.entrySet()) {
+                it[mutableEntry.key] = mutableEntry.value
+            }
+        }
     }
 }

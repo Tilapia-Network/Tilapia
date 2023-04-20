@@ -2,6 +2,7 @@ package net.tilapiamc.communication.api
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
+import com.google.gson.JsonElement
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.auth.*
@@ -80,6 +81,14 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
         }
     }
     // Game Service
+    suspend fun updateGameProperty(gameId: UUID, properties: Map<String, JsonElement>) {
+        val response = client.post("/game/update-properties") {
+            parameter("gameId", gameId)
+            contentType(ContentType.Application.Json)
+            setBody(properties)
+        }
+        ensureResponse(response)
+    }
     suspend fun registerGame(gameData: GameData) {
         val response = client.post("/game/register") {
             contentType(ContentType.Application.Json)

@@ -1,5 +1,6 @@
 package net.tilapiamc.core
 
+import com.google.gson.JsonObject
 import io.ktor.websocket.*
 import kotlinx.coroutines.runBlocking
 import me.fan87.plugindevkit.events.EntityTickEvent
@@ -98,6 +99,7 @@ class TilapiaCoreImpl : TilapiaCore {
         var initialized = false
         sessionThread = Thread {
             runBlocking {
+                var dontShutdown = false
                 communication.start(schemas, { SuspendEventTarget(it) }, { player, gameId, forceJoin ->
                     val game = localGameManager.getLocalGameById(gameId) ?: run {
                         runBlocking {
@@ -121,6 +123,7 @@ class TilapiaCoreImpl : TilapiaCore {
                         }
                     }
                     onSessionClosed.add {
+                        dontShutdown = true
                         if (it.closeReason?.message != DISCONNECT_REASON) {
                             logger.error("Connection to central server is closed! Shutting down... ${it.closeReason}")
                             Bukkit.getServer().shutdown()
@@ -129,6 +132,10 @@ class TilapiaCoreImpl : TilapiaCore {
                     onPlayerAccepted.add {
                         accepter.handleAcceptPlayerPacket(this@TilapiaCoreImpl, it)
                     }
+                }
+                if (!dontShutdown) {
+                    logger.error("Connection to central server is closed! Shutting down...  UNKNOWN")
+                    Bukkit.getServer().shutdown()
                 }
             }
         }
@@ -186,13 +193,13 @@ class TilapiaCoreImpl : TilapiaCore {
         if (localGameManager.getAllLocalGames().any { it is ManagedGame && it.gameWorld.name == game.gameWorld.name }) {
             throw IllegalArgumentException("The world is already assigned to another game")
         }
-        game.start()
         games.add(game)
         localGameManager.registerManagedGame(game)
-        EventsManager.registerAnnotationBasedListener(game)
         runBlocking {
             communication.registerGame(game.toGameData())
         }
+        game.start()
+        EventsManager.registerAnnotationBasedListener(game)
     }
 
     override fun removeGame(game: ManagedGame) {
@@ -211,6 +218,12 @@ class TilapiaCoreImpl : TilapiaCore {
         EventsManager.unregisterAnnotationBasedListener(game)
         runBlocking {
             session.communication.endGame(game.gameId)
+        }
+    }
+
+    override fun updateGame(game: ManagedGame) {
+        runBlocking {
+            communication.updateGameProperty(game.gameId, game.getProperties())
         }
     }
 
@@ -266,11 +279,11 @@ class TilapiaCoreImpl : TilapiaCore {
         }
 
         fun Lobby.toLobbyInfo(): LobbyInfo {
-            return LobbyInfo(server.serverId, gameId, lobbyType, players.map { it.toPlayerInfo() })
+            return LobbyInfo(server.serverId, gameId, lobbyType, players.map { it.toPlayerInfo() }, JsonObject().also { getProperties().entries.forEach { entry -> it.add(entry.key, entry.value) } })
         }
 
         fun MiniGame.toMiniGameInfo(): MiniGameInfo {
-            return MiniGameInfo(server.serverId, gameId, lobbyType, players.map { it.toPlayerInfo() }, miniGameType)
+            return MiniGameInfo(server.serverId, gameId, lobbyType, players.map { it.toPlayerInfo() }, miniGameType, JsonObject().also { getProperties().entries.forEach { entry -> it.add(entry.key, entry.value) } })
         }
 
         fun NetworkPlayer.toPlayerInfo(): PlayerInfo {

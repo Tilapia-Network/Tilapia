@@ -7,11 +7,9 @@ import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.commands.*
 import net.tilapiamc.api.game.ManagedGame
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
+import net.tilapiamc.sandbox.SandboxProperties
 import net.tilapiamc.sandbox.TilapiaSandbox
-import net.tilapiamc.sandbox.commands.args.SandBoxNotFoundException
-import net.tilapiamc.sandbox.commands.args.WorldNotFoundException
-import net.tilapiamc.sandbox.commands.args.sandBoxArg
-import net.tilapiamc.sandbox.commands.args.worldNameArg
+import net.tilapiamc.sandbox.commands.args.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
@@ -53,7 +51,7 @@ class CommandSandbox: BukkitCommand("sandbox", "沙盒模式主要指令", true)
                 if (sender !is Player) {
                     sender.sendMessage(getLanguageBundle()[success])
                 } else {
-                    val command = "/sandbox tp-local $worldName"
+                    val command = "/sandbox tp $worldName"
                     requiresPlayer().spigot().sendMessage(TextComponent(getLanguageBundle()[success]).also {
                         it.addExtra(TextComponent(getLanguageBundle()[clickToTeleport]).also { button ->
                             button.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, command)
@@ -64,9 +62,9 @@ class CommandSandbox: BukkitCommand("sandbox", "沙盒模式主要指令", true)
                 true
             }
         }
-        subCommand("stop", "停止沙盒模式") {
+        subCommand("stop-local", "停止沙盒模式") {
             val success = getCommandLanguageKey("SUCCESS", "${ChatColor.GREEN}成功結束沙盒地圖")
-            val sandBox by sandBoxArg("SandBox", true)
+            val sandBox by localSandBoxArg("SandBox", true)
             onCommand {
                 val sandBox = sandBox()!!
                 sender.sendMessage(getLanguageBundle()[success])
@@ -74,19 +72,15 @@ class CommandSandbox: BukkitCommand("sandbox", "沙盒模式主要指令", true)
                 true
             }
         }
-        val noSandboxRunning = getCommandLanguageKey("NO_SANDBOX_RUNNING", "${ChatColor.RED}目前並沒有任何沙盒地圖")
-        subCommand("list", "列出所有正在運行的沙盒地圖") {
-            onCommand {
-                sender.sendMessage("TODO: Not yet implemented")
-                true
-            }
-        }
-        subCommand("list-local", "列出此伺服器正在運行的沙盒地圖") {
+
+        subCommand("list", "列出正在運行的沙盒地圖") {
+            val noSandboxRunning = getCommandLanguageKey("NO_SANDBOX_RUNNING", "${ChatColor.RED}目前並沒有任何沙盒地圖")
             val header = getCommandLanguageKey("HEADER", "${ChatColor.GRAY}沙盒地圖列表: ")
             val footer = getCommandLanguageKey("FOOTER", "")
             onCommand {
-                val sandboxes = core.localGameManager.getAllLocalGames()
-                    .filterIsInstance<TilapiaSandbox>()
+                val sandboxes = core.gameFinder.findLobbies("sandbox").filter {
+                    it.hasProperty(SandboxProperties.SANDBOX_WORLD)
+                }
                 if (sandboxes.isEmpty()) {
                     sender.sendMessage("")
                     sender.sendMessage(getLanguageBundle()[noSandboxRunning])
@@ -95,11 +89,12 @@ class CommandSandbox: BukkitCommand("sandbox", "沙盒模式主要指令", true)
                 }
                 sender.sendMessage(getLanguageBundle()[header])
                 sender.sendMessage("")
-                for (tilapiaSandbox in sandboxes) {
-                    val text = "${ChatColor.GRAY}- ${ChatColor.GREEN}${tilapiaSandbox.gameWorld.name}"
-                    val command = "/sandbox tp-local ${tilapiaSandbox.gameWorld.name}"
+                for (sandbox in sandboxes) {
+                    val worldName = sandbox.getProperty(SandboxProperties.SANDBOX_WORLD)!!.asString
+                    val text = "${ChatColor.GRAY}- ${ChatColor.GREEN}${worldName}"
+                    val command = "/sandbox tp $worldName"
                     if (sender is Player) {
-                        requiresPlayer().spigot().sendMessage(TextComponent(text + "    ").also {
+                        requiresPlayer().spigot().sendMessage(TextComponent("$text    ").also {
                             it.addExtra(TextComponent(getLanguageBundle()[clickToTeleport]).also { button ->
                                 button.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, command)
                                 button.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, arrayOf(TextComponent(getLanguageBundle()[hoverText].format(command))))
@@ -113,7 +108,7 @@ class CommandSandbox: BukkitCommand("sandbox", "沙盒模式主要指令", true)
                 true
             }
         }
-        subCommand("tp-local", "傳送到此伺服器的一張沙盒地圖") {
+        subCommand("tp", "傳送到一張沙盒地圖") {
             val sandBox by sandBoxArg("SandBox", true)
             onCommand {
                 val sandBox = sandBox()

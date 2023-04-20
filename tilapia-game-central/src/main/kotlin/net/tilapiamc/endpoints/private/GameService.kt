@@ -2,18 +2,19 @@ package net.tilapiamc.endpoints.private
 
 import com.google.gson.Gson
 import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
+import net.tilapiamc.common.json.jsonArrayOf
+import net.tilapiamc.communication.*
 import net.tilapiamc.managers.ServerManager
 import net.tilapiamc.obj.game.Game
 import net.tilapiamc.obj.game.Lobby
 import net.tilapiamc.obj.game.MiniGame
-import net.tilapiamc.common.json.jsonArrayOf
-import net.tilapiamc.communication.*
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -75,11 +76,11 @@ object GameService {
                     }
                     serverManager.logger.info("Registered game: ${game.gameId}")
                     if (game is LobbyInfo) {
-                        val lobby = Lobby(server, game.gameId, game.lobbyType)
+                        val lobby = Lobby(server, game.gameId, game.lobbyType, properties = game.properties)
                         server.games.add(lobby)
                         serverManager.games[lobby.gameId] = lobby
                     } else if (game is MiniGameInfo) {
-                        val miniGame = MiniGame(server, game.gameId, game.lobbyType, game.miniGameType)
+                        val miniGame = MiniGame(server, game.gameId, game.lobbyType, game.miniGameType, properties = game.properties)
                         server.games.add(miniGame)
                         serverManager.games[miniGame.gameId] = miniGame
                     } else {
@@ -104,6 +105,18 @@ object GameService {
                             return@post
                         }
                         server.games.removeIf { it.gameId == game.gameId }
+                        call.respond(HttpStatusCode.OK)
+                    } else {
+                        call.respond(HttpStatusCode.NotFound, "The requested game is not found")
+                    }
+
+                }
+                post<JsonObject>("/game/update-properties") {
+                    val gameId = call.parameters["gameId"]?.let { UUID.fromString(it) }
+                    if (gameId in serverManager.games) {
+                        val game = serverManager.games[gameId]!!
+                        game.properties = it
+                        serverManager.logger.info("Updated game properties: ${game.gameId}  to  ${gson.toJson(it)}")
                         call.respond(HttpStatusCode.OK)
                     } else {
                         call.respond(HttpStatusCode.NotFound, "The requested game is not found")

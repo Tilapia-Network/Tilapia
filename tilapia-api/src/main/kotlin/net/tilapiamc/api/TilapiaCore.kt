@@ -29,6 +29,7 @@ interface TilapiaCore {
 
     fun addGame(game: ManagedGame)
     fun removeGame(game: ManagedGame)
+    fun updateGame(game: ManagedGame)
 
     fun getInternal(): TilapiaInternal
 
