@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk8
+FROM adoptopenjdk/openjdk11
 ARG SPIGOT_JAR
 RUN mkdir /opt/minecraft
 
@@ -10,5 +10,5 @@ RUN sh -c "echo \"eula=true\" > /opt/minecraft/eula.txt"
 WORKDIR /opt/minecraft
 
 EXPOSE 25565
-CMD [ "/usr/bin/bash" ]
+CMD [ "sh", "./start.sh" ]
 #CMD [ "java", "-jar", "server.jar" ]

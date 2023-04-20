@@ -76,6 +76,7 @@ docker {
     pull(true)
     noCache(false)
     this.files("src/")
+    this.files("Tilapia-Spigot-Docker/")
     this.files(spigotJar)
 
 

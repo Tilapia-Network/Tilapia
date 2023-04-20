@@ -40,3 +40,4 @@ spigot {
 }
 
 tasks.classes.get().dependsOn("spigotPlugin")
+
