@@ -58,7 +58,7 @@ class BackupCommand(val saveManager: WorldSaveManager): BukkitCommand("backup", 
             val clickToCreateSandBoxWorld = getCommandLanguageKey("CLICK_TO_CREATE_SANDBOX", "\n${ChatColor.YELLOW}[點我創建沙盒世界]")
             onCommand {
                 val finalSaveName = saveName()!!
-                val finalWorldName = worldName()?:finalSaveName
+                val finalWorldName = worldName()?:finalSaveName.split("__BACKUP__")[0]
                 val world = saveManager.load(finalSaveName, finalWorldName)
                 if (world == null) {
                     sender.sendMessage("")
