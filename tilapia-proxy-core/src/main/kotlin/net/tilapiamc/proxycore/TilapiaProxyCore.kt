@@ -60,7 +60,7 @@ class TilapiaProxyCore @Inject constructor(override val proxy: ProxyServer, val 
 
     val backendAddress = System.getenv("BACKEND_HOST")?:"localhost"
     val databaseAddress = System.getenv("DATABASE_HOST")?:backendAddress
-    val communication = ProxyCommunication("testKey", "http://$backendAddress:8080")
+    val communication = ProxyCommunication(System.getenv("API_KEY")?:"testKey", "http://$backendAddress:8080")
 
     init {
         TilapiaProxyAPI.instance = this
@@ -90,53 +90,51 @@ class TilapiaProxyCore @Inject constructor(override val proxy: ProxyServer, val 
         var initialized = false
         sessionThread = Thread {
             runBlocking {
-                communication.start(schemas, { SuspendEventTarget(it) }) {
-                    session = this
-                    onProxyConnected.add {
-                        initialized = true
-                        synchronized(lock) {
-                            lock.notifyAll()
-                        }
-                    }
-                    onSessionClosed.add {
-                        if (it.closeReason?.message == "Proxy shutdown") {
-                            return@add
-                        }
-                        logger.error("Connection to central server is closed! Shutting down... ${it.closeReason}")
-                        proxy.shutdown()
-                    }
-                    onPlayerAccepted.add { packet ->
-                        try {
-                            val player = proxy.allPlayers.filter { it.uniqueId == packet.player }.firstOrNull()?:return@add
-                            if (player.uniqueId in joinCancel) {
-                                joinCancel.remove(player.uniqueId)
-                                return@add
+                try {
+                    communication.start(schemas, { SuspendEventTarget(it) }) {
+                        session = this
+                        onProxyConnected.add {
+                            initialized = true
+                            synchronized(lock) {
+                                lock.notifyAll()
                             }
-                            if (player.currentServer.getOrNull()?.serverInfo?.name == packet.serverId.toString()) {
-                                return@add
+                        }
+                        onPlayerAccepted.add { packet ->
+                            try {
+                                val player = proxy.allPlayers.filter { it.uniqueId == packet.player }.firstOrNull()?:return@add
+                                if (player.uniqueId in joinCancel) {
+                                    joinCancel.remove(player.uniqueId)
+                                    return@add
+                                }
+                                if (player.currentServer.getOrNull()?.serverInfo?.name == packet.serverId.toString()) {
+                                    return@add
+                                }
+                                val status = withContext(Dispatchers.IO) {
+                                    player.createConnectionRequest(proxy.allServers.first { it.serverInfo.name == packet.serverId.toString() })
+                                        .connect().get()
+                                }.status
+                                if (status == Status.SERVER_DISCONNECTED || status == Status.CONNECTION_CANCELLED) {
+                                    player.disconnect(Component.text(player.getLocalPlayer().getLanguageBundle()[COULD_NOT_SEND]))
+                                }
+                            } catch (e: Throwable) {
+                                e.printStackTrace()
                             }
-                            val status = withContext(Dispatchers.IO) {
-                                player.createConnectionRequest(proxy.allServers.first { it.serverInfo.name == packet.serverId.toString() })
-                                    .connect().get()
-                            }.status
-                            if (status == Status.SERVER_DISCONNECTED || status == Status.CONNECTION_CANCELLED) {
-                                player.disconnect(Component.text(player.getLocalPlayer().getLanguageBundle()[COULD_NOT_SEND]))
+                        }
+                        onServerAdded.add {
+                            var info = it.serverInfo
+                            if (info.host.startsWith("172.")) { // Docker IP
+                                logger.info("Found a local docker container (${info.host})")
+                                info = ServerInfo(info.host, 25565, info.proxy, info.serverId, info.games)
                             }
-                        } catch (e: Throwable) {
-                            e.printStackTrace()
+                            localServerManager.register(NetworkServerImpl(info))
+                        }
+                        onServerRemoved.add {
+                            localServerManager.servers[it.serverId]?.also { server -> localServerManager.unregister(server) }
                         }
                     }
-                    onServerAdded.add {
-                        var info = it.serverInfo
-                        if (info.host.startsWith("172.")) { // Docker IP
-                            logger.info("Found a local docker container (${info.host})")
-                            info = ServerInfo(info.host, 25565, info.proxy, info.serverId, info.games)
-                        }
-                        localServerManager.register(NetworkServerImpl(info))
-                    }
-                    onServerRemoved.add {
-                        localServerManager.servers[it.serverId]?.also { server -> localServerManager.unregister(server) }
-                    }
+                } finally {
+                    logger.error("Connection has been closed! Exiting....")
+                    proxy.shutdown()
                 }
             }
         }

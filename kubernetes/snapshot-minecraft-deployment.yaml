@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tilapia-spigot-dynamic
+  labels:
+    app: tilapia-spigot-dynamic
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tilapia-spigot-dynamic
+  template:
+    metadata:
+      labels:
+        app: tilapia-spigot-dynamic
+    spec:
+      containers:
+        - name: spigot-1-8
+          image: docker.tilapiamc.net:443/repository/docker/tilapia-spigot:snapshot
+          ports:
+            - containerPort: 25565
+          tty: true
+          stdin: true
+          env:
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: game-central-pass
+                  key: api-key
+            - name: BACKEND_HOST
+              value: tilapia-game-central
+            - name: DATABASE_HOST
+              value: tilapia-mysql
+            - name: MC_PORT
+              value: '25565'

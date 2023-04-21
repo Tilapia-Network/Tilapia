@@ -60,7 +60,7 @@ class TilapiaCoreImpl : TilapiaCore {
     init {
         if (DockerUtils.isInDocker()) {
             backendAddress = System.getenv("BACKEND_HOST")?:DockerUtils.getContainerGateway()
-            logger.info("Docker detected! IP: ${backendAddress}:${DockerUtils.getMinecraftPort()}")
+            logger.info("Docker detected! IP: ${backendAddress}:${System.getenv("MC_PORT")?.toInt()?:DockerUtils.getMinecraftPort()}")
         } else {
             logger.warn("The server should be run in docker! Don't use it for production.")
             backendAddress = System.getenv("BACKEND_HOST")?:"localhost"
@@ -68,7 +68,7 @@ class TilapiaCoreImpl : TilapiaCore {
         databaseAddress = System.getenv("DATABASE_HOST")?:backendAddress
     }
 
-    val communication = ServerCommunication("testKey", "http://${backendAddress}:8080")
+    val communication = ServerCommunication(System.getenv("API_KEY")?:"testKey", "http://${backendAddress}:8080")
     lateinit var session: ServerCommunicationSession
     lateinit var sessionThread: Thread
     private lateinit var localServer: LocalServerImpl
@@ -102,43 +102,47 @@ class TilapiaCoreImpl : TilapiaCore {
         sessionThread = Thread {
             runBlocking {
                 var dontShutdown = false
-                communication.start(schemas, { SuspendEventTarget(it) }, { player, gameId, forceJoin ->
-                    val game = localGameManager.getLocalGameById(gameId) ?: run {
-                        runBlocking {
-                            try {
-                                communication.endGame(gameId)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
+                try {
+                    communication.start(schemas, { SuspendEventTarget(it) }, { player, gameId, forceJoin ->
+                        val game = localGameManager.getLocalGameById(gameId) ?: run {
+                            runBlocking {
+                                try {
+                                    communication.endGame(gameId)
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+
+                            return@start JoinResult(false, 0.0, "The game is not found")
+                        }
+                        val result = game.couldAdd(NetworkPlayerImpl(session, player), forceJoin)
+                        JoinResult(result.type.success, result.chance, result.message)
+                    }, if (DockerUtils.isInDocker()) System.getenv("MC_PORT")?.toInt()?:DockerUtils.getMinecraftPort() else System.getenv("MC_PORT")?.toInt()?:Bukkit.getPort()) {
+                        session = this
+                        onServerConnected.add {
+                            initialized = true
+                            synchronized(lock) {
+                                lock.notifyAll()
                             }
                         }
+                        onSessionClosed.add {
+                            if (it.closeReason?.message != DISCONNECT_REASON) {
+                                logger.error("Connection to central server is closed! Shutting down... ${it.closeReason}")
+                                Bukkit.getServer().shutdown()
+                            }
+                            dontShutdown = true
+                        }
+                        onPlayerAccepted.add {
+                            accepter.handleAcceptPlayerPacket(this@TilapiaCoreImpl, it)
+                        }
+                    }
+                } finally {
+                    if (!dontShutdown) {
+                        logger.error("Connection to central server is closed! Shutting down...  UNKNOWN")
+                        Bukkit.getServer().shutdown()
+                    }
+                }
 
-                        return@start JoinResult(false, 0.0, "The game is not found")
-                    }
-                    val result = game.couldAdd(NetworkPlayerImpl(session, player), forceJoin)
-                    JoinResult(result.type.success, result.chance, result.message)
-                }, if (DockerUtils.isInDocker()) DockerUtils.getMinecraftPort() else System.getenv("MC_PORT")?.toInt()?:Bukkit.getPort()) {
-                    session = this
-                    onServerConnected.add {
-                        initialized = true
-                        synchronized(lock) {
-                            lock.notifyAll()
-                        }
-                    }
-                    onSessionClosed.add {
-                        dontShutdown = true
-                        if (it.closeReason?.message != DISCONNECT_REASON) {
-                            logger.error("Connection to central server is closed! Shutting down... ${it.closeReason}")
-                            Bukkit.getServer().shutdown()
-                        }
-                    }
-                    onPlayerAccepted.add {
-                        accepter.handleAcceptPlayerPacket(this@TilapiaCoreImpl, it)
-                    }
-                }
-                if (!dontShutdown) {
-                    logger.error("Connection to central server is closed! Shutting down...  UNKNOWN")
-                    Bukkit.getServer().shutdown()
-                }
             }
         }
         sessionThread.start()

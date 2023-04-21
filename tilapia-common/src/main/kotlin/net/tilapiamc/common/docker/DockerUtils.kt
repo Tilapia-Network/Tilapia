@@ -15,7 +15,7 @@ object DockerUtils {
         val process = Runtime.getRuntime().exec(arrayOf("sh", "-c", "curl -s --unix-socket /var/run/docker.sock http://dummy/containers/${System.getenv("HOSTNAME")}/json"))
         val text = process.inputStream.readBytes().decodeToString()
         println(text)
-        gson.fromJson(text, JsonObject::class.java)
+        gson.fromJson(text, JsonObject::class.java)?:JsonObject()
     }
 
 

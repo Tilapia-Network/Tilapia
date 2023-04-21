@@ -13,7 +13,7 @@ import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.selectAll
 import java.util.*
 
-class BackupCommand(val saveManager: WorldSaveManager): BukkitCommand("backup", "創建世界的存檔") {
+class BackupCommand(val saveManager: WorldSaveManager): BukkitCommand("backup", "創建世界的存檔", true) {
 
     val saveOverrideTimeout = HashMap<UUID, Long>()
 
