@@ -11,6 +11,7 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.selectAll
+import java.io.File
 import java.util.*
 
 class BackupCommand(val saveManager: WorldSaveManager): BukkitCommand("backup", "創建世界的存檔", true) {
@@ -29,7 +30,7 @@ class BackupCommand(val saveManager: WorldSaveManager): BukkitCommand("backup", 
             onCommand {
                 Thread {
                     val finalWorldName = worldName()!!
-                    val finalSaveName = saveName() ?: "${finalWorldName.split("__BACKUP__")[0]}__BACKUP__${System.currentTimeMillis()}"
+                    val finalSaveName = "${saveName() ?: finalWorldName.split("__BACKUP__")[0]}__BACKUP__${System.currentTimeMillis()}"
                     Bukkit.getWorld(finalWorldName)?.save()
                     if (System.currentTimeMillis() > (saveOverrideTimeout[requiresPlayer().uniqueId]?:0) && saveManager.has(finalSaveName)) {
                         saveOverrideTimeout[requiresPlayer().uniqueId] = System.currentTimeMillis() + 3000
@@ -55,6 +56,7 @@ class BackupCommand(val saveManager: WorldSaveManager): BukkitCommand("backup", 
 
             val success = getCommandLanguageKey("SUCCESS", "\n${ChatColor.GREEN}成功載入世界 %1\$s")
             val worldNotFound = getCommandLanguageKey("WORLD_NOT_FOUND", "\n${ChatColor.RED}找不到該存檔 %1\$s")
+            val worldAlreadyExists = getCommandLanguageKey("WORLD_ALREADY_EXISTS", "\n${ChatColor.RED}世界早已存在！若要覆蓋，請刪除世界; 若要使用其他世界名稱，請使用 /backup load <存檔名稱> <世界名稱>")
             val clickToCreateSandBoxWorld = getCommandLanguageKey("CLICK_TO_CREATE_SANDBOX", "\n${ChatColor.YELLOW}[點我創建沙盒世界]")
             onCommand {
                 val finalSaveName = saveName()!!
@@ -63,6 +65,12 @@ class BackupCommand(val saveManager: WorldSaveManager): BukkitCommand("backup", 
                 if (world == null) {
                     sender.sendMessage("")
                     sender.sendMessage(getLanguageBundle()[worldNotFound].format(finalSaveName))
+                    sender.sendMessage("")
+                    return@onCommand true
+                }
+                if (File(finalWorldName).exists()) {
+                    sender.sendMessage("")
+                    sender.sendMessage(getLanguageBundle()[worldAlreadyExists])
                     sender.sendMessage("")
                     return@onCommand true
                 }
