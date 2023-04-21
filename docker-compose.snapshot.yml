@@ -1,0 +1,69 @@
+services:
+  mariadb:
+    image: mariadb
+    ports:
+      - '3306:3306'
+    environment:
+      - MARIADB_ROOT_PASSWORD=fd59bc61-d486-41ec-a673-74b59f5da2f4
+    networks:
+      - minecraft-network
+    volumes:
+      - db_data:/var/lib/mysql
+
+  game-central:
+    depends_on:
+      - mariadb
+    links:
+      - mariadb
+    image: "docker.tilapiamc.net:443/repository/docker/tilapia-game-central:snapshot"
+    ports:
+      - '8080:8080'
+    networks:
+      - minecraft-network
+
+  proxy:
+    image: "docker.tilapiamc.net:443/repository/docker/tilapia-proxy:snapshot"
+    ports:
+      - '25565:25565'
+    depends_on:
+      - mariadb
+      - game-central
+    links:
+      - mariadb
+      - game-central
+    networks:
+      - minecraft-network
+    environment:
+      - BACKEND_HOST=game-central
+      - DATABASE_HOST=mariadb
+
+  minecraft:
+    depends_on:
+      - mariadb
+      - game-central
+      - proxy
+    links:
+      - mariadb
+      - game-central
+      - proxy
+    image: "docker.tilapiamc.net:443/repository/docker/tilapia-spigot:snapshot"
+    ports:
+      - '25565'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    deploy:
+      replicas: 2
+    stdin_open: true
+    tty: true
+    networks:
+      - minecraft-network
+    environment:
+      - BACKEND_HOST=game-central
+      - DATABASE_HOST=mariadb
+
+networks:
+  minecraft-network:
+    driver: overlay
+
+volumes:
+  db_data:

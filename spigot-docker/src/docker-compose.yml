@@ -1,9 +1,0 @@
-version: 1.0-SNAPSHOT
-services:
-  minecraft:
-    image: tilapia-spigot:snapshot
-    ports:
-      - '25565'
-    volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
-    tty: true

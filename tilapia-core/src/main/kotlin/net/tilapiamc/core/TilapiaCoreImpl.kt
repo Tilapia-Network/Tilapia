@@ -55,6 +55,7 @@ class TilapiaCoreImpl : TilapiaCore {
     val logger = LogManager.getLogger("TilapiaCore")
 
     val backendAddress: String
+    val databaseAddress: String
 
     init {
         if (DockerUtils.isInDocker()) {
@@ -64,6 +65,7 @@ class TilapiaCoreImpl : TilapiaCore {
             logger.warn("The server should be run in docker! Don't use it for production.")
             backendAddress = System.getenv("BACKEND_HOST")?:"localhost"
         }
+        databaseAddress = System.getenv("DATABASE_HOST")?:backendAddress
     }
 
     val communication = ServerCommunication("testKey", "http://${backendAddress}:8080")
@@ -249,7 +251,7 @@ class TilapiaCoreImpl : TilapiaCore {
     override fun getDatabase(databaseName: String): Database {
         return databaseCache[databaseName]?: run {
             val databaseLogin = session.databaseLogin
-            val uri = URI("mysql", null, backendAddress, 3306, "/$databaseName", null, null)
+            val uri = URI("mysql", null, databaseAddress, 3306, "/$databaseName", null, null)
             val database = Database.connect("jdbc:${uri.toASCIIString()}", user = databaseLogin.username, password = databaseLogin.password)
             databaseCache[databaseName] = database
             database

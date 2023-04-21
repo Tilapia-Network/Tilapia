@@ -1,0 +1,141 @@
+# MySQL / MariaDB
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tilapia-mysql
+  labels:
+    app: game-central
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: game-central
+    tier: mariadb
+  type: NodePort
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tilapia-mysql-volume-claim
+  labels:
+    app: game-central
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mariadb-pass
+  labels:
+    app: game-central
+type: Opaque
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tilapia-mysql
+  labels:
+    app: game-central
+spec:
+  selector:
+    matchLabels:
+      app: game-central
+      tier: mariadb
+  template:
+    metadata:
+      labels:
+        app: game-central
+        tier: mariadb
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb
+          env:
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-pass
+                  key: password
+          ports:
+            - containerPort: 3306
+              name: mariadb
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mariadb-persistent-storage
+      volumes:
+        - name: mariadb-persistent-storage
+          persistentVolumeClaim:
+            claimName: tilapia-mysql-volume-claim
+
+
+
+
+# Game Central
+
+
+
+
+
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: game-central-pass
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tilapia-game-central
+  labels:
+    app: game-central
+spec:
+  ports:
+    - port: 8080
+  selector:
+    app: tilapia
+    tier: game-central
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tilapia-game-central
+  labels:
+    app: game-central
+spec:
+  selector:
+    matchLabels:
+      app: game-central
+  template:
+    metadata:
+      labels:
+        app: game-central
+    spec:
+      containers:
+        - name: game-central
+          image: docker.tilapiamc.net:443/repository/docker/tilapia-game-central:snapshot
+          ports:
+            - containerPort: 8080
+          tty: true
+          env:
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-pass
+                  key: password
+            - name: DATABASE_USER
+              value: root
+            - name: HOST
+              value: 0.0.0.0
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: game-central-pass
+                  key: api-key
+

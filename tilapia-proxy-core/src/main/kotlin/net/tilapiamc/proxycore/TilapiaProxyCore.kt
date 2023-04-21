@@ -59,6 +59,7 @@ class TilapiaProxyCore @Inject constructor(override val proxy: ProxyServer, val 
     override val localServerManager: LocalServerManager = LocalServerManager(this)
 
     val backendAddress = System.getenv("BACKEND_HOST")?:"localhost"
+    val databaseAddress = System.getenv("DATABASE_HOST")?:backendAddress
     val communication = ProxyCommunication("testKey", "http://$backendAddress:8080")
 
     init {
@@ -198,7 +199,7 @@ class TilapiaProxyCore @Inject constructor(override val proxy: ProxyServer, val 
     override fun getDatabase(databaseName: String): Database {
         return databaseCache[databaseName]?: run {
             val databaseLogin = session.databaseLogin
-            val uri = URI("mysql", null, backendAddress, 3306, "/$databaseName", null, null)
+            val uri = URI("mysql", null, databaseAddress, 3306, "/$databaseName", null, null)
             val database = Database.connect("jdbc:${uri.toASCIIString()}", user = databaseLogin.username, password = databaseLogin.password)
             databaseCache[databaseName] = database
             database
