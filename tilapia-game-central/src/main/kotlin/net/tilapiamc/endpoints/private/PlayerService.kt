@@ -6,12 +6,12 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import net.tilapiamc.managers.ServerManager
 import net.tilapiamc.communication.GameData
 import net.tilapiamc.communication.GameType
 import net.tilapiamc.communication.session.client.CPacketAcknowledge
 import net.tilapiamc.communication.session.server.proxy.SPacketProxyAcceptPlayer
 import net.tilapiamc.communication.session.server.server.SPacketServerAcceptPlayer
+import net.tilapiamc.managers.ServerManager
 import java.util.*
 
 object PlayerService {
@@ -84,6 +84,7 @@ object PlayerService {
                             call.respond(HttpStatusCode.ServiceUnavailable, "The proxy did not respond to accept player packet")
                             return@post
                         }
+                        playerInstance.currentGame?.players?.remove(playerInstance)
                         gameInstance.players.add(playerInstance)
                         playerInstance.currentGame = gameInstance
 

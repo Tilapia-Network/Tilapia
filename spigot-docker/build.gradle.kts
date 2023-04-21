@@ -7,6 +7,7 @@ val SPIGOT_PLUGINS = arrayOf(
     "tilapia-multiworld",
     "tilapia-sandbox",
     "tilapia-util-commands",
+    "tilapia-auto-op", // TODO: Remvoe on production
 )
 
 plugins {

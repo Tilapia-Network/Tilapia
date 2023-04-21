@@ -22,7 +22,7 @@ class GeneratorArgument<S>(name: String, isRequired: Boolean = false): CommandAr
     }
 
     override fun tabComplete(sender: S, token: String): Collection<String> {
-        return Generators.generators.keys.filter { it.lowercase().startsWith(token) }
+        return Generators.generators.keys.filter { it.lowercase().startsWith(token.lowercase()) }
     }
 }
 
