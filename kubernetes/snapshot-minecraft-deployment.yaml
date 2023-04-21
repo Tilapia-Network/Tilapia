@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
         - name: spigot-1-8
+          imagePullPolicy: Always
           image: docker.tilapiamc.net:443/repository/docker/tilapia-spigot:snapshot
           ports:
             - containerPort: 25565
