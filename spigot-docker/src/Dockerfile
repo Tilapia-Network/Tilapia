@@ -9,6 +9,6 @@ RUN sh -c "echo \"eula=true\" > /opt/minecraft/eula.txt"
 
 WORKDIR /opt/minecraft
 
-HEALTHCHECK CMD bash -c "echo > /dev/tcp/127.0.0.1/25565"
+HEALTHCHECK CMD bash -c "ls /opt/minecraft/SERVER_STARTED"
 EXPOSE 25565
 CMD [ "sh", "./start.sh" ]

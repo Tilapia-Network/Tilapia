@@ -47,6 +47,7 @@ import org.apache.logging.log4j.LogManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
+import java.io.File
 import java.net.URI
 import java.util.*
 
@@ -109,6 +110,9 @@ class TilapiaCoreImpl : TilapiaCore {
     }
 
     fun onEnable() {
+        Bukkit.getScheduler().runTaskLater(getPlugin(), {
+            File("SERVER_STARTED").mkdirs()
+        }, 1)
         adventure = BukkitAudiences.create(getPlugin())
         val schemas = ArrayList<String>()
         for (plugin in Bukkit.getPluginManager().plugins) {

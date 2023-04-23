@@ -61,16 +61,17 @@ class BackupCommand(val saveManager: WorldSaveManager): BukkitCommand("backup", 
             onCommand {
                 val finalSaveName = saveName()!!
                 val finalWorldName = worldName()?:finalSaveName.split("__BACKUP__")[0]
+
+                if (File(finalWorldName).exists()) {
+                    sender.sendMessage("")
+                    sender.sendMessage(getLanguageBundle()[worldAlreadyExists])
+                    sender.sendMessage("")
+                    return@onCommand true
+                }
                 val world = saveManager.load(finalSaveName, finalWorldName)
                 if (world == null) {
                     sender.sendMessage("")
                     sender.sendMessage(getLanguageBundle()[worldNotFound].format(finalSaveName))
-                    sender.sendMessage("")
-                    return@onCommand true
-                }
-                if (File(finalWorldName).exists()) {
-                    sender.sendMessage("")
-                    sender.sendMessage(getLanguageBundle()[worldAlreadyExists])
                     sender.sendMessage("")
                     return@onCommand true
                 }

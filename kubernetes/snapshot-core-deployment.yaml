@@ -87,6 +87,7 @@ spec:
     spec:
       containers:
         - name: game-central
+          imagePullPolicy: Always
           image: docker.tilapiamc.net:443/repository/docker/tilapia-game-central:snapshot
           ports:
             - containerPort: 8080

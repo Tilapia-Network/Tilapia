@@ -5,7 +5,7 @@ metadata:
   labels:
     app: tilapia-spigot-dynamic
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: tilapia-spigot-dynamic
@@ -34,4 +34,18 @@ spec:
               value: tilapia-mysql
             - name: MC_PORT
               value: '25565'
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /usr/bin/bash
+                  - -c
+                  - kill $(pidof java)
+          livenessProbe:
+            exec:
+              command:
+                - ls
+                - /opt/minecraft/SERVER_STARTED
+            timeoutSeconds: 60
+
       terminationGracePeriodSeconds: 600
