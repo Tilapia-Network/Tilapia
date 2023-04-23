@@ -22,6 +22,7 @@ interface TilapiaCore {
     val localGameManager: GamesManager
     val gameFinder: GameFinder
     val adventure: BukkitAudiences
+    val shuttingDown: Boolean
 
     fun provideGameId(gameType: GameType): UUID
 

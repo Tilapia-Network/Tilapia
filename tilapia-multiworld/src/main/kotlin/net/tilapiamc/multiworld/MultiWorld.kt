@@ -24,12 +24,15 @@ class MultiWorld: TilapiaPlugin() {
         requireSchemaAccess("backup_trashbin")
     }
 
+    lateinit var worldSaveManager: WorldSaveManager
+
     override fun onEnable() {
+        worldSaveManager = WorldSaveManager(TilapiaCore.instance.getDatabase("backups"), TilapiaCore.instance.getDatabase("backup_trashbin"))
 
         TemporaryWorldProvider // Delete useless worlds
         Generators
         SpigotCommandsManager.registerCommand(MultiWorldCommand())
-        SpigotCommandsManager.registerCommand(BackupCommand(WorldSaveManager(TilapiaCore.instance.getDatabase("backups"), TilapiaCore.instance.getDatabase("backup_trashbin"))))
+        SpigotCommandsManager.registerCommand(BackupCommand(worldSaveManager))
         WorldManager.load()
 
         for (registeredWorld in ArrayList(WorldManager.registeredWorlds)) {

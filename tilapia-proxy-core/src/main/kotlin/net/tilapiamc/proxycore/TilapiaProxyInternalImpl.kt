@@ -25,7 +25,7 @@ class TilapiaProxyInternalImpl(val proxyApi: TilapiaProxyCore): TilapiaProxyInte
         }
 
         return runBlocking {
-            val result = proxyApi.communication.send(player.uuid, game.gameId, forceJoin, spectate).get()
+            val result = proxyApi.communication.send(player.uuid, game.gameId, forceJoin, spectate)
             PlayerJoinResult(result.success, result.chance, result.message)
         }
 

@@ -25,7 +25,7 @@ abstract class ManagedMiniGame(
 
 
     final override val logger: Logger = LogManager.getLogger("MiniGame $gameId")
-    val inGamePlayers = ArrayList<LocalNetworkPlayer>()
+    override val inGamePlayers = ArrayList<LocalNetworkPlayer>()
     val spectatorPlayers = ArrayList<LocalNetworkPlayer>()
 
     init {

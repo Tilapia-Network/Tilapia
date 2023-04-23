@@ -11,7 +11,7 @@ abstract class MiniGame(
 ): Game(server, GameType.MINIGAME, gameId, managed) {
 
     val spectators = ArrayList<NetworkPlayer>()
-    val inGamePlayers: List<NetworkPlayer>
+    open val inGamePlayers: List<NetworkPlayer>
         get() = players.filter { it !in spectators }
 
     override fun equals(other: Any?): Boolean {

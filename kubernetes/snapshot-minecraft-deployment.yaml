@@ -34,3 +34,4 @@ spec:
               value: tilapia-mysql
             - name: MC_PORT
               value: '25565'
+      terminationGracePeriodSeconds: 600

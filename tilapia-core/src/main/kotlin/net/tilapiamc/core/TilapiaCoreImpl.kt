@@ -11,6 +11,7 @@ import net.tilapiamc.api.TilapiaPlugin
 import net.tilapiamc.api.commands.LanguageCommand
 import net.tilapiamc.api.commands.SpigotCommandsManager
 import net.tilapiamc.api.events.EventsManager
+import net.tilapiamc.api.events.server.ServerShutdownEvent
 import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.GamesManager
 import net.tilapiamc.api.game.IGame
@@ -73,9 +74,38 @@ class TilapiaCoreImpl : TilapiaCore {
     lateinit var sessionThread: Thread
     private lateinit var localServer: LocalServerImpl
     override lateinit var adventure: BukkitAudiences
+    override var shuttingDown: Boolean = false
 
     init {
-
+        val map = Class.forName("java.lang.ApplicationShutdownHooks").getDeclaredField("hooks").also {
+            it.isAccessible = true
+        }
+            .get(null) as IdentityHashMap<Thread, Thread>
+        val oldMap = HashMap(map)
+        map.clear()
+        Runtime.getRuntime().addShutdownHook(Thread {
+            logger.warn("Server has received SIGTERM, shutting down...")
+            shuttingDown = true
+            EventsManager.fireEvent(ServerShutdownEvent())
+            while (localGameManager.getAllLocalGames().isNotEmpty()) {
+                for (managedGame in localGameManager.getAllLocalGames().filter { it.canShutdown()  }) {
+                    managedGame.end()
+                }
+                Thread.sleep(1000)
+            }
+            for (hook in oldMap.values) {
+                hook.start()
+            }
+            for (hook in oldMap.values) {
+                while (true) {
+                    try {
+                        hook.join()
+                        break
+                    } catch (ignored: InterruptedException) {
+                    }
+                }
+            }
+        })
     }
 
     fun onEnable() {

@@ -11,10 +11,15 @@ import net.tilapiamc.api.utils.PlayerBasedProvider
 import net.tilapiamc.common.language.LanguageKeyDelegation
 import net.tilapiamc.gameextension.plugins.PluginBossBar1_8_8
 import net.tilapiamc.gameextension.plugins.PluginChat
+import net.tilapiamc.multiworld.MultiWorld
+import net.tilapiamc.multiworld.WorldManager
 import net.tilapiamc.spigotcommon.game.lobby.LocalLobby
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.Sound
 import org.bukkit.World
 import org.bukkit.entity.Player
+import org.bukkit.plugin.java.JavaPlugin
 
 
 class TilapiaSandbox(core: TilapiaCore, world: World): LocalLobby(core, world, "sandbox") {
@@ -38,16 +43,41 @@ class TilapiaSandbox(core: TilapiaCore, world: World): LocalLobby(core, world, "
     }
 
     override fun onEnd() {
-
+        if (Bukkit.getServer().pluginManager.isPluginEnabled("tilapia-multiworld")) {
+            logger.info("Saving world: ${gameWorld.name}")
+            WorldManager.getWorld(gameWorld.name)?.let { tilapiaWorld ->
+                JavaPlugin.getPlugin(MultiWorld::class.java).worldSaveManager.save(
+                    "${gameWorld.name}__BACKUP__${System.currentTimeMillis()}",
+                    tilapiaWorld,
+                    true
+                )
+            }
+        }
     }
 
+    var shutdownNotifyCount = 0
 
+    val serverShuttingDown = getGameLanguageKey("SERVER_SHUTTING_DOWN", "${ChatColor.YELLOW}[沙盒模式] ${ChatColor.RED}伺服器即將更新！請除存世界並盡快退出")
 
+    override fun canShutdown(): Boolean {
+        if (shutdownNotifyCount % 5 == 0) {
+            for (player in localPlayers) {
+                player.playSound(player.location, Sound.NOTE_PIANO, 1f, 1f)
+                player.sendMessage(player.getLanguageBundle()[serverShuttingDown])
+            }
+        }
+        shutdownNotifyCount++
+        return players.isEmpty()
+    }
 
+    val responseShuttingDown = getGameLanguageKey("RESPONSE_SHUTTING_DOWN", "伺服器即將關閉，請等待所有玩家退出再重開沙盒模式")
     val forceJoinOnly = getGameLanguageKey("FORCE_JOIN_ONLY", "沙盒世界必須使用強制加入")
     override fun couldAddPlayer(networkPlayer: NetworkPlayer, forceJoin: Boolean): ManagedGame.PlayerJoinResult {
         return if (forceJoin)
-            ManagedGame.PlayerJoinResult(ManagedGame.PlayerJoinResultType.ACCEPTED, 1.0)
+            if (core.shuttingDown)
+                ManagedGame.PlayerJoinResult(ManagedGame.PlayerJoinResultType.DENIED, 0.0, networkPlayer.getLanguageBundle()[responseShuttingDown])
+            else
+                ManagedGame.PlayerJoinResult(ManagedGame.PlayerJoinResultType.ACCEPTED, 1.0)
         else
             ManagedGame.PlayerJoinResult(ManagedGame.PlayerJoinResultType.DENIED, 0.0, networkPlayer.getLanguageBundle()[forceJoinOnly])
     }
