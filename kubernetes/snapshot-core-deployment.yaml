@@ -124,9 +124,11 @@ spec:
   ports:
     - port: 25565
       targetPort: 25565
+      protocol: TCP
   selector:
     app: minecraft-proxy
   type: LoadBalancer
+  loadBalancerIP: 192.168.1.105
 ---
 apiVersion: apps/v1
 kind: Deployment
