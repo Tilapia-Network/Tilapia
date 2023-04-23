@@ -112,7 +112,7 @@ class TilapiaCoreImpl : TilapiaCore {
     fun onEnable() {
         Bukkit.getScheduler().runTaskLater(getPlugin(), {
             File("SERVER_STARTED").mkdirs()
-        }, 1)
+        }, 20)
         adventure = BukkitAudiences.create(getPlugin())
         val schemas = ArrayList<String>()
         for (plugin in Bukkit.getPluginManager().plugins) {

@@ -46,6 +46,6 @@ spec:
               command:
                 - ls
                 - /opt/minecraft/SERVER_STARTED
-            timeoutSeconds: 60
+            timeoutSeconds: 120
 
       terminationGracePeriodSeconds: 600
