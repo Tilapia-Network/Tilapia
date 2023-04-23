@@ -14,6 +14,8 @@ class NetworkPlayerImpl(val session: ServerCommunicationSession, val data: Playe
     data.locale,
     data.uniqueId
 ) {
+
+
     override val isLocal: Boolean
         get() = false
     override val language: Locale
@@ -21,7 +23,7 @@ class NetworkPlayerImpl(val session: ServerCommunicationSession, val data: Playe
 
     override fun where(): Game? {
         return runBlocking {
-            session.communication.where(uuid).toGame(session.communication)
+            session.communication.where(uuid).toGame(session)
         }
     }
 

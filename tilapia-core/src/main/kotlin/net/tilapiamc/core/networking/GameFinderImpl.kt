@@ -15,13 +15,13 @@ class GameFinderImpl(val core: TilapiaCoreImpl): GameFinder {
 
     override fun findLobbies(lobbyType: String): List<Lobby> {
         return runBlocking {
-            core.communication.getGames(lobbyType).map { NetworkLobbyImpl(core.communication, it.lobby!!) }
+            core.communication.getGames(lobbyType).map { NetworkLobbyImpl(core.session, it.lobby!!) }
         }
     }
 
     override fun findMiniGames(miniGameType: String): List<MiniGame> {
         return runBlocking {
-            core.communication.getGames(miniGameType).map { NetworkMiniGameImpl(core.communication, it.miniGame!!) }
+            core.communication.getGames(miniGameType).map { NetworkMiniGameImpl(core.session, it.miniGame!!) }
         }
     }
 
@@ -34,7 +34,7 @@ class GameFinderImpl(val core: TilapiaCoreImpl): GameFinder {
             runBlocking {
                 core.communication.getGamesForPlayer(player.uuid, lobbyType = lobbyType, forceJoin = forceJoin).entries.forEach {
                     val result = it.value
-                    out[NetworkLobbyImpl(core.communication, it.key.lobby!!)] = ManagedGame.PlayerJoinResult(if (result.success) ManagedGame.PlayerJoinResultType.ACCEPTED else ManagedGame.PlayerJoinResultType.DENIED, result.chance, result.message)
+                    out[NetworkLobbyImpl(core.session, it.key.lobby!!)] = ManagedGame.PlayerJoinResult(if (result.success) ManagedGame.PlayerJoinResultType.ACCEPTED else ManagedGame.PlayerJoinResultType.DENIED, result.chance, result.message)
                 }
             }
         }
@@ -49,7 +49,7 @@ class GameFinderImpl(val core: TilapiaCoreImpl): GameFinder {
             runBlocking {
                 core.communication.getGamesForPlayer(player.uuid, miniGameType = miniGameType, forceJoin = forceJoin).entries.forEach {
                     val result = it.value
-                    out[NetworkMiniGameImpl(core.communication, it.key.miniGame!!)] = ManagedGame.PlayerJoinResult(if (result.success) ManagedGame.PlayerJoinResultType.ACCEPTED else ManagedGame.PlayerJoinResultType.DENIED, result.chance, result.message)
+                    out[NetworkMiniGameImpl(core.session, it.key.miniGame!!)] = ManagedGame.PlayerJoinResult(if (result.success) ManagedGame.PlayerJoinResultType.ACCEPTED else ManagedGame.PlayerJoinResultType.DENIED, result.chance, result.message)
                 }
             }
         }
@@ -60,14 +60,14 @@ class GameFinderImpl(val core: TilapiaCoreImpl): GameFinder {
     override fun getGameFromID(gameId: UUID): Game? {
         return core.localGameManager.getLocalGameById(gameId) as Game?
             ?: return runBlocking {
-                core.communication.getGames(gameIdPrefix = gameId.toString()).firstOrNull()?.toGame(core.communication)
+                core.communication.getGames(gameIdPrefix = gameId.toString()).firstOrNull()?.toGame(core.session)
             }
     }
 
     override fun getGameFromShortID(shortGameId: String): Game? {
         return core.localGameManager.getAllLocalGames().firstOrNull { it.shortGameId.lowercase() == shortGameId.lowercase() } as Game?
             ?: return runBlocking {
-                core.communication.getGames(gameIdPrefix = shortGameId).firstOrNull()?.toGame(core.communication)
+                core.communication.getGames(gameIdPrefix = shortGameId).firstOrNull()?.toGame(core.session)
             }
     }
 

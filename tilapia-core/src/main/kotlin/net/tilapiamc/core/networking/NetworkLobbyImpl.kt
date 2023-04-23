@@ -3,12 +3,15 @@ package net.tilapiamc.core.networking
 import com.google.gson.JsonElement
 import net.tilapiamc.api.game.lobby.Lobby
 import net.tilapiamc.communication.LobbyInfo
-import net.tilapiamc.communication.api.ServerCommunication
+import net.tilapiamc.communication.api.ServerCommunicationSession
 
-class NetworkLobbyImpl(communication: ServerCommunication,
+class NetworkLobbyImpl(session: ServerCommunicationSession,
                        data: LobbyInfo
-    ): Lobby(NetworkServerImpl.getServer(communication, data.serverId)!!, data.gameId, false, data.lobbyType) {
+    ): Lobby(NetworkServerImpl.getServer(session.communication, data.serverId)!!, data.gameId, false, data.lobbyType) {
 
+    init {
+        data.players.forEach { players.add(NetworkPlayerImpl(session, it)) }
+    }
     val properties = data.properties
 
     override fun getProperty(name: String): JsonElement? {

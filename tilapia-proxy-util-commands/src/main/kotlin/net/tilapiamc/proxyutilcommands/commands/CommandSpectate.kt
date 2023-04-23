@@ -24,12 +24,13 @@ class CommandSpectate: ProxyCommand("spectate", "強制玩家觀戰一局遊戲"
             val localPlayer = player()?.getLocalPlayer()?:(sender as Player).getLocalPlayer()
             val targetGame = game()!!
             val original = localPlayer.where()
-            if (original?.gameId == targetGame.gameId) {
-                sender.sendMessage(getLanguageBundle()[alreadyIn])
-                return@onCommand true
-            }
             if (targetGame !is MiniGame) {
                 sender.sendMessage(getLanguageBundle()[spectateLobbyNotSupported])
+                return@onCommand true
+            }
+
+            if (original?.gameId == targetGame.gameId) {
+                sender.sendMessage(getLanguageBundle()[alreadyIn])
                 return@onCommand true
             }
             localPlayer.send(targetGame, false, true)

@@ -19,7 +19,7 @@ class LocalPlayerImpl(val internal: TilapiaProxyCore, proxyPlayer: Player): Loca
     override val isLocal: Boolean = true
     override fun where(): Game? {
         return runBlocking {
-            internal.session.communication.where(uuid).toGame(internal.communication)
+            internal.session.communication.where(uuid).toGame(internal.session)
         }
     }
 

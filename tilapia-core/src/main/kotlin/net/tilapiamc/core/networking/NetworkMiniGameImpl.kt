@@ -3,13 +3,16 @@ package net.tilapiamc.core.networking
 import com.google.gson.JsonElement
 import net.tilapiamc.api.game.minigame.MiniGame
 import net.tilapiamc.communication.MiniGameInfo
-import net.tilapiamc.communication.api.ServerCommunication
+import net.tilapiamc.communication.api.ServerCommunicationSession
 
 
-class NetworkMiniGameImpl(communication: ServerCommunication,
+class NetworkMiniGameImpl(session: ServerCommunicationSession,
                        data: MiniGameInfo,
-): MiniGame(NetworkServerImpl.getServer(communication, data.serverId)!!, data.gameId, false, data.lobbyType, data.miniGameType) {
-
+): MiniGame(NetworkServerImpl.getServer(session.communication, data.serverId)!!, data.gameId, false, data.lobbyType, data.miniGameType) {
+    init {
+        data.players.forEach { players.add(NetworkPlayerImpl(session, it)) }
+        data.spectators.forEach { players.add(NetworkPlayerImpl(session, it)) }
+    }
     val properties = data.properties
 
     override fun getProperty(name: String): JsonElement? {

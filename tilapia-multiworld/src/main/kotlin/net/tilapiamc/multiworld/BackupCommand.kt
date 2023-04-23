@@ -118,7 +118,7 @@ class BackupCommand(val saveManager: WorldSaveManager): BukkitCommand("backup", 
             val header = getCommandLanguageKey("HEADER", "\n${ChatColor.GRAY}- 除存清單")
             val footer = getCommandLanguageKey("FOOTER", "")
             val clickToTeleport = getCommandLanguageKey("CLICK_TO_TELEPORT", "${ChatColor.YELLOW}[點我載入]")
-            val clickToDelete = getCommandLanguageKey("CLICK_TO_TELEPORT", "${ChatColor.RED}  [點我刪除]")
+            val clickToDelete = getCommandLanguageKey("CLICK_TO_TELEPORT", "  ${ChatColor.RED}[點我刪除]")
             val loaded = getCommandLanguageKey("LOADED", "已經匯入")
             val autoSave = getCommandLanguageKey("AUTO_SAVE", "[自動除存]")
             onCommand {

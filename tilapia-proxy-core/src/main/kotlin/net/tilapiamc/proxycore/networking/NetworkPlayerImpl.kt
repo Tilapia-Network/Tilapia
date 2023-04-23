@@ -22,7 +22,7 @@ class NetworkPlayerImpl(val session: ProxyCommunicationSession, val data: Player
 
     override fun where(): Game? {
         return runBlocking {
-            session.communication.where(uuid).toGame(session.communication)
+            session.communication.where(uuid).toGame(session)
         }
     }
 

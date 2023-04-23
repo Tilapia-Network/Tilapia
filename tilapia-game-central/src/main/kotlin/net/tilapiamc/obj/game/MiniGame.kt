@@ -1,19 +1,18 @@
 package net.tilapiamc.obj.game
 
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import net.tilapiamc.communication.GameType
 import net.tilapiamc.communication.MiniGameInfo
 import net.tilapiamc.obj.Player
 import net.tilapiamc.session.ServerSession
 import java.util.*
-import kotlin.collections.HashMap
 
 class MiniGame(server: ServerSession,
                gameId: UUID,
                val lobbyType: String,
                val miniGameType: String,
                players: MutableList<Player> = ArrayList<Player>(),
+               val spectators: MutableList<Player> = ArrayList<Player>(),
                properties: JsonObject = JsonObject()
 ) : Game(server, gameId, players, properties) {
 
@@ -24,6 +23,7 @@ class MiniGame(server: ServerSession,
             lobbyType,
             players.map { it.toPlayerInfo() },
             miniGameType,
+            spectators.map { it.toPlayerInfo() },
             properties,
         )
     }

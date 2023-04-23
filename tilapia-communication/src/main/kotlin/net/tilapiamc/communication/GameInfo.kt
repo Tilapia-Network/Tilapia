@@ -1,6 +1,5 @@
 package net.tilapiamc.communication
 
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import java.util.*
 
@@ -21,6 +20,7 @@ class MiniGameInfo(serverId: UUID,
                    lobbyType: String,
                    players: List<PlayerInfo>,
                    val miniGameType: String,
+                   val spectators: List<PlayerInfo>,
                    properties: JsonObject = JsonObject()
 ) : GameInfo(serverId, gameId, lobbyType, players, properties) {
 }

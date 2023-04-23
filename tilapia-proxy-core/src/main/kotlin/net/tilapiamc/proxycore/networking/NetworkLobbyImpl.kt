@@ -1,13 +1,15 @@
 package net.tilapiamc.proxycore.networking
 
 import net.tilapiamc.communication.LobbyInfo
-import net.tilapiamc.communication.api.ProxyCommunication
+import net.tilapiamc.communication.api.ProxyCommunicationSession
 import net.tilapiamc.proxyapi.game.Lobby
 
-class NetworkLobbyImpl(communication: ProxyCommunication,
+class NetworkLobbyImpl(session: ProxyCommunicationSession,
                        data: LobbyInfo
-    ): Lobby(NetworkServerImpl.getServer(communication, data.serverId)!!, data.gameId, false, data.lobbyType, data.properties) {
+    ): Lobby(NetworkServerImpl.getServer(session.communication, data.serverId)!!, data.gameId, false, data.lobbyType, data.properties) {
 
-
+    init {
+        data.players.forEach { players.add(NetworkPlayerImpl(session, it)) }
+    }
 
 }

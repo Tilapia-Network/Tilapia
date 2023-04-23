@@ -15,13 +15,13 @@ class GameFinderImpl(val core: TilapiaProxyCore): GameFinder {
 
     override fun findLobbies(lobbyType: String?): List<Lobby> {
         return runBlocking {
-            core.communication.getGames(lobbyType).map { NetworkLobbyImpl(core.communication, it.lobby!!) }
+            core.communication.getGames(lobbyType).map { NetworkLobbyImpl(core.session, it.lobby!!) }
         }
     }
 
     override fun findMiniGames(miniGameType: String?): List<MiniGame> {
         return runBlocking {
-            core.communication.getGames(miniGameType).map { NetworkMiniGameImpl(core.communication, it.miniGame!!) }
+            core.communication.getGames(miniGameType).map { NetworkMiniGameImpl(core.session, it.miniGame!!) }
         }
     }
 
@@ -38,7 +38,7 @@ class GameFinderImpl(val core: TilapiaProxyCore): GameFinder {
                     forceJoin = forceJoin
                 ).entries.forEach {
                     val result = it.value
-                    out[NetworkLobbyImpl(core.communication, it.key.lobby!!)] =
+                    out[NetworkLobbyImpl(core.session, it.key.lobby!!)] =
                         PlayerJoinResult(result.success, result.chance, result.message)
                 }
             }
@@ -58,7 +58,7 @@ class GameFinderImpl(val core: TilapiaProxyCore): GameFinder {
                     forceJoin = forceJoin
                 ).entries.forEach {
                     val result = it.value
-                    out[NetworkMiniGameImpl(core.communication, it.key.miniGame!!)] =
+                    out[NetworkMiniGameImpl(core.session, it.key.miniGame!!)] =
                         PlayerJoinResult(result.success, result.chance, result.message)
                 }
             }
@@ -68,13 +68,13 @@ class GameFinderImpl(val core: TilapiaProxyCore): GameFinder {
 
     override fun getGameFromID(gameId: UUID): Game? {
         return runBlocking {
-            core.communication.getGames(gameIdPrefix = gameId.toString()).firstOrNull()?.toGame(core.communication)
+            core.communication.getGames(gameIdPrefix = gameId.toString()).firstOrNull()?.toGame(core.session)
         }
     }
 
     override fun getGameFromShortID(shortGameId: String): Game? {
         return runBlocking {
-            core.communication.getGames(gameIdPrefix = shortGameId).firstOrNull()?.toGame(core.communication)
+            core.communication.getGames(gameIdPrefix = shortGameId).firstOrNull()?.toGame(core.session)
         }
     }
 }
