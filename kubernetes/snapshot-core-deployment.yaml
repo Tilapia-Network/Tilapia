@@ -156,6 +156,13 @@ spec:
             - containerPort: 25565
           tty: true
           stdin: true
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /usr/bin/bash
+                  - -c
+                  - kill $(pidof java)
           env:
             - name: API_KEY
               valueFrom:
