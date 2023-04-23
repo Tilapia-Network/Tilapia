@@ -8,6 +8,7 @@ import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
 import org.apache.logging.log4j.Logger
 import org.bukkit.Location
+import org.bukkit.OfflinePlayer
 import org.bukkit.World
 import java.util.*
 
@@ -51,7 +52,8 @@ interface ManagedGame: IGame {
     }
     enum class PlayerJoinResultType(val success: Boolean) { ACCEPTED(true), DENIED(false) }
 
-    open fun getSpawnLocation(player: LocalNetworkPlayer): Location = gameWorld.spawnLocation
+    open fun getPreSpawnLocation(player: OfflinePlayer, spectate: Boolean): Location = gameWorld.spawnLocation
+    open fun getSpawnLocation(player: LocalNetworkPlayer, spectate: Boolean): Location = gameWorld.spawnLocation
 
 }
 

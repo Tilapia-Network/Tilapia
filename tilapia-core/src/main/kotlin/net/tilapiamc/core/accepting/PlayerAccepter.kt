@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.event.player.PlayerJoinEvent
+import org.spigotmc.event.player.PlayerSpawnLocationEvent
 import java.util.*
 
 class PlayerAccepter {
@@ -40,6 +41,22 @@ class PlayerAccepter {
         acceptedPlayers[packet.player] = AcceptedInfo(game, if (game is MiniGame) packet.spectate else false)
     }
 
+    @Subscribe("acceptedPlayerSpawn")
+    fun handlePlayerSpawnLocation(event: PlayerSpawnLocationEvent) {
+        val acceptedInfo = acceptedPlayers[event.player.uniqueId]
+        if (acceptedInfo == null) {
+            // We are not expecting to receive player data as the player may be joining with direct IP
+            event.player.kickPlayer("${ChatColor.RED}The server has sent you to a wrong game. Please rejoin\n" +
+                    "${ChatColor.RED}伺服器傳送你到了一個錯誤的遊戲！請重新加入")
+            return
+        }
+
+        val spectate = acceptedInfo.spectate
+        val game = acceptedInfo.game
+        if (game.managed) {
+            event.spawnLocation = game.getPreSpawnLocation(event.player, spectate)
+        }
+    }
     @Subscribe("acceptedPlayerJoin", mustRunAfter = ["playerJoinInit"])
     fun handlePlayerJoin(event: PlayerJoinEvent) {
         val acceptedInfo = acceptedPlayers[event.player.uniqueId]
@@ -55,7 +72,7 @@ class PlayerAccepter {
         val spectate = acceptedInfo.spectate
         val game = acceptedInfo.game
         if (game.managed && game is ManagedGame && player.isLocal && player is LocalNetworkPlayer) {
-            event.player.teleport(game.getSpawnLocation(player))
+            event.player.teleport(game.getSpawnLocation(player, spectate))
             if (spectate) {
                 (game as ManagedMiniGame).addSpectator(player)
             } else {
