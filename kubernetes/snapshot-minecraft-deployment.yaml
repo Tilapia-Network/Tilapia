@@ -42,6 +42,10 @@ spec:
                   - -c
                   - kill $(pidof java)
           livenessProbe:
+            tcpSocket:
+              port: 25565
+            timeoutSeconds: 120
+          readinessProbe:
             exec:
               command:
                 - ls
