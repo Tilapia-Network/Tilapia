@@ -289,7 +289,7 @@ class TilapiaCoreImpl : TilapiaCore {
         }
 
         fun MiniGame.toMiniGameInfo(): MiniGameInfo {
-            return MiniGameInfo(server.serverId, gameId, lobbyType, players.map { it.toPlayerInfo() }, miniGameType, JsonObject().also { getProperties().entries.forEach { entry -> it.add(entry.key, entry.value) } })
+            return MiniGameInfo(server.serverId, gameId, lobbyType, players.map { it.toPlayerInfo() }, miniGameType, spectators.map { it.toPlayerInfo() }, JsonObject().also { getProperties().entries.forEach { entry -> it.add(entry.key, entry.value) } })
         }
 
         fun NetworkPlayer.toPlayerInfo(): PlayerInfo {
