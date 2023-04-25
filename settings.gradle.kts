@@ -1,3 +1,20 @@
+pluginManagement {
+    repositories {
+        google()
+        gradlePluginPortal()
+        mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        google()
+        maven("https://us-central1-maven.pkg.dev/varabyte-repos/public")
+    }
+
+    plugins {
+        kotlin("jvm").version(extra["kotlin.version"] as String)
+        kotlin("multiplatform").version(extra["kotlin.version"] as String)
+        id("org.jetbrains.compose").version(extra["compose.version"] as String)
+    }
+}
+
 
 rootProject.name = "tilapia"
 include("tilapia-common")
@@ -25,3 +42,5 @@ include("proxy-docker")
 include("game-central-docker")
 include("tilapia-auto-op")
 include("tilapia-client-integration")
+include("panel")
+include("fastasyncworldedit")

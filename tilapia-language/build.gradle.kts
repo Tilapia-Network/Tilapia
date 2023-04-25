@@ -1,7 +1,7 @@
 import fr.il_totore.manadrop.MinecraftRepositoryHelper
 
 plugins {
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm")
     id("fr.il_totore.manadrop") version "0.4.3"
 }
 

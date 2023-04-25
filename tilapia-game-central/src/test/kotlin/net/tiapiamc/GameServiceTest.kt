@@ -16,7 +16,7 @@ class GameServiceTest: StringSpec() {
     init {
         "Create Game and Check Game Existence" {
             withServerContext(ServerManager()) {
-                val gameInfo = MiniGameInfo(serverId, UUID.randomUUID(), "main", arrayListOf(), "fleetwars")
+                val gameInfo = MiniGameInfo(serverId, UUID.randomUUID(), "main", emptyList(), "fleetwars", emptyList())
                 expectThat(communication.getTypes(GameType.MINIGAME))
                     .isEmpty()
                 expectThat(communication.getGames())
@@ -34,7 +34,7 @@ class GameServiceTest: StringSpec() {
         }
         "Player Join Result" {
             withServerContext(ServerManager(), { player, uuid, forceJoin -> JoinResult(true, 8.7, "${player.uniqueId} - $uuid") }) {
-                val gameInfo = MiniGameInfo(serverId, UUID.randomUUID(), "main", arrayListOf(), "fleetwars")
+                val gameInfo = MiniGameInfo(serverId, UUID.randomUUID(), "main", emptyList(), "fleetwars", emptyList())
                 expectThat(communication.getTypes(GameType.MINIGAME))
                     .isEmpty()
                 expectThat(communication.getGames())

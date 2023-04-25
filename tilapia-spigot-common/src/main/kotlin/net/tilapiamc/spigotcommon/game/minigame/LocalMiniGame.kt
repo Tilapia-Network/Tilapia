@@ -94,8 +94,10 @@ class PluginSpectator(
     @Subscribe("NoDestruction-onEntityDamage")
     fun onEntityDamage(event: EntityDamageEvent) {
         if (event is EntityDamageByEntityEvent) {
-            if (event.damager is Player && ignorePlayer(event.damager as Player)) {
-                return
+            if (event.damager is Player) {
+                if (!ignorePlayer(event.damager as Player)) {
+                    event.isCancelled = true
+                }
             }
         }
         if (event.entity is Player) {

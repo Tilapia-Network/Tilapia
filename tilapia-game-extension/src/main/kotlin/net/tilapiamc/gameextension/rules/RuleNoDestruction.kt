@@ -86,6 +86,8 @@ class RuleNoDestruction(
         if (event is EntityDamageByEntityEvent) {
             if (event.damager is Player && ignorePlayer(event.damager as Player)) {
                 return
+            } else {
+                event.isCancelled = true
             }
         }
         if (event.entity is Player) {

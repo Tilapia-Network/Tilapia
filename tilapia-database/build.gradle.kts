@@ -1,7 +1,7 @@
 val exposed_version: String by project
 
 plugins {
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm")
 }
 
 group = "net.tilapiamc"

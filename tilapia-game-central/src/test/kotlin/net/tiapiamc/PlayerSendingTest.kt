@@ -17,7 +17,7 @@ class PlayerSendingTest: StringSpec() {
         "Send Player and Check Location" {
             withServerContext(ServerManager(), { _, _, _ -> JoinResult(true, 1.0, "") }) { proxySession ->
                 val playerInfo = PlayerInfo("fan87", UUID.randomUUID(), Locale.TRADITIONAL_CHINESE, null)
-                val gameInfo = MiniGameInfo(serverId, UUID.randomUUID(), "main", listOf(), "fleetwars")
+                val gameInfo = MiniGameInfo(serverId, UUID.randomUUID(), "main", listOf(), "fleetwars", emptyList())
                 proxySession.login(playerInfo)
                 communication.registerGame(gameInfo)
                 communication.send(playerInfo.uniqueId, gameInfo.gameId)

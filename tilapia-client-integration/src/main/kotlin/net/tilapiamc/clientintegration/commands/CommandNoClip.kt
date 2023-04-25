@@ -50,8 +50,6 @@ class CommandNoClip: BukkitCommand("noclip", "啟用或停用穿牆模式", true
     val disabledMsg = getCommandLanguageKey("NOCLIP_DISABLED", "${ChatColor.RED}成功停用穿牆模式")
 
     init {
-        addAlias("gm")
-
         val mode by stringEnumArg("Mode", { arrayListOf("enable", "disable") }, isRequired = false)
 
         onCommand {
