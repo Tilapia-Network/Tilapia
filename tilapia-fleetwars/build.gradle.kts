@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":tilapia-language"))
     implementation(project(":tilapia-spigot-common"))
     implementation(project(":tilapia-game-extension"))
+    compileOnly(project(":tilapia-sandbox"))
     compileOnly("org.apache.logging.log4j:log4j-core:2.20.0")
 }
 
