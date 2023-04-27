@@ -40,6 +40,9 @@ open class Config(val configFile: File, val gson: Gson = GsonBuilder().setPretty
         return gson.fromJson(FileReader(configFile), JsonObject::class.java)
     }
 
+    inline fun <reified T> configValue(defaultValue: T): ConfigDelegationProvider<T> {
+        return ConfigDelegationProvider(T::class.java, defaultValue)
+    }
 }
 
 class ConfigProperty<T>(val name: String, val type: Class<T>, val defaultValue: T)
@@ -48,6 +51,7 @@ class ConfigProperty<T>(val name: String, val type: Class<T>, val defaultValue: 
 class ConfigDelegationProvider<T>(val valueType: Class<T>, val defaultValue: T) {
     operator fun provideDelegate(thisRef: Config, property: KProperty<*>): ConfigDelegationProvider<T> {
         thisRef.configProperties.add(ConfigProperty(property.name, valueType, defaultValue))
+        println("Registered ${property.name}")
         return this
     }
 
@@ -57,8 +61,4 @@ class ConfigDelegationProvider<T>(val valueType: Class<T>, val defaultValue: T) 
         }
         return thisRef.gson.fromJson(thisRef.dataObject.get(property.name), valueType)?:defaultValue
     }
-}
-
-inline fun <reified T> configValue(defaultValue: T): ConfigDelegationProvider<T> {
-    return ConfigDelegationProvider(T::class.java, defaultValue)
 }

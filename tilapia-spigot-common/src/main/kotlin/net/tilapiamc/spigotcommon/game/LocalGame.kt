@@ -1,6 +1,7 @@
 package net.tilapiamc.spigotcommon.game
 
 import com.comphenix.protocol.injector.server.TemporaryPlayer
+import net.citizensnpcs.api.event.NPCEvent
 import net.tilapiamc.api.events.AbstractEvent
 import net.tilapiamc.api.events.game.GameEvent
 import net.tilapiamc.api.game.ManagedGame
@@ -13,6 +14,7 @@ import org.bukkit.event.inventory.InventoryEvent
 import org.bukkit.event.player.PlayerEvent
 import org.bukkit.event.vehicle.VehicleEvent
 import org.bukkit.event.weather.WeatherEvent
+import org.bukkit.event.world.WorldEvent
 
 interface LocalGame: ManagedGame {
     val rules: ArrayList<AbstractRule>
@@ -100,6 +102,12 @@ interface LocalGame: ManagedGame {
         }
         if (event is GameEvent) {
             return event.game == this
+        }
+        if (event is WorldEvent) {
+            return event.world == gameWorld
+        }
+        if (event is NPCEvent) {
+            return event.npc.entity.world == gameWorld
         }
         return true
     }

@@ -26,7 +26,8 @@ private val associatedListeners = HashMap<Any, List<EventListener>>()
 
 fun AbstractEventsManager.registerAnnotationBasedListener(listener: Any, includeEventSubClasses: Boolean = true, filter: (event: AbstractEvent) -> Boolean = { true }) {
     if (listener in associatedListeners) {
-        throw IllegalArgumentException("Listener has already been registered!")
+        return
+//        ("Listener has already been registered!")
     }
     val listenerMethods = listener.getListenerMethods()
     val listeners = ArrayList<EventListener>()

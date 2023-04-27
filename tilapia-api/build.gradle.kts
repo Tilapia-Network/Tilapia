@@ -30,6 +30,9 @@ dependencies {
     implementation("org.reflections:reflections:0.10.2")
     implementation("com.mojang:brigadier:1.0.18")
     implementation("io.netty:netty-all:4.0.23.Final")
+    compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT") {
+        exclude("*", "*")
+    }
 
     api("org.ow2.asm:asm:9.4")
     api("org.ow2.asm:asm-commons:9.4")

@@ -14,12 +14,14 @@ fun languageKey(name: String, defaultValue: String): LanguageKey {
     return LanguageKey(name, defaultValue)
 }
 
-class LanguageKeyDelegation(val defaultValue: String? = null) {
+class LanguageKeyDelegation(val prefix: String, val defaultValue: String?) {
+
+    constructor(defaultValue: String?): this("", defaultValue)
     operator fun provideDelegate(owner: Any?, property: KProperty<*>): LanguageKeyDelegation {
-        LanguageManager.instance.registerLanguageKey(LanguageKey(property.name, defaultValue?:property.name))
+        LanguageManager.instance.registerLanguageKey(LanguageKey(prefix + property.name, defaultValue?:(prefix + property.name)))
         return this
     }
     operator fun getValue(owner: Any?, property: KProperty<*>): LanguageKey {
-        return LanguageKey(property.name, defaultValue?:property.name)
+        return LanguageKey(prefix + property.name, defaultValue?:(prefix + property.name))
     }
 }

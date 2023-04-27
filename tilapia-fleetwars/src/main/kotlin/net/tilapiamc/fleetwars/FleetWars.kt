@@ -7,11 +7,9 @@ import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.NetworkPlayer
 import net.tilapiamc.fleetwars.stages.StageInGame
 import net.tilapiamc.gameextension.minigame.StageWaiting
-import net.tilapiamc.gameextension.rules.RuleNoDestruction
 import net.tilapiamc.spigotcommon.game.minigame.LocalMiniGame
 import net.tilapiamc.spigotcommon.game.minigame.stage.MiniGameStage
 import net.tilapiamc.spigotcommon.utils.TemporaryWorldProvider
-import org.bukkit.GameMode
 import org.bukkit.World
 
 class FleetWars(core: TilapiaCore, gameWorld: World): LocalMiniGame(core, TemporaryWorldProvider.createTemporaryWorldFromWorld(gameWorld), "fleetwars", "fleetwars") {
@@ -23,9 +21,7 @@ class FleetWars(core: TilapiaCore, gameWorld: World): LocalMiniGame(core, Tempor
 
 
     override fun onStart() {
-        addRule(RuleNoDestruction.spectatorRule(this) {
-            isInGame() || gameMode == GameMode.CREATIVE
-        })
+        FleetWarsRules.makeFleetWars(this)
     }
 
     override fun onEnd() {

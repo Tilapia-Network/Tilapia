@@ -5,7 +5,10 @@ import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.injector.packet.PacketRegistry
+import com.google.common.reflect.ClassPath
 import me.fan87.plugindevkit.PluginInstanceGrabber
+import net.citizensnpcs.api.event.NPCCollisionEvent
+import net.citizensnpcs.api.event.NPCEvent
 import net.tilapiamc.api.events.packet.PacketReceiveEvent
 import net.tilapiamc.api.events.packet.PacketSendEvent
 import net.tilapiamc.common.events.AbstractEvent
@@ -16,6 +19,9 @@ import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.reflections.Reflections
+import org.reflections.util.ConfigurationBuilder
+import java.io.DataInputStream
+import java.io.InputStream
 
 typealias AbstractEvent = Any
 
@@ -28,10 +34,21 @@ object EventsManager: AbstractEventsManager(), Listener {
 
         listenInPackage("org.bukkit.event")
         listenInPackage("org.spigotmc.event")
+        // For some reason, reflections isn't detecting citizens events
+        ClassPath.from(NPCEvent::class.java.classLoader).getTopLevelClasses("net.citizensnpcs.api.event").forEach {
+
+            val clazz = Class.forName(it.name)
+            if (Event::class.java.isAssignableFrom(clazz)) {
+                if (clazz.declaredMethods.any { it.name == "getHandlerList" }) { // Valid Spigot Event
+                    listenForEvent(clazz as Class<out Event>)
+                }
+            }
+        }
 
     }
 
     fun listenInPackage(packageName: String) {
+
         val reflections = Reflections(packageName)
 
         for (clazz in reflections.getSubTypesOf(Event::class.java)) {

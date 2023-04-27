@@ -9,7 +9,7 @@ servers together, and run one game on each individual Minecraft server. The pro 
 really easy to setup, and it's really easy to understand, and you can
 use plugins on the market for minigames and lobbies, while the cons being non-horizontal scalable,
 and difficult to deploy changes with Rolling Update technique, which means players must be
-disconnected from a server, or a period that people can't join in order to do a server update.
+disconnected from a server, or a period of time that people can't join in order to do a server update.
 It's good for small Minecraft networks, or a private server, but not for large-scaled Minecraft
 network.
 
@@ -33,6 +33,10 @@ the list of Database it needs to access (For security).
 
 ![img.png](assets/img.png)
 > Main.kt of Fleetwars plugin
+
+The protocol will rarely be updated, but for latest protocol
+specification, please check out the code of module 
+`tilapia-communication`
 
 # WIP
 

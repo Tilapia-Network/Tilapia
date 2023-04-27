@@ -7,40 +7,35 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
-group = rootProject.group
+
+group = "net.tilapiamc"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    MinecraftRepositoryHelper.spigotSnapshot()
-    MinecraftRepositoryHelper.sonatype()
     mavenCentral()
 }
 
 dependencies {
-    compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT") {
-        exclude("*", "*")
-    }
     compileOnly(MinecraftDependencyHelper.spigotApi("1.8.8"))
-    compileOnly(project(":tilapia-api"))
-    implementation(project(":tilapia-common"))
+    compileOnly(MinecraftDependencyHelper.spigot("1.8.8"))
     implementation(project(":tilapia-command"))
+    implementation(project(":fan87-plugin-dev-kit"))
+    implementation(project(":tilapia-api"))
     implementation(project(":tilapia-language"))
-    implementation(project(":tilapia-spigot-common"))
-    implementation(project(":tilapia-game-extension"))
-    compileOnly(project(":tilapia-sandbox"))
     compileOnly("org.apache.logging.log4j:log4j-core:2.20.0")
 }
 
 spigot {
     desc {
-        named(project.name)
+        named("tilapia-core")
         version(project.version.toString())
-        main("net.tilapiamc.fleetwars.main.Main")
-        depend("tilapia-core")
+        main("net.tilapiamc.dummycore.main.Main")
+        depend("Citizens")
     }
 }
 
 tasks.classes.get().dependsOn("spigotPlugin")
+
 
 kotlin {
     jvmToolchain {
