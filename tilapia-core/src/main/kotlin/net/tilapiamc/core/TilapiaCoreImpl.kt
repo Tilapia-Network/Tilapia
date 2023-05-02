@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import me.fan87.plugindevkit.events.EntityTickEvent
 import me.fan87.plugindevkit.events.ServerTickEvent
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import net.minecraft.server.v1_8_R3.MinecraftServer
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.TilapiaPlugin
 import net.tilapiamc.api.commands.LanguageCommand
@@ -41,14 +42,21 @@ import net.tilapiamc.core.networking.GameFinderImpl
 import net.tilapiamc.core.networking.NetworkPlayerImpl
 import net.tilapiamc.core.networking.NetworkServerImpl
 import net.tilapiamc.core.server.LocalServerImpl
+import net.tilapiamc.core.tables.TableLogs
+import net.tilapiamc.database.blockingDbQuery
 import net.tilapiamc.language.LanguageCore
 import net.tilapiamc.language.LanguageGame
 import org.apache.logging.log4j.LogManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 import java.io.File
 import java.net.URI
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.*
 
 const val DISCONNECT_REASON = "Plugin disabled"
@@ -85,26 +93,37 @@ class TilapiaCoreImpl : TilapiaCore {
         val oldMap = HashMap(map)
         map.clear()
         Runtime.getRuntime().addShutdownHook(Thread {
+            Thread.sleep(100)
             logger.warn("Server has received SIGTERM, shutting down...")
             shuttingDown = true
-            EventsManager.fireEvent(ServerShutdownEvent())
+            Bukkit.getScheduler().runTask(getPlugin()) {
+                EventsManager.fireEvent(ServerShutdownEvent())
+            }
             while (localGameManager.getAllLocalGames().isNotEmpty()) {
-                for (managedGame in localGameManager.getAllLocalGames().filter { it.canShutdown()  }) {
-                    managedGame.end()
+                for (managedGame in localGameManager.getAllLocalGames().filter { it.canShutdown() }) {
+                    Bukkit.getScheduler().runTask(getPlugin()) {
+                        managedGame.end()
+                    }
                 }
                 Thread.sleep(1000)
             }
-            for (hook in oldMap.values) {
-                hook.start()
-            }
-            for (hook in oldMap.values) {
-                while (true) {
-                    try {
-                        hook.join()
-                        break
-                    } catch (ignored: InterruptedException) {
-                    }
+            MinecraftServer.getServer().safeShutdown()
+            MinecraftServer.getServer().stop()
+
+            // Upload lop
+            val logBytes = File("logs/latest.log").readBytes()
+            val database = getDatabase("logs")
+            blockingDbQuery(database) {
+                SchemaUtils.createMissingTablesAndColumns(TableLogs)
+                TableLogs.insert {
+                    it[this.content] = ExposedBlob(logBytes)
+                    it[this.logTime] = LocalDateTime.now()
                 }
+            }
+
+
+            runBlocking {
+                session.closeSession(CloseReason(CloseReason.Codes.NORMAL, DISCONNECT_REASON))
             }
         })
     }
@@ -122,6 +141,7 @@ class TilapiaCoreImpl : TilapiaCore {
                 schemas.addAll(plugin.schemaAccess)
             }
         }
+        schemas.add("logs")
         schemaAccess.clear()
         schemaAccess.addAll(schemas)
         // Initialize managers
@@ -304,9 +324,9 @@ class TilapiaCoreImpl : TilapiaCore {
                 allGame.end()
             }
         }
-        runBlocking {
-            session.closeSession(CloseReason(CloseReason.Codes.NORMAL, DISCONNECT_REASON))
-        }
+
+
+
     }
 
     companion object {

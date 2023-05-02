@@ -3,11 +3,13 @@ package net.tilapiamc.dummycore
 import me.fan87.plugindevkit.events.EntityTickEvent
 import me.fan87.plugindevkit.events.ServerTickEvent
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import net.minecraft.server.v1_8_R3.MinecraftServer
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.TilapiaPlugin
 import net.tilapiamc.api.commands.LanguageCommand
 import net.tilapiamc.api.commands.SpigotCommandsManager
 import net.tilapiamc.api.events.EventsManager
+import net.tilapiamc.api.events.server.ServerShutdownEvent
 import net.tilapiamc.api.game.GameType
 import net.tilapiamc.api.game.GamesManager
 import net.tilapiamc.api.game.ManagedGame
@@ -18,6 +20,7 @@ import net.tilapiamc.api.server.TilapiaServer
 import net.tilapiamc.common.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.common.events.annotation.unregisterAnnotationBasedListener
 import net.tilapiamc.common.language.LanguageManager
+import net.tilapiamc.database.blockingDbQuery
 import net.tilapiamc.dummycore.commands.CommandJoinLocal
 import net.tilapiamc.dummycore.commands.CommandLobbyLocal
 import net.tilapiamc.dummycore.commands.CommandSpectateLocal
@@ -27,15 +30,26 @@ import net.tilapiamc.dummycore.networking.GameFinderImpl
 import net.tilapiamc.dummycore.server.LocalServerImpl
 import net.tilapiamc.language.LanguageCore
 import net.tilapiamc.language.LanguageGame
+import org.apache.logging.log4j.LogManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.statements.api.ExposedBlob
+import java.io.File
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.ArrayList
 
 
 class TilapiaCoreImpl : TilapiaCore {
     val schemaAccess = ArrayList<String>()
+    val logger = LogManager.getLogger("TilapiaCore")
+
+    init {
+
+    }
 
     init {
         // Initialize managers
@@ -58,12 +72,19 @@ class TilapiaCoreImpl : TilapiaCore {
         adventure = BukkitAudiences.create(getPlugin())
 
         val schemas = ArrayList<String>()
-        for (plugin in Bukkit.getPluginManager().plugins) {
-            if (plugin is TilapiaPlugin) {
-                schemas.addAll(plugin.schemaAccess)
+        blockingDbQuery(Database.connect(DummyCoreConfig.databaseUrl, user = DummyCoreConfig.databaseUsername, password = DummyCoreConfig.databasePassword)) {
+            for (plugin in Bukkit.getPluginManager().plugins) {
+                if (plugin is TilapiaPlugin) {
+                    schemas.addAll(plugin.schemaAccess)
+                    for (schemaAccess1 in plugin.schemaAccess) {
+                        SchemaUtils.createDatabase(schemaAccess1)
+                    }
+                }
             }
+            SchemaUtils.createDatabase("logs")
         }
         schemaAccess.clear()
+        schemaAccess.add("logs")
         schemaAccess.addAll(schemas)
 
         LanguageCore
@@ -73,6 +94,33 @@ class TilapiaCoreImpl : TilapiaCore {
         SpigotCommandsManager.registerCommand(CommandJoinLocal())
         SpigotCommandsManager.registerCommand(CommandLobbyLocal())
         SpigotCommandsManager.registerCommand(CommandSpectateLocal())
+
+
+        Bukkit.getScheduler().runTaskLater(getPlugin(), {
+            val map = Class.forName("java.lang.ApplicationShutdownHooks").getDeclaredField("hooks").also {
+                it.isAccessible = true
+            }
+                .get(null) as IdentityHashMap<Thread, Thread>
+            map.clear()
+            Runtime.getRuntime().addShutdownHook(Thread {
+                var doneLock = Object()
+                logger.warn("Server has received SIGTERM, shutting down...")
+                shuttingDown = true
+                Bukkit.getScheduler().runTask(getPlugin()) {
+                    EventsManager.fireEvent(ServerShutdownEvent())
+                }
+                while (localGameManager.getAllLocalGames().isNotEmpty()) {
+                    for (managedGame in localGameManager.getAllLocalGames().filter { it.canShutdown() }) {
+                        Bukkit.getScheduler().runTask(getPlugin()) {
+                            managedGame.end()
+                        }
+                    }
+                    Thread.sleep(1000)
+                }
+                MinecraftServer.getServer().safeShutdown()
+                MinecraftServer.getServer().stop()
+            })
+        }, 1)
     }
 
     override fun provideGameId(gameType: GameType): UUID {
@@ -143,6 +191,23 @@ class TilapiaCoreImpl : TilapiaCore {
                 allGame.end()
             }
         }
+
+        try {
+            // Upload lop
+            println("Uploading logs")
+            val logBytes = File("logs/latest.log").readBytes()
+            val database = getDatabase("logs")
+            blockingDbQuery(database) {
+                SchemaUtils.createMissingTablesAndColumns(TableLogs)
+                TableLogs.insert {
+                    it[this.content] = ExposedBlob(logBytes)
+                    it[this.logTime] = LocalDateTime.now()
+                }
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+
     }
 
 }

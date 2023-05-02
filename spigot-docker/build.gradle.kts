@@ -9,6 +9,7 @@ val SPIGOT_PLUGINS = arrayOf(
     "tilapia-util-commands",
     "tilapia-auto-op", // TODO: Remvoe on production
     "tilapia-client-integration",
+    "fastasyncworldedit"
 )
 
 plugins {
