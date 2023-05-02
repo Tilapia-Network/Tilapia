@@ -967,6 +967,9 @@ public class MainUtil {
     }
 
     public static Object copyNd(Object arr) {
+        if (arr == null) {
+            return null;
+        }
         if (arr.getClass().isArray()) {
             int innerArrayLength = Array.getLength(arr);
             Class component = arr.getClass().getComponentType();

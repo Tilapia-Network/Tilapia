@@ -14,6 +14,8 @@ import com.boydti.fawe.util.TaskManager;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.StringTag;
 import com.sk89q.jnbt.Tag;
+import com.sk89q.worldedit.entity.BaseEntity;
+import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
 import java.io.File;
 import java.io.IOException;
@@ -79,6 +81,7 @@ public class BukkitQueue18R3 extends BukkitQueue_0<net.minecraft.server.v1_8_R3.
     protected static Field fieldGenLayer2;
     protected static MutableGenLayer genLayer;
     protected static ChunkSection emptySection;
+
 
     static {
         try {

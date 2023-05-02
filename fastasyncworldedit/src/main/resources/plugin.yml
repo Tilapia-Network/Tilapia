@@ -161,3 +161,4 @@ permissions:
       worldedit.extinguish: true
       worldedit.calc: true
       worldedit.fill: true
+      worldedit.clientintegration.debug: true

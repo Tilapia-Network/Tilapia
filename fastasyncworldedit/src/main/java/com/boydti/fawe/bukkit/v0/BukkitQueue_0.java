@@ -2,24 +2,19 @@ package com.boydti.fawe.bukkit.v0;
 
 import com.boydti.fawe.Fawe;
 import com.boydti.fawe.FaweCache;
+import com.boydti.fawe.bukkit.BukkitMain;
 import com.boydti.fawe.bukkit.BukkitPlayer;
 import com.boydti.fawe.bukkit.FaweBukkit;
 import com.boydti.fawe.bukkit.util.BukkitReflectionUtils;
 import com.boydti.fawe.example.CharFaweChunk;
 import com.boydti.fawe.example.NMSMappedFaweQueue;
-import com.boydti.fawe.jnbt.anvil.MCAChunk;
 import com.boydti.fawe.object.FaweChunk;
 import com.boydti.fawe.object.FawePlayer;
 import com.boydti.fawe.object.RunnableVal;
-import com.boydti.fawe.object.queue.LazyFaweChunk;
 import com.boydti.fawe.object.visitor.FaweChunkVisitor;
 import com.boydti.fawe.util.MathMan;
 import com.boydti.fawe.util.ReflectionUtils;
 import com.boydti.fawe.util.TaskManager;
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.injector.netty.WirePacket;
 import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.adapter.BukkitImplAdapter;
@@ -33,6 +28,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import net.tilapiamc.clientintegration.ClientIntegration;
+import net.tilapiamc.clientintegration.debugmenu.DebugMenuSender;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -56,6 +54,7 @@ public abstract class BukkitQueue_0<CHUNK, CHUNKSECTIONS, SECTION> extends NMSMa
     private static boolean setupAdapter = false;
     private static Method methodGetHandle;
 
+
     static {
         Class<?> classCraftChunk = BukkitReflectionUtils.getCbClass("CraftChunk");
         try {
@@ -69,8 +68,7 @@ public abstract class BukkitQueue_0<CHUNK, CHUNKSECTIONS, SECTION> extends NMSMa
         super(world);
         setupAdapter(null);
         if (!registered) {
-            registered = true;
-            Bukkit.getServer().getPluginManager().registerEvents(this, ((FaweBukkit) Fawe.imp()).getPlugin());
+            register();
         }
     }
 
@@ -78,9 +76,17 @@ public abstract class BukkitQueue_0<CHUNK, CHUNKSECTIONS, SECTION> extends NMSMa
         super(world);
         setupAdapter(null);
         if (!registered) {
-            registered = true;
-            Bukkit.getServer().getPluginManager().registerEvents(this, ((FaweBukkit) Fawe.imp()).getPlugin());
+            register();
         }
+    }
+
+    private void register() {
+        registered = true;
+        Bukkit.getServer().getPluginManager().registerEvents(this, ((FaweBukkit) Fawe.imp()).getPlugin());
+        Bukkit.getScheduler().runTaskTimer(BukkitMain.getPlugin(BukkitMain.class), () -> {
+            ClientIntegration.Companion.getDebugMenu().setDebugInfo("FAWE Keep Loads", keepLoaded.size());
+        }, 1, 1);
+
     }
 
     @Override

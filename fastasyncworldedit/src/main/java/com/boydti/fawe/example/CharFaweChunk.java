@@ -111,6 +111,7 @@ public abstract class CharFaweChunk<T, V extends FaweQueue> extends FaweChunk<T>
         return bitMask;
     }
 
+
     /**
      * Get the raw data for a section
      *
@@ -195,6 +196,7 @@ public abstract class CharFaweChunk<T, V extends FaweQueue> extends FaweChunk<T>
     public void setBlock(int x, int y, int z, int id) {
         final int i = FaweCache.CACHE_I[y][z][x];
         final int j = FaweCache.CACHE_J[y][z][x];
+
         char[] vs = this.ids[i];
         if (vs == null) {
             vs = this.ids[i] = new char[4096];
@@ -209,6 +211,7 @@ public abstract class CharFaweChunk<T, V extends FaweQueue> extends FaweChunk<T>
                     break;
             }
         }
+
         switch (id) {
             case 0:
                 this.air[i]++;
@@ -241,6 +244,8 @@ public abstract class CharFaweChunk<T, V extends FaweQueue> extends FaweChunk<T>
     public void setBlock(final int x, final int y, final int z, final int id, int data) {
         final int i = FaweCache.CACHE_I[y][z][x];
         final int j = FaweCache.CACHE_J[y][z][x];
+
+
         char[] vs = this.ids[i];
         if (vs == null) {
             vs = this.ids[i] = new char[4096];
@@ -255,6 +260,7 @@ public abstract class CharFaweChunk<T, V extends FaweQueue> extends FaweChunk<T>
                     break;
             }
         }
+
         switch (id) {
             case 0:
                 this.air[i]++;

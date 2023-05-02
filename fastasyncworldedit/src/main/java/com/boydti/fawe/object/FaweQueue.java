@@ -171,7 +171,7 @@ public interface FaweQueue extends HasFaweQueue, Extent {
             public void run(int[] value) {
                 FaweChunk newChunk;
                 if (value[6] == 0) {
-                    newChunk = fc.copy(true);
+                    newChunk = fc.copy(false);
                     newChunk.setLoc(FaweQueue.this, value[0], value[1]);
                 } else {
                     int bx = value[2] & 15;
@@ -179,7 +179,7 @@ public interface FaweQueue extends HasFaweQueue, Extent {
                     int bz = value[3] & 15;
                     int tz = value[5] & 15;
                     if (bx == 0 && tx == 15 && bz == 0 && tz == 15) {
-                        newChunk = fc.copy(true);
+                        newChunk = fc.copy(false);
                         newChunk.setLoc(FaweQueue.this, value[0], value[1]);
                     } else {
                         newChunk = FaweQueue.this.getFaweChunk(value[0], value[1]);

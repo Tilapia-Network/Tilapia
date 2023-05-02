@@ -1,4 +1,5 @@
 plugins {
+    kotlin("jvm")
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
@@ -27,6 +28,8 @@ repositories {
 }
 
 dependencies {
+    compileOnly(project(":fan87-plugin-dev-kit"))
+    compileOnly(project(":tilapia-client-integration"))
     compileOnly("org.bukkit.craftbukkit:Craftbukkit_1_8:1.8.8")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT")
     compileOnly("com.sk89q.worldedit:worldedit-core:6.1.4-SNAPSHOT")

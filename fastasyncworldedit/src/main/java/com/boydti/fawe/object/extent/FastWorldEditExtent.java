@@ -150,6 +150,7 @@ public class FastWorldEditExtent extends AbstractDelegateExtent implements HasFa
         return true;
     }
 
+    // TODO: By fan87, Uh, do I need to mention that it needs just a "little bit" of improvement?
     @Override
     public boolean setBlock(int x, int y, int z, final BaseBlock block) throws WorldEditException {
         int id = block.getId();

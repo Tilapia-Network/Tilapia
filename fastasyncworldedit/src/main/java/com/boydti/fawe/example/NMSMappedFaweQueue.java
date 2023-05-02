@@ -163,6 +163,7 @@ public abstract class NMSMappedFaweQueue<WORLD, CHUNK, CHUNKSECTION, SECTION> ex
     public abstract void relightSky(int x, int y, int z);
 
     public void setSkyLight(int x, int y, int z, int value) {
+        System.out.println("Setting skyLight from thread " + Thread.currentThread().getName());
         int cx = x >> 4;
         int cz = z >> 4;
         int cy = y >> 4;
