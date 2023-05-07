@@ -160,7 +160,6 @@ open class TilapiaPrivateAPI(val client: HttpClient) {
     }
 
 
-    val threadPool = Executors.newFixedThreadPool(200)
 
     suspend fun send(player: UUID, gameId: UUID, forceJoin: Boolean = false, spectate: Boolean = false): JoinResult {
         // TODO: Player joining too fast
