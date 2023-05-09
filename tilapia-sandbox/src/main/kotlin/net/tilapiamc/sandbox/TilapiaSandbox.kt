@@ -12,6 +12,7 @@ import net.tilapiamc.api.utils.PlayerBasedProvider
 import net.tilapiamc.common.language.LanguageKeyDelegation
 import net.tilapiamc.gameextension.plugins.PluginBossBar1_8_8
 import net.tilapiamc.gameextension.plugins.PluginChat
+import net.tilapiamc.gameextension.plugins.PluginScoreBoard
 import net.tilapiamc.multiworld.MultiWorld
 import net.tilapiamc.multiworld.WorldManager
 import net.tilapiamc.spigotcommon.game.lobby.LocalLobby
@@ -37,6 +38,15 @@ class TilapiaSandbox(core: TilapiaCore, world: World): LocalLobby(core, world, "
     init {
         applyPlugin(PluginChat { player, message -> "${player.nameWithPrefix}${ChatColor.WHITE}: $message" })
         applyPlugin(PluginBossBar1_8_8 { rainbowTextProvider(it) + "  ${ChatColor.RESET}${ChatColor.YELLOW}${world.name}" })
+        applyPlugin(PluginScoreBoard({ "${ChatColor.GOLD}${ChatColor.BOLD}${ChatColor.UNDERLINE}沙盒模式" }, {
+//            "${ChatColor.GRAY}${ChatColor.STRIKETHROUGH}--------------------\n" +
+            "${ChatColor.WHITE}分流剩餘記憶體： ${ChatColor.YELLOW}${Runtime.getRuntime().freeMemory()/1024/1024}MB\n" +
+            "\n" +
+            "${ChatColor.WHITE}沙盒地圖： ${ChatColor.GREEN}${gameWorld.name}\n" +
+            "${ChatColor.WHITE}玩家數量： ${ChatColor.YELLOW}${players.size}\n" +
+            "${ChatColor.WHITE}啟用的沙盒插件： ${ChatColor.YELLOW}${plugins.size}"
+//            "${ChatColor.GRAY}${ChatColor.STRIKETHROUGH}--------------------\n" +
+        }))
     }
 
     override fun onStart() {

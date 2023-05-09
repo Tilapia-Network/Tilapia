@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":tilapia-common"))
     implementation(project(":tilapia-language"))
     implementation(project(":tilapia-spigot-common"))
+    implementation("fr.mrmicky:fastboard:1.2.1")
 
     implementation("org.ow2.asm:asm:9.4")
     implementation("org.ow2.asm:asm-commons:9.4")
