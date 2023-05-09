@@ -1,10 +1,17 @@
 package net.tilapiamc.core.main
 
 import net.tilapiamc.api.TilapiaCore
+import net.tilapiamc.api.TilapiaPlugin
 import net.tilapiamc.core.TilapiaCoreImpl
+import net.tilapiamc.ranks.RanksManager
 import org.bukkit.plugin.java.JavaPlugin
 
-class Main: JavaPlugin() {
+class Main: TilapiaPlugin() {
+
+    init {
+        requireSchemaAccess(RanksManager.DATABASE_NAME)
+        requireSchemaAccess("logs")
+    }
 
     override fun onLoad() {
         logger.info("Tilapia Core has been loaded")

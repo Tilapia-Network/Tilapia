@@ -46,6 +46,7 @@ dependencies {
     api(project(":tilapia-command"))
     api(project(":tilapia-common"))
     api(project(":tilapia-database"))
+    api(project(":tilapia-rank-common"))
 
     api("org.jetbrains.exposed:exposed-core:$exposed_version")
     api("org.jetbrains.exposed:exposed-jdbc:$exposed_version")

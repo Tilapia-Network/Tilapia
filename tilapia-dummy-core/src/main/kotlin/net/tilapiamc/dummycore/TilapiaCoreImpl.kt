@@ -30,6 +30,7 @@ import net.tilapiamc.dummycore.networking.GameFinderImpl
 import net.tilapiamc.dummycore.server.LocalServerImpl
 import net.tilapiamc.language.LanguageCore
 import net.tilapiamc.language.LanguageGame
+import net.tilapiamc.ranks.RanksManager
 import org.apache.logging.log4j.LogManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
@@ -84,7 +85,6 @@ class TilapiaCoreImpl : TilapiaCore {
             SchemaUtils.createDatabase("logs")
         }
         schemaAccess.clear()
-        schemaAccess.add("logs")
         schemaAccess.addAll(schemas)
 
         LanguageCore
@@ -183,6 +183,10 @@ class TilapiaCoreImpl : TilapiaCore {
             throw IllegalArgumentException("Schema access not registered")
         }
         return Database.connect(DummyCoreConfig.databaseUrl + "/$databaseName", user = DummyCoreConfig.databaseUsername, password = DummyCoreConfig.databasePassword)
+    }
+
+    override val ranksManager: RanksManager by lazy {
+        RanksManager(getDatabase(RanksManager.DATABASE_NAME))
     }
 
     fun onDisable() {

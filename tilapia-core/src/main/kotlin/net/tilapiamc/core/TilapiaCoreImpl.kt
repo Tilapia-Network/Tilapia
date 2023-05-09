@@ -46,6 +46,7 @@ import net.tilapiamc.core.tables.TableLogs
 import net.tilapiamc.database.blockingDbQuery
 import net.tilapiamc.language.LanguageCore
 import net.tilapiamc.language.LanguageGame
+import net.tilapiamc.ranks.RanksManager
 import org.apache.logging.log4j.LogManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
@@ -66,7 +67,9 @@ class TilapiaCoreImpl : TilapiaCore {
 
     val backendAddress: String
     val databaseAddress: String
-
+    override val ranksManager: RanksManager by lazy {
+        RanksManager(getDatabase(RanksManager.DATABASE_NAME))
+    }
     init {
         if (DockerUtils.isInDocker()) {
             backendAddress = System.getenv("BACKEND_HOST")?:DockerUtils.getContainerGateway()
@@ -141,7 +144,6 @@ class TilapiaCoreImpl : TilapiaCore {
                 schemas.addAll(plugin.schemaAccess)
             }
         }
-        schemas.add("logs")
         schemaAccess.clear()
         schemaAccess.addAll(schemas)
         // Initialize managers

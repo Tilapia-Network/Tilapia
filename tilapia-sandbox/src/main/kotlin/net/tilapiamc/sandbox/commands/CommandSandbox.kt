@@ -19,7 +19,7 @@ class CommandSandbox: BukkitCommand("sandbox", "沙盒模式主要指令", true)
     val core = TilapiaCore.instance
 
     init {
-
+        addAlias("sb")
         val clickToTeleport = getCommandLanguageKey("CLICK_TO_TELEPORT", "${ChatColor.YELLOW}[點我傳送]")
         val hoverText = getCommandLanguageKey("CLICK_TO_TELEPORT_HOVER_TEXT", "${ChatColor.GRAY}執行 %1\$s")
 

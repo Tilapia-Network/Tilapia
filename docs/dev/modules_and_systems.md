@@ -96,4 +96,8 @@ The implementation of our current rank system:
 2. Ranks are stored in Database, accessed directly from Database for every match and the proxy
 3. `RanksManager` has an implementation of `updateRanks` that fetches all the ranks from the MySQL Database
 4. `RanksManager` has an implementation of `changeRank` that changes the rank of a player
-5. Rank of a player is directly stored as clear text (For example, `DEVELOPER`)
+5. Rank of a player is directly stored as clear text (For example, `DEVELOPER`) in the database
+
+Database Diagram:
+
+![](assets/ranks-diagram.png)

@@ -8,6 +8,7 @@ import net.tilapiamc.api.internal.TilapiaInternal
 import net.tilapiamc.api.networking.GameFinder
 import net.tilapiamc.api.server.TilapiaServer
 import net.tilapiamc.common.language.LanguageManager
+import net.tilapiamc.ranks.RanksManager
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import java.util.*
@@ -23,6 +24,8 @@ interface TilapiaCore {
     val gameFinder: GameFinder
     val adventure: BukkitAudiences
     val shuttingDown: Boolean
+
+    val ranksManager: RanksManager
 
     fun provideGameId(gameType: GameType): UUID
 
