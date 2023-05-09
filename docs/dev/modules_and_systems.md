@@ -58,7 +58,7 @@ During the last 30 minutes of maintenance (After graceful shutdown has timed out
 24. Expose public api unit
 25. Check the health of the network
 
-## Master Control
+## Units
 
 ### Kubernetes Unit
 
@@ -88,15 +88,40 @@ The game central is in the project `tilapia-game-central`. The game central unit
 
 If a critical change needs to be deployed in the game central unit, the entire server has to go down, as it manages all the proxies and servers, and they won't work without the game central unit.
 
-## Rank System Infrastructure
+## Systems & Modules
+
+### Transforming Module
+
+Transforming enables the possibility to modify the Spigot without having a custom build or `-noverify` flag in VM options. Currently, it only works on x86_64 linux & x86_64 windows due to the lack of machines we can use to build native libraries, but should work on arm64, arm32, x86_32 with proper native library built.
+
+There are already several transformers that are used in some game plugins (e.g. speedyboat, disables the boat speed limit) and some features (e.g. noclip, disables the vanilla block clipping check).
+
+You may have to learn Java bytecode in order to use this module.
+
+### Command System
+
+The design we came up with for our commands system:
+
+1. Cancel all the vanilla, non-tilapia commands if the player does not have the vanilla command permission (Including plugin commands, like citizens or worldedit)
+2. The command is using Kotlin DSL based API, and with the goal of being easy and fast to use.
+3. Every command is associated with a permission, and the permission may be granted by default if the command is not required by OP
+4. The command API implemented in tilapia-proxy-api and tilapia-api (the one for spigot/bukkit) is identical
+5. As for now, console is not affected by the command system, meaning that all the commands should not and cannot be run on console. It's not a bug, and won't be fixed.
+6. Custom argument type is more then welcome, but it's recommended to directly add those argument types into shared project `tilapia-commands-extension` so everyone has access to them
+7. Commands should not have clear user-friendly text, but should be wrapped as a languaged text instead (Using `getCommandLanguageKey`)
+
+### Rank System Infrastructure
 
 The implementation of our current rank system:
 
 1. `RanksManager` manages all the ranks
 2. Ranks are stored in Database, accessed directly from Database for every match and the proxy
 3. `RanksManager` has an implementation of `updateRanks` that fetches all the ranks from the MySQL Database
-4. `RanksManager` has an implementation of `changeRank` that changes the rank of a player
+4. `RanksManager` has an implementation of `setRank` that changes the rank of a player and `getRank` that gets the rank of a player
 5. Rank of a player is directly stored as clear text (For example, `DEVELOPER`) in the database
+6. Prefix and such are stored as RankMetadata, including other non-bukkit-permission but permissive related values, for example: level multiplier, which is a float
+7. Rank metadata can and is designed to be modified directly from database. Useless rank metadata will be removed by deployment manager after the next update is fully deployed, while the engineer will take note of what is being removed.
+8. Ranks has a `previous` value, which is the parent of the rank. It will inherit all the permission of the previous rank (Metadata is not included, still needs to be configured manually)
 
 Database Diagram:
 

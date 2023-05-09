@@ -6,6 +6,7 @@ import net.tilapiamc.api.commands.args.worldNameArg
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import net.tilapiamc.fleetwars.FleetWars
 import net.tilapiamc.fleetwars.FleetWarsRules
+import net.tilapiamc.sandbox.SandboxProperties
 import net.tilapiamc.sandbox.TilapiaSandbox
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -59,7 +60,7 @@ class FleetWarsCommand: BukkitCommand("fleetwars", "FleetWars 的主要指令", 
                         }
                         sandboxGames.add(sandbox.gameId)
                         FleetWarsRules.makeFleetWarsSandbox(sandbox)
-                        sender.sendMessage(getLanguageBundle()[success])
+                        sender.sendMessage(getLanguageBundle()[success].format(sandbox.getProperty(SandboxProperties.SANDBOX_WORLD)))
                         sender.sendMessage(getLanguageBundle()[hint])
                     } else {
                         sender.sendMessage(getLanguageBundle()[notSandbox])

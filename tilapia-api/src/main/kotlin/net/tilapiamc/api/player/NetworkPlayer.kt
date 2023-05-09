@@ -4,7 +4,6 @@ import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.game.Game
 import net.tilapiamc.api.game.lobby.Lobby
 import net.tilapiamc.api.game.minigame.MiniGame
-import net.tilapiamc.api.ranks.Rank
 import net.tilapiamc.api.server.TilapiaServer
 import net.tilapiamc.common.language.LanguageBundle
 import java.util.*
@@ -20,8 +19,6 @@ abstract class NetworkPlayer(
 
     lateinit var currentServer: TilapiaServer
 
-    abstract var rank: Rank
-        internal set
     abstract val language: Locale
 
     fun getLanguageBundle(): LanguageBundle {

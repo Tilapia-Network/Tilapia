@@ -31,6 +31,17 @@ object EventsManager: AbstractEventsManager(), Listener {
 
     init {
 
+        ProtocolLibrary.getProtocolManager().addPacketListener(object : PacketAdapter(PluginInstanceGrabber.getPluginInstance(), PacketType.values().filter {
+            PacketRegistry.getServerPacketTypes().contains(it) || PacketRegistry.getClientPacketTypes().contains(it)
+        }) {
+            override fun onPacketSending(event: PacketEvent) {
+                fireEvent(PacketSendEvent(event))
+            }
+
+            override fun onPacketReceiving(event: PacketEvent) {
+                fireEvent(PacketReceiveEvent(event))
+            }
+        })
 
         listenInPackage("org.bukkit.event")
         listenInPackage("org.spigotmc.event")
@@ -57,17 +68,6 @@ object EventsManager: AbstractEventsManager(), Listener {
             }
         }
 
-        ProtocolLibrary.getProtocolManager().addPacketListener(object : PacketAdapter(PluginInstanceGrabber.getPluginInstance(), PacketType.values().filter {
-            PacketRegistry.getServerPacketTypes().contains(it) || PacketRegistry.getClientPacketTypes().contains(it)
-        }) {
-            override fun onPacketSending(event: PacketEvent) {
-                fireEvent(PacketSendEvent(event))
-            }
-
-            override fun onPacketReceiving(event: PacketEvent) {
-                fireEvent(PacketReceiveEvent(event))
-            }
-        })
     }
 
     fun listenForEvent(eventType: Class<out Event>) {
