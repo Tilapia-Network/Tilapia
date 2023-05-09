@@ -23,6 +23,7 @@ dependencies {
     compileOnly(MinecraftDependencyHelper.spigot("1.8.8"))
     compileOnly(project(":tilapia-api"))
     compileOnly(project(":tilapia-spigot-common"))
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
 }
 
 kotlin {
