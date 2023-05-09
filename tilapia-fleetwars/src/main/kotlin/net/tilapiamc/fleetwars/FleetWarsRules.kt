@@ -9,6 +9,9 @@ import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
 import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.common.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.common.events.annotation.unregisterAnnotationBasedListener
+import net.tilapiamc.customib.item.ItemsManager
+import net.tilapiamc.customib.item.PluginCustomItem
+import net.tilapiamc.fleetwars.customitems.ItemFireBall
 import net.tilapiamc.fleetwars.customitems.PluginFireBall
 import net.tilapiamc.gameextension.plugins.PluginSignNPC
 import net.tilapiamc.gameextension.traits.TraitMultiLineName
@@ -24,15 +27,21 @@ import kotlin.math.atan2
 object FleetWarsRules {
 
     fun makeFleetWarsSandbox(sandbox: TilapiaSandbox) {
-        sandbox.applyPlugin(provideShopNPCPlugin(true))
-        sandbox.applyPlugin(PluginFireBall(true))
+        val plugin = PluginCustomItem(
+            ItemFireBall(true)
+        )
+        sandbox.applyPlugin(plugin)
+        sandbox.applyPlugin(provideShopNPCPlugin(true, plugin.itemsManager))
     }
     fun makeFleetWars(fleetWars: FleetWars) {
-        fleetWars.applyPlugin(provideShopNPCPlugin(false))
-        fleetWars.applyPlugin(PluginFireBall(false))
+        val plugin = PluginCustomItem(
+            ItemFireBall(false)
+        )
+        fleetWars.applyPlugin(plugin)
+        fleetWars.applyPlugin(provideShopNPCPlugin(false, plugin.itemsManager))
     }
 
-    private fun provideShopNPCPlugin(sandbox: Boolean): PluginSignNPC {
+    private fun provideShopNPCPlugin(sandbox: Boolean, itemsManager: ItemsManager): PluginSignNPC {
         class TraitShopNPC(val sign: Block, val pluginSignNPC: PluginSignNPC): Trait("shopnpc") {
             override fun run() {
                 if (npc.entity.ticksLived > 10) {
@@ -60,7 +69,7 @@ object FleetWarsRules {
             @Subscribe("shopNpc-onRightClick")
             fun onRightClick(event: NPCRightClickEvent) {
                 if (event.npc == npc) {
-                    GuiShop(event.clicker.getLocalPlayer()).open(event.clicker)
+                    GuiShop(event.clicker.getLocalPlayer(), itemsManager).open(event.clicker)
                     event.isCancelled = true
                 }
             }

@@ -1,5 +1,6 @@
 package net.tilapiamc.sandbox
 
+import me.fan87.plugindevkit.PluginInstanceGrabber
 import net.tilapiamc.api.TilapiaCore
 import net.tilapiamc.api.commands.getSenderLanguageBundle
 import net.tilapiamc.api.game.ManagedGame
@@ -43,6 +44,10 @@ class TilapiaSandbox(core: TilapiaCore, world: World): LocalLobby(core, world, "
     }
 
     override fun onEnd() {
+        if (Bukkit.getServer().pluginManager.getPlugin("tilapia-core").javaClass.name.contains("dummy")) {
+            logger.warn("Skipping auto-save since tilapia-dummy-core is enabled")
+            return
+        }
         if (Bukkit.getServer().pluginManager.isPluginEnabled("tilapia-multiworld")) {
             logger.info("Saving world: ${gameWorld.name}")
             WorldManager.getWorld(gameWorld.name)?.let { tilapiaWorld ->

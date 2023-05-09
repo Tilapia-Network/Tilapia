@@ -48,7 +48,10 @@ class PluginSignNPC(val sandbox: Boolean,
     }
 
     override fun onDisable() {
-
+        for (value in npcs.values) {
+            value.destroy()
+        }
+        registry.deregisterAll()
     }
 
     @Subscribe("pluginSignNPC-onSignLoaded")

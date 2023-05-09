@@ -6,7 +6,9 @@ import me.fan87.plugindevkit.utils.ItemStackBuilder
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.common.language.LanguageKey
 import net.tilapiamc.common.language.LanguageKeyDelegation
-import net.tilapiamc.fleetwars.customitems.FleetWarsCustomItemProvider
+import net.tilapiamc.customib.NamespacedKey
+import net.tilapiamc.customib.item.CustomItem
+import net.tilapiamc.customib.item.ItemsManager
 import net.tilapiamc.spigotcommon.utils.ItemPayable
 import net.tilapiamc.spigotcommon.utils.Payable
 import org.bukkit.ChatColor
@@ -14,7 +16,7 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.inventory.ItemStack
 
-class GuiShop(val player: LocalNetworkPlayer): Gui(player.getLanguageBundle()[FLEETWARS_SHOP_TITLE], 6) {
+class GuiShop(val player: LocalNetworkPlayer, val itemsManager: ItemsManager): Gui(player.getLanguageBundle()[FLEETWARS_SHOP_TITLE], 6) {
 
     companion object {
         val FLEETWARS_SHOP_CLICK_TO_PURCHASE by LanguageKeyDelegation("${ChatColor.YELLOW}點我購買")
@@ -43,7 +45,7 @@ class GuiShop(val player: LocalNetworkPlayer): Gui(player.getLanguageBundle()[FL
             it.whoClicked.closeInventory()
         })
 
-        set(2, 2, ShopItem(FleetWarsCustomItemProvider.createFireBall(), FleetWarsLanguage.ITEM_FIREBALL, CoinType.GOLD, 32))
+        set(2, 2, ShopItem(itemsManager.customItems[NamespacedKey("fleetwars", "fireball")]!!, 1, CoinType.GOLD, 32))
     }
 
     private inner class ShopItem(val targetItem: ItemStack, val itemLanguageKey: LanguageKey, val coinType: CoinType, val price: Int): GuiItem(
@@ -69,6 +71,13 @@ class GuiShop(val player: LocalNetworkPlayer): Gui(player.getLanguageBundle()[FL
             player.sendMessage(player.getLanguageBundle()[FLEETWARS_SHOP_PURCHASE_SUCCESS])
         }
     ) {
+
+        constructor(customItem: CustomItem, amount: Int, coinType: CoinType, price: Int): this(
+            customItem.generateItem(amount),
+            customItem.displayLanguageKey,
+            coinType,
+            price
+        )
     }
 
 }

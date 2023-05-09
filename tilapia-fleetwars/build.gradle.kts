@@ -20,11 +20,12 @@ dependencies {
     compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT") {
         exclude("*", "*")
     }
-    compileOnly(MinecraftDependencyHelper.spigotApi("1.8.8"))
+    compileOnly(MinecraftDependencyHelper.spigot("1.8.8"))
     compileOnly(project(":tilapia-api"))
     implementation(project(":tilapia-common"))
     implementation(project(":tilapia-command"))
     implementation(project(":tilapia-language"))
+    implementation(project(":tilapia-custom-ib"))
     implementation(project(":tilapia-spigot-common"))
     implementation(project(":tilapia-game-extension"))
     compileOnly(project(":tilapia-sandbox"))
