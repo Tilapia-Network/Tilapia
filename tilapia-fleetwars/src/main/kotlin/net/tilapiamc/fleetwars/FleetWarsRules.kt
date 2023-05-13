@@ -10,13 +10,15 @@ import net.tilapiamc.common.events.annotation.Subscribe
 import net.tilapiamc.common.events.annotation.registerAnnotationBasedListener
 import net.tilapiamc.common.events.annotation.unregisterAnnotationBasedListener
 import net.tilapiamc.customib.item.ItemsManager
-import net.tilapiamc.customib.item.PluginCustomItem
+import net.tilapiamc.customib.PluginCustomItemBlocks
+import net.tilapiamc.customib.block.BlocksManager
+import net.tilapiamc.customib.block.CustomBlock
+import net.tilapiamc.customib.item.CustomItem
+import net.tilapiamc.fleetwars.customitems.BlockSpeedPad
 import net.tilapiamc.fleetwars.customitems.ItemFireBall
-import net.tilapiamc.fleetwars.customitems.PluginFireBall
 import net.tilapiamc.gameextension.plugins.PluginSignNPC
 import net.tilapiamc.gameextension.traits.TraitMultiLineName
 import net.tilapiamc.sandbox.TilapiaSandbox
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -26,17 +28,35 @@ import kotlin.math.atan2
 
 object FleetWarsRules {
 
+    private val itemProviders: Array<(Boolean) -> CustomItem> = arrayOf(
+        { ItemFireBall(it) }
+    )
+
+    private val blockProviders: Array<(Boolean, BlocksManager) -> CustomBlock> = arrayOf(
+        { _, blocksManager -> BlockSpeedPad(blocksManager) }
+    )
+
     fun makeFleetWarsSandbox(sandbox: TilapiaSandbox) {
-        val plugin = PluginCustomItem(
-            ItemFireBall(true)
-        )
+        val plugin = PluginCustomItemBlocks {
+            for (itemProvider in itemProviders) {
+                itemsManager.registerItem(itemProvider(true))
+            }
+            for (blockProvider in blockProviders) {
+                blocksManager.registerBlock(blockProvider(true, blocksManager))
+            }
+        }
         sandbox.applyPlugin(plugin)
         sandbox.applyPlugin(provideShopNPCPlugin(true, plugin.itemsManager))
     }
     fun makeFleetWars(fleetWars: FleetWars) {
-        val plugin = PluginCustomItem(
-            ItemFireBall(false)
-        )
+        val plugin = PluginCustomItemBlocks {
+            for (itemProvider in itemProviders) {
+                itemsManager.registerItem(itemProvider(false))
+            }
+            for (blockProvider in blockProviders) {
+                blocksManager.registerBlock(blockProvider(false, blocksManager))
+            }
+        }
         fleetWars.applyPlugin(plugin)
         fleetWars.applyPlugin(provideShopNPCPlugin(false, plugin.itemsManager))
     }

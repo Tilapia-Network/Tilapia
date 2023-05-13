@@ -13,6 +13,7 @@ import org.objectweb.asm.util.CheckClassAdapter
 import java.io.PrintWriter
 import java.lang.instrument.ClassDefinition
 import java.lang.instrument.ClassFileTransformer
+import java.security.ProtectionDomain
 
 object TransformManager {
 
@@ -52,33 +53,41 @@ object TransformManager {
 
             instrumentation.redefineClasses(ClassDefinition(classTransformer.targetClass, result))
         } else {
-            val transformer = ClassFileTransformer { loader, className, classBeingRedefined, protectionDomain, classfileBuffer ->
-                try {
-                    if (classBeingRedefined == classTransformer.targetClass) {
-                        val classNode = ClassNode()
-                        val classReader = ClassReader(classfileBuffer)
-                        classReader.accept(classNode, ClassReader.EXPAND_FRAMES)
-                        classTransformer.transform(classNode)
-                        var result: ByteArray
-                        try {
-                            val classWriter = ClassWriter(ClassWriter.COMPUTE_FRAMES)
-                            classNode.accept(classWriter)
-                            result = classWriter.toByteArray()
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                            val classWriter = ClassWriter(ClassWriter.COMPUTE_MAXS)
-                            classNode.accept(classWriter)
-                            result = classWriter.toByteArray()
+            val transformer = object : ClassFileTransformer {
+                override fun transform(
+                    loader: ClassLoader?,
+                    className: String?,
+                    classBeingRedefined: Class<*>?,
+                    protectionDomain: ProtectionDomain?,
+                    classfileBuffer: ByteArray
+                ): ByteArray {
+                    try {
+                        if (classBeingRedefined == classTransformer.targetClass) {
+                            val classNode = ClassNode()
+                            val classReader = ClassReader(classfileBuffer)
+                            classReader.accept(classNode, ClassReader.EXPAND_FRAMES)
+                            classTransformer.transform(classNode)
+                            var result: ByteArray
+                            try {
+                                val classWriter = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+                                classNode.accept(classWriter)
+                                result = classWriter.toByteArray()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                val classWriter = ClassWriter(ClassWriter.COMPUTE_MAXS)
+                                classNode.accept(classWriter)
+                                result = classWriter.toByteArray()
+                            }
+                            CheckClassAdapter.verify(ClassReader(result), TransformManager::class.java.classLoader, false, PrintWriter(System.err, true));
+                            classesCache[classBeingRedefined] = classNode
+                            return result
+                        } else {
+                            return classfileBuffer
                         }
-                        CheckClassAdapter.verify(ClassReader(result), TransformManager::class.java.classLoader, false, PrintWriter(System.err, true));
-                        classesCache[classBeingRedefined] = classNode
-                        result
-                    } else {
-                        classfileBuffer
+                    } catch (e: Throwable) {
+                        e.printStackTrace()
+                        return classfileBuffer
                     }
-                } catch (e: Throwable) {
-                    e.printStackTrace()
-                    classfileBuffer
                 }
             }
             instrumentation.addTransformer(transformer, true)

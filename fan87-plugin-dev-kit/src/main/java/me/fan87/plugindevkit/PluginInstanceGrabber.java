@@ -6,7 +6,8 @@ import org.bukkit.plugin.Plugin;
 public class PluginInstanceGrabber {
 
     public static Plugin getPluginInstance() {
-        return Bukkit.getServer().getPluginManager().getPlugins()[0];
+//        return Bukkit.getServer().getPluginManager().getPlugins()[0];
+        return Bukkit.getServer().getPluginManager().getPlugin("tilapia-core");
     }
 
 }

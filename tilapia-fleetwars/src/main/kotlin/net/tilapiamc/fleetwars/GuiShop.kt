@@ -46,6 +46,7 @@ class GuiShop(val player: LocalNetworkPlayer, val itemsManager: ItemsManager): G
         })
 
         set(2, 2, ShopItem(itemsManager.customItems[NamespacedKey("fleetwars", "fireball")]!!, 1, CoinType.GOLD, 32))
+        set(3, 2, ShopItem(itemsManager.customItems[NamespacedKey("fleetwars", "speedpad")]!!, 1, CoinType.GOLD, 1))
     }
 
     private inner class ShopItem(val targetItem: ItemStack, val itemLanguageKey: LanguageKey, val coinType: CoinType, val price: Int): GuiItem(

@@ -163,7 +163,9 @@ object ASMUtils {
             list
         })
         out.add(generateMethodCall(Method::invoke))
-        out.add(generateCast(method.returnType))
+        if (method.returnType != Void::class.javaPrimitiveType) {
+            out.add(generateCast(method.returnType))
+        }
         return out
     }
 

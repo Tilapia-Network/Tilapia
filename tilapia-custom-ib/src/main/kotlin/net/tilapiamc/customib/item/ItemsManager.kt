@@ -2,6 +2,7 @@ package net.tilapiamc.customib.item
 
 import net.minecraft.server.v1_8_R3.ItemStack
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata
+import net.minecraft.server.v1_8_R3.PacketPlayOutWindowItems
 import net.tilapiamc.api.events.packet.PacketSendEvent
 import net.tilapiamc.api.player.LocalNetworkPlayer
 import net.tilapiamc.api.player.PlayersManager.getLocalPlayer
@@ -34,16 +35,16 @@ class ItemsManager(val eventManager: GameEventManager) {
         val packet = event.original
         for (declaredField in packet.packet.handle.javaClass.declaredFields) {
             declaredField.isAccessible = true
-            val value = declaredField[packet.packet.handle]
-            if (value == null)
+            val value = declaredField[packet.packet.handle] ?: continue
             // ItemStack array
             if (declaredField.type.isArray && declaredField.type.componentType == ItemStack::class.java) {
                 val value = value as Array<ItemStack>
                 for (withIndex in value.withIndex()) {
+                    if (withIndex.value == null) continue
                     value[withIndex.index] = processItemStack(event.player.getLocalPlayer(), withIndex.value)
                 }
             }
-            // ItemStack array
+            // ItemStack list
             if (value is List<*>) {
                 val value = value as MutableList<Any>
                 ArrayList(value).withIndex().forEach {

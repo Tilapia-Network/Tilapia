@@ -2,6 +2,7 @@ package net.tilapiamc.fleetwars.main
 
 import net.tilapiamc.api.TilapiaPlugin
 import net.tilapiamc.api.commands.SpigotCommandsManager
+import net.tilapiamc.customib.events.BlockUpdateEvent
 import net.tilapiamc.fleetwars.FleetWarsLanguage
 import net.tilapiamc.fleetwars.GuiShop
 import net.tilapiamc.fleetwars.commands.FleetWarsCommand
